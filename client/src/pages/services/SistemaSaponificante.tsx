@@ -270,20 +270,108 @@ export default function SistemaSaponificante() {
         </div>
       </section>
 
-      {/* VIDEO */}
-      <section className="section-dark" style={{ padding: "4rem 0" }}>
-        <div className="container">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "3rem", alignItems: "center" }}>
-            <div>
-              <div className="section-label" style={{ color: "rgba(255,255,255,0.6)" }}>Veja na prática</div>
-              <div className="divider-red" />
-              <h2 className="text-headline" style={{ color: "#fff", marginBottom: "1rem" }}>Sistema em Operação</h2>
-              <p style={{ color: "var(--gray-400)", lineHeight: 1.75 }}>
-                Sistema Saponificante em Coifa seguindo a atualização da NBR 14095 — Demonstração real de instalação e funcionamento com intertravamento de gás e exaustão.
-              </p>
+      {/* VIDEO SECTION — IMPACTANTE */}
+      <section style={{ background: "var(--black)", padding: "0" }}>
+        {/* Topo: headline + stats */}
+        <div style={{ padding: "4rem 0 3rem", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="container">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "3rem", alignItems: "center" }}>
+              <div>
+                <div className="section-label" style={{ color: "rgba(255,255,255,0.45)" }}>Veja na prática</div>
+                <div className="divider-red" />
+                <h2 className="text-headline" style={{ color: "#fff", marginBottom: "1rem" }}>O Sistema que Salva Cozinhas</h2>
+                <p style={{ color: "var(--gray-400)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
+                  Em menos de <strong style={{ color: "#fff" }}>30 segundos</strong>, o agente saponificante detecta, suprime e sela a superfície — impedindo a re-ignição que extintores comuns não conseguem evitar. Assista às demonstrações reais abaixo.
+                </p>
+              </div>
+              {/* Stats */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+                {[
+                  { value: "< 30s", label: "Tempo de acionamento automático" },
+                  { value: "100%", label: "Sem energia elétrica para operar" },
+                  { value: "Classe K", label: "Única solução aprovada para óleos" },
+                  { value: "UL 300", label: "Certificação internacional exigida" },
+                ].map((s) => (
+                  <div key={s.label} style={{ borderLeft: "3px solid var(--red)", paddingLeft: "1rem" }}>
+                    <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.625rem", color: "#fff", lineHeight: 1 }}>{s.value}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--gray-400)", marginTop: "0.3rem", lineHeight: 1.4 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="video-wrapper" style={{ maxWidth: "560px" }}>
-              <iframe src="https://www.youtube.com/embed/5J0vIP-oec4?rel=0&modestbranding=1" title="Sistema Saponificante — Demonstração" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowFullScreen loading="lazy" />
+          </div>
+        </div>
+
+        {/* Vídeo principal — Amerex KP */}
+        <div style={{ padding: "3rem 0", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="container">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "3rem", alignItems: "center" }}>
+              <div style={{ order: 0 }}>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", background: "var(--red)", color: "#fff", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "0.3rem 0.75rem", marginBottom: "1rem" }}>
+                  ▶ Demonstração Amerex KP
+                </div>
+                <h3 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "#fff", marginBottom: "0.75rem", lineHeight: 1.2 }}>
+                  Sistema Amerex KP — Proteção Certificada UL 300
+                </h3>
+                <p style={{ color: "var(--gray-400)", fontSize: "0.875rem", lineHeight: 1.75, marginBottom: "1rem" }}>
+                  Demonstração oficial do sistema Amerex KP para cozinhas comerciais. Veja o acionamento automático, a supressão do fogo e o intertravamento com o sistema de gás — tudo em conformidade com NFPA 17A e UL 300.
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  {["Acionamento mecânico sem energia elétrica", "Intertravamento automático com gás e exaustão", "Agente wet chemical Classe K", "Aprovado NFPA 17A · UL 300 · LPCB"].map((item) => (
+                    <div key={item} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", color: "rgba(255,255,255,0.65)" }}>
+                      <CheckCircle size={13} style={{ color: "var(--red)", flexShrink: 0 }} />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", background: "#111" }}>
+                <iframe
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+                  src="https://www.youtube.com/embed/MtnGHk6-Nr0?rel=0&modestbranding=1&color=white"
+                  title="Amerex Commercial Kitchen Fire Protection System — UL 300"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Vídeo secundário — Combate real em PT-BR */}
+        <div style={{ padding: "3rem 0 4rem" }}>
+          <div className="container">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "3rem", alignItems: "center" }}>
+              <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", background: "#111" }}>
+                <iframe
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+                  src="https://www.youtube.com/embed/5uAeWrKsluw?rel=0&modestbranding=1&color=white"
+                  title="Combate a incêndio em cozinha industrial — Sistema Saponificante"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+              <div>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "0.3rem 0.75rem", marginBottom: "1rem" }}>
+                  ▶ Demonstração em Português
+                </div>
+                <h3 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "#fff", marginBottom: "0.75rem", lineHeight: 1.2 }}>
+                  Combate Real em Cozinha Industrial
+                </h3>
+                <p style={{ color: "var(--gray-400)", fontSize: "0.875rem", lineHeight: 1.75, marginBottom: "1rem" }}>
+                  Vídeo em português mostrando o funcionamento real de um sistema fixo de combate a incêndio com agente saponificante em cozinha industrial. Demonstração do acionamento, descarga do agente e supressão completa do fogo.
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  {["Demonstração em português", "Cozinha industrial real", "Acionamento e descarga do agente", "Supressão completa sem re-ignição"].map((item) => (
+                    <div key={item} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", color: "rgba(255,255,255,0.65)" }}>
+                      <CheckCircle size={13} style={{ color: "var(--red)", flexShrink: 0 }} />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
