@@ -32,6 +32,7 @@ function Router() {
       <Route path="/sistema-supressao-co2" component={SistemaSupressaoCO2} />
       <Route path="/recarga-co2" component={RecargaCO2} />
       <Route path="/sistema-saponificante" component={SistemaSaponificante} />
+      <Route path="/coifas" component={SistemaSaponificante} />
       <Route path="/hidrantes" component={Hidrantes} />
       <Route path="/alarme-incendio" component={AlarmeIncendio} />
       <Route path="/detector-gas" component={DetectorGas} />

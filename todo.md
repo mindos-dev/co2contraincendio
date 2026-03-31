@@ -23,3 +23,5 @@
 - [x] ServicePageTemplate para páginas de serviços
 - [x] Configurar App.tsx com todas as rotas
 - [x] Copiar index.css com estilos globais
+- [ ] Carrossel na página inicial com as mesmas imagens e estilo do site co2contraincendio.com
+- [x] Página /coifas: lapidar ou criar no padrão UL do projeto, baseada no conteúdo de co2contraincendio.com/coifas

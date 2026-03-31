@@ -1,71 +1,358 @@
-import { Droplets, Flame, Shield, Settings, CheckCircle, AlertTriangle } from "lucide-react";
-import ServicePageTemplate from "../../components/ServicePageTemplate";
+import { Droplets, Flame, Shield, Settings, CheckCircle, AlertTriangle, ArrowRight, Phone, ExternalLink } from "lucide-react";
+import { Link } from "wouter";
+import Layout from "../../components/Layout";
+
+const suppliers = [
+  {
+    name: "Amerex Fire Systems",
+    country: "EUA",
+    flag: "🇺🇸",
+    product: "Sistema KP — Kitchen Protection",
+    cert: "UL 300 · NFPA 17A",
+    description:
+      "Líder mundial em sistemas de supressão para cozinhas comerciais. O sistema Amerex KP oferece proteção por Zona Defense, permitindo reconfiguração dos equipamentos sem necessidade de reprojeto do sistema. Tecnologia STRIKE com detecção eletrônica elimina cabos e fusíveis mecânicos sujeitos a acúmulo de gordura.",
+    highlights: ["Cobertura Zone Defense", "Sistema STRIKE eletrônico", "Detecção linear por tubo pneumático", "Log de eventos para auditoria"],
+    url: "https://www.amerex-fire.com/kp",
+    color: "#C8102E",
+  },
+  {
+    name: "Defender",
+    country: "Turquia / Europa",
+    flag: "🇪🇺",
+    product: "Séries DC, DM, DP",
+    cert: "EN 17446:2021 · UL 300",
+    description:
+      "Primeiro sistema de supressão para cozinhas aprovado pela norma europeia EN 17446:2021. As séries DC (mecânico) e DP (pneumático) cobrem desde pequenas cozinhas até grandes instalações industriais. Referência em hotéis, restaurantes e cozinhas hospitalares na Europa e Oriente Médio.",
+    highlights: ["Primeiro aprovado EN 17446:2021", "Séries mecânica e pneumática", "Catálogo corporativo completo", "Referências em 40+ países"],
+    url: "https://www.defender.com.tr/",
+    color: "#1A3A6B",
+  },
+  {
+    name: "Rotarex FireDETEC",
+    country: "Luxemburgo",
+    flag: "🇱🇺",
+    product: "TRIPLESTAR — Sistema Pré-Engenheirado",
+    cert: "UL 300 · EN 17446 · NFPA 17A",
+    description:
+      "O sistema TRIPLESTAR da Rotarex é um sistema pré-engenheirado completo em uma única caixa, sem necessidade de cálculo preliminar. A tecnologia FireDETEC utiliza tubo de detecção pneumático pressurizado a nitrogênio seco (16 bar), com detecção direta acima dos equipamentos e acionamento instantâneo sem energia elétrica.",
+    highlights: ["Sistema completo em uma caixa", "Tubo pneumático FireDETEC", "Sem energia elétrica para acionamento", "Proteção 24/7 para 3 a 9 zonas"],
+    url: "https://rotarexfiretec.com/category/commercial-kitchen-fire-protection",
+    color: "#2D6A4F",
+  },
+];
+
+const features = [
+  { icon: <Droplets size={20} />, title: "Agente Saponificante (Wet Chemical)", desc: "Reage quimicamente com a gordura aquecida formando uma camada de sabão que sela a superfície e previne a re-ignição. Única solução aprovada para incêndios Classe K." },
+  { icon: <Flame size={20} />, title: "Proteção de Coifas e Dutos", desc: "Bicos difusores posicionados estrategicamente na coifa, nos dutos de exaustão e diretamente sobre cada equipamento de cocção conforme projeto." },
+  { icon: <Settings size={20} />, title: "Intertravamento com Gás e Exaustão", desc: "Integração obrigatória com solenóide de corte de gás e dampers de exaustão para desligamento automático no momento do acionamento." },
+  { icon: <Shield size={20} />, title: "Detecção Térmica Fusível", desc: "Detectores térmicos posicionados sobre os equipamentos para acionamento automático mecânico, sem dependência de energia elétrica." },
+  { icon: <AlertTriangle size={20} />, title: "Acionamento Manual (Pull Station)", desc: "Estação de acionamento manual acessível ao operador para ativação imediata em situação de emergência, conforme NFPA 17A." },
+  { icon: <CheckCircle size={20} />, title: "Manutenção Semestral Obrigatória", desc: "Inspeção e manutenção semestral conforme ABNT NBR 14095, incluindo recarga do agente, verificação de pressão e teste de todos os intertravamentos." },
+];
+
+const norms = [
+  { code: "ABNT NBR 14095", title: "Sistema de supressão por agente saponificante", excerpt: "Estabelece os requisitos mínimos para projeto, instalação, inspeção e manutenção de sistemas fixos de extinção por agente saponificante em equipamentos de cocção." },
+  { code: "NFPA 17A", title: "Standard for Wet Chemical Extinguishing Systems", excerpt: "Covers the design, installation, maintenance, and use of wet chemical extinguishing systems for the protection of cooking equipment and associated exhaust systems." },
+  { code: "UL 300", title: "Fire Testing of Fire Extinguishing Systems — Cooking Equipment", excerpt: "Standard for fire extinguishing systems for protection of commercial cooking equipment. Required by NFPA guidelines for all certified systems." },
+  { code: "IT-21 CBMMG", title: "Instrução Técnica — Sistemas de Supressão", excerpt: "Estabelece os requisitos para aprovação de sistemas fixos de extinção junto ao Corpo de Bombeiros Militar de Minas Gerais." },
+];
+
+const process = [
+  { step: "01", title: "Levantamento dos Equipamentos", desc: "Mapeamento de todos os equipamentos de cocção, dimensões da coifa e dutos, tipo de combustível e volume de óleo utilizado." },
+  { step: "02", title: "Projeto Técnico + ART", desc: "Cálculo do agente saponificante, posicionamento de bicos, tubulação, cilindros e integração com sistemas de gás e exaustão." },
+  { step: "03", title: "Aprovação CBMMG", desc: "Protocolo e acompanhamento da aprovação do projeto junto ao Corpo de Bombeiros Militar de Minas Gerais." },
+  { step: "04", title: "Instalação Integrada", desc: "Montagem do sistema com bicos difusores, tubulação, cilindros de agente, detectores térmicos, painel e todos os intertravamentos." },
+  { step: "05", title: "Testes Operacionais", desc: "Simulação de acionamento, verificação dos intertravamentos de gás e exaustão, e teste funcional de todos os componentes." },
+  { step: "06", title: "Treinamento e Documentação", desc: "Treinamento da equipe da cozinha, entrega de manual técnico, certificados de instalação e documentação para o Corpo de Bombeiros." },
+];
+
+const faqs = [
+  { q: "O sistema saponificante é obrigatório para restaurantes?", a: "Sim. O Corpo de Bombeiros exige sistema fixo de supressão para cozinhas industriais com equipamentos de cocção a óleo (fritadeiras, chapas, grelhadores) acima de determinadas dimensões. A obrigatoriedade varia conforme a Instrução Técnica do CBMMG do estado e a área do estabelecimento." },
+  { q: "Qual a diferença entre saponificante e CO₂ para cozinhas?", a: "O agente saponificante é o único aprovado para proteção de equipamentos de cocção a óleo (incêndios Classe K) porque reage quimicamente com a gordura, formando uma camada protetora que previne a re-ignição. O CO₂ extingue o fogo, mas não previne a re-ignição em superfícies com óleo quente." },
+  { q: "O sistema precisa ser integrado ao gás e à exaustão?", a: "Sim. As normas exigem o intertravamento do sistema saponificante com a solenóide de corte de gás e com os dampers de exaustão. Quando o sistema é acionado, o gás é cortado automaticamente e os dampers fecham para conter o incêndio no duto." },
+  { q: "Com que frequência o sistema precisa de manutenção?", a: "A ABNT NBR 14095 exige inspeção semestral do sistema, incluindo verificação do agente saponificante, pressão dos cilindros, bicos difusores, detectores térmicos e intertravamentos. A recarga é necessária após cada acionamento ou quando a pressão estiver abaixo do especificado." },
+  { q: "O sistema funciona sem energia elétrica?", a: "Sim. Os detectores térmicos fusíveis acionam o sistema mecanicamente, sem necessidade de energia elétrica. O acionamento elétrico via painel é adicional e complementar ao acionamento mecânico — garantindo operação mesmo em queda de energia." },
+  { q: "Quais equipamentos de cozinha precisam de proteção?", a: "Fritadeiras industriais, chapas, grelhadores, woks, fornos a gás e qualquer equipamento de cocção a óleo ou gordura. A coifa e o duto de exaustão também devem ser protegidos, pois acumulam gordura e são pontos críticos de propagação de incêndio." },
+];
 
 export default function SistemaSaponificante() {
   return (
-    <ServicePageTemplate
-      meta={{
-        title: "Sistema Saponificante para Cozinhas Industriais — NBR 14095",
-        description: "Sistemas fixos de supressão com agente saponificante para coifas, dutos e equipamentos de cocção. Obrigatório para cozinhas industriais conforme NBR 14095 e NFPA 17A. Atendemos BH e todo o Brasil.",
-        keywords: "sistema saponificante, saponificante cozinha industrial, supressão incêndio cozinha, NBR 14095, NFPA 17A, coifa incêndio, duto cozinha incêndio, fritadeira incêndio, chapa incêndio",
-      }}
-      hero={{
-        label: "Sistema Saponificante",
-        title: "Proteção Especializada para Cozinhas Industriais",
-        sub: "Sistemas fixos com agente saponificante para coifas, dutos e equipamentos de cocção. Solução obrigatória conforme NBR 14095 e NFPA 17A para restaurantes, shoppings e cozinhas industriais.",
-        bg: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&q=80",
-      }}
-      intro={{
-        heading: "O que é o Sistema Saponificante?",
-        body: [
-          "O sistema de supressão por agente saponificante (wet chemical) é a solução específica para proteção de cozinhas industriais, restaurantes e estabelecimentos com equipamentos de cocção a óleo. O agente saponificante reage quimicamente com a gordura aquecida, formando uma camada de sabão que sela a superfície e impede a re-ignição.",
-          "A CO₂ Contra Incêndio projeta e instala sistemas saponificantes para coifas, dutos de exaustão, fritadeiras industriais, chapas, grelhadores, fornos e woks. O sistema é acionado automaticamente por detectores térmicos ou manualmente pelo operador.",
-          "Diferentemente do CO₂, o agente saponificante é especialmente eficaz em incêndios classe K (óleos e gorduras vegetais e animais aquecidos), sendo a única solução aprovada pelas normas para proteção de equipamentos de cocção a óleo.",
-          "Todos os nossos projetos incluem o intertravamento com o sistema de gás (solenóide de corte) e o sistema de exaustão (dampers), garantindo a segurança completa da cozinha conforme exigência do Corpo de Bombeiros.",
-        ],
-      }}
-      features={[
-        { icon: <Droplets size={20} />, title: "Agente Saponificante (Wet Chemical)", desc: "Reage com gordura aquecida formando camada de sabão que sela a superfície e previne re-ignição. Eficaz em incêndios Classe K." },
-        { icon: <Flame size={20} />, title: "Proteção de Coifas e Dutos", desc: "Bicos difusores posicionados estrategicamente na coifa, dutos de exaustão e sobre cada equipamento de cocção." },
-        { icon: <Settings size={20} />, title: "Intertravamento com Gás e Exaustão", desc: "Integração com solenóide de corte de gás e dampers de exaustão para desligamento automático em caso de acionamento." },
-        { icon: <Shield size={20} />, title: "Detecção Térmica", desc: "Detectores térmicos fusíveis posicionados sobre os equipamentos para acionamento automático sem necessidade de energia elétrica." },
-        { icon: <AlertTriangle size={20} />, title: "Acionamento Manual", desc: "Estação de acionamento manual (pull station) para ativação pelo operador em caso de emergência." },
-        { icon: <CheckCircle size={20} />, title: "Manutenção Semestral", desc: "Inspeção e manutenção semestral obrigatória conforme NBR 14095, com recarga do agente e verificação de todos os componentes." },
-      ]}
-      norms={[
-        { code: "ABNT NBR 14095", title: "Sistema de supressão de incêndio por agente saponificante", excerpt: "Esta norma estabelece os requisitos mínimos para projeto, instalação, inspeção e manutenção de sistemas fixos de extinção de incêndio por agente saponificante em equipamentos de cocção." },
-        { code: "NFPA 17A", title: "Standard for Wet Chemical Extinguishing Systems", excerpt: "This standard covers the design, installation, maintenance, and use of wet chemical extinguishing systems for the protection of cooking equipment and associated exhaust systems." },
-        { code: "IT-21 CBMMG", title: "Instrução Técnica — Sistemas de Supressão", excerpt: "Estabelece os requisitos para aprovação de sistemas fixos de extinção de incêndio, incluindo sistemas saponificantes para cozinhas industriais, junto ao CBMMG." },
-        { code: "ABNT NBR 16250", title: "Cozinhas industriais — Segurança contra incêndio", excerpt: "Requisitos de segurança contra incêndio para cozinhas industriais, incluindo sistemas de supressão, exaustão e detecção integrados." },
-      ]}
-      process={[
-        { step: "01", title: "Levantamento dos Equipamentos", desc: "Mapeamento de todos os equipamentos de cocção, dimensões da coifa e dutos, tipo de combustível e volume de óleo utilizado." },
-        { step: "02", title: "Projeto + ART", desc: "Cálculo do agente saponificante, posicionamento de bicos, tubulação, cilindros e integração com sistemas de gás e exaustão." },
-        { step: "03", title: "Aprovação CBMMG", desc: "Protocolo e acompanhamento da aprovação do projeto junto ao Corpo de Bombeiros Militar de Minas Gerais." },
-        { step: "04", title: "Instalação Integrada", desc: "Montagem do sistema com bicos difusores, tubulação, cilindros de agente, detectores térmicos, painel e intertravamentos." },
-        { step: "05", title: "Testes Operacionais", desc: "Simulação de acionamento, verificação dos intertravamentos de gás e exaustão, e teste de todos os componentes." },
-        { step: "06", title: "Treinamento e Documentação", desc: "Treinamento da equipe da cozinha para operação e manutenção básica, entrega de manual técnico e certificados." },
-      ]}
-      videoId="5J0vIP-oec4"
-      videoTitle="Sistema Saponificante em Coifa seguindo a atualização da NBR 14095 — Demonstração real de instalação e funcionamento."
-      faqs={[
-        { q: "O sistema saponificante é obrigatório para restaurantes?", a: "Sim. O Corpo de Bombeiros exige sistema fixo de supressão para cozinhas industriais com equipamentos de cocção a óleo (fritadeiras, chapas, grelhadores) acima de determinadas dimensões. A obrigatoriedade varia conforme a Instrução Técnica do CBMMG do estado e a área do estabelecimento." },
-        { q: "Qual a diferença entre saponificante e CO₂ para cozinhas?", a: "O agente saponificante é o único aprovado para proteção de equipamentos de cocção a óleo (incêndios Classe K) porque reage quimicamente com a gordura, formando uma camada protetora que previne a re-ignição. O CO₂ extingue o fogo, mas não previne a re-ignição em superfícies com óleo quente." },
-        { q: "O sistema precisa ser integrado ao gás e à exaustão?", a: "Sim. As normas exigem o intertravamento do sistema saponificante com a solenóide de corte de gás e com os dampers de exaustão. Quando o sistema é acionado, o gás é cortado automaticamente e os dampers fecham para conter o incêndio no duto." },
-        { q: "Com que frequência o sistema precisa de manutenção?", a: "A ABNT NBR 14095 exige inspeção semestral do sistema, incluindo verificação do agente saponificante, pressão dos cilindros, bicos difusores, detectores térmicos e intertravamentos. A recarga é necessária após cada acionamento ou quando a pressão estiver abaixo do especificado." },
-        { q: "O sistema funciona sem energia elétrica?", a: "Sim. Os detectores térmicos fusíveis acionam o sistema mecanicamente, sem necessidade de energia elétrica. O acionamento elétrico (via painel) é adicional e complementar ao acionamento mecânico." },
-      ]}
-      related={[
-        { title: "Sistema de Supressão por CO₂", href: "/sistema-supressao-co2" },
-        { title: "Detector de Gás GLP/GN", href: "/detector-gas" },
-        { title: "Projeto de Exaustão", href: "/projeto-exaustao" },
-        { title: "Alarme de Incêndio", href: "/alarme-incendio" },
-        { title: "Vistoria e Laudo com ART", href: "/vistoria-laudo-art" },
-      ]}
-      cta={{
-        heading: "Precisa de Sistema Saponificante para sua Cozinha?",
-        sub: "Projetamos e instalamos sistemas saponificantes com intertravamento de gás e exaustão. Aprovação no Corpo de Bombeiros e ART incluídos. Atendemos BH, MG e todo o Brasil.",
-      }}
-    />
+    <Layout>
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Sistema Saponificante para Cozinhas Industriais — NBR 14095 · UL 300",
+        "description": "Sistemas fixos de supressão com agente saponificante para coifas, dutos e equipamentos de cocção. Obrigatório para cozinhas industriais conforme NBR 14095, NFPA 17A e UL 300.",
+        "provider": {
+          "@type": "LocalBusiness",
+          "name": "CO₂ Contra Incêndio",
+          "address": { "@type": "PostalAddress", "addressLocality": "Belo Horizonte", "addressRegion": "MG", "addressCountry": "BR" }
+        },
+        "areaServed": { "@type": "Country", "name": "Brasil" }
+      })}} />
+
+      {/* HERO */}
+      <section style={{ position: "relative", height: "clamp(380px,55vh,520px)", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url(https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&q=80)`, backgroundSize: "cover", backgroundPosition: "center" }} />
+        <div className="hero-overlay" style={{ position: "absolute", inset: 0 }} />
+        <div className="container" style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{ maxWidth: "640px" }}>
+            <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.65)", marginBottom: "0.75rem" }}>
+              <Link href="/" style={{ color: "rgba(255,255,255,0.55)" }}>Home</Link>
+              <span style={{ margin: "0 0.5rem", color: "rgba(255,255,255,0.35)" }}>›</span>
+              <Link href="/servicos" style={{ color: "rgba(255,255,255,0.55)" }}>Serviços</Link>
+              <span style={{ margin: "0 0.5rem", color: "rgba(255,255,255,0.35)" }}>›</span>
+              <span style={{ color: "rgba(255,255,255,0.7)" }}>Sistema Saponificante</span>
+            </div>
+            <h1 className="text-display" style={{ color: "#fff", marginBottom: "1rem" }}>Proteção Especializada para Cozinhas Industriais</h1>
+            <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", lineHeight: 1.75, maxWidth: "540px" }}>
+              Sistemas fixos com agente saponificante (wet chemical) para coifas, dutos e equipamentos de cocção. Solução obrigatória conforme <strong style={{ color: "#fff" }}>NBR 14095 · NFPA 17A · UL 300</strong>. Atendemos BH, MG e todo o Brasil.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* QUICK CTA BAR */}
+      <div style={{ background: "var(--red)", padding: "1rem 0" }}>
+        <div className="container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+          <span style={{ color: "#fff", fontWeight: 600, fontSize: "0.9375rem" }}>Precisa de um orçamento rápido?</span>
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+            <a href="https://wa.me/5531973581278" target="_blank" rel="noopener noreferrer" className="btn-outline-white" style={{ padding: "0.5rem 1.25rem" }}>WhatsApp</a>
+            <Link href="/contato" className="btn-outline-white" style={{ padding: "0.5rem 1.25rem" }}>Solicitar Orçamento</Link>
+          </div>
+        </div>
+      </div>
+
+      {/* INTRO + FEATURES */}
+      <section style={{ padding: "5rem 0", background: "#fff" }}>
+        <div className="container">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "4rem", alignItems: "start" }}>
+            <div>
+              <div className="section-label">Sobre o serviço</div>
+              <div className="divider-red" />
+              <h2 className="text-headline" style={{ marginBottom: "1.5rem" }}>O que é o Sistema Saponificante?</h2>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, marginBottom: "1.1rem", fontSize: "0.9375rem" }}>
+                O sistema de supressão por agente saponificante (<em>wet chemical</em>) é a solução específica para proteção de cozinhas industriais, restaurantes e estabelecimentos com equipamentos de cocção a óleo. O agente reage quimicamente com a gordura aquecida, formando uma camada de sabão que sela a superfície e impede a re-ignição — fenômeno que o CO₂ e o pó químico não conseguem evitar.
+              </p>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, marginBottom: "1.1rem", fontSize: "0.9375rem" }}>
+                A CO₂ Contra Incêndio projeta e instala sistemas saponificantes para coifas, dutos de exaustão, fritadeiras industriais, chapas, grelhadores, fornos e woks. O sistema é acionado automaticamente por detectores térmicos fusíveis ou manualmente pelo operador via <em>pull station</em>.
+              </p>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, marginBottom: "1.1rem", fontSize: "0.9375rem" }}>
+                Todos os projetos incluem o intertravamento obrigatório com o sistema de gás (solenóide de corte) e o sistema de exaustão (dampers), garantindo a segurança completa da cozinha conforme exigência do Corpo de Bombeiros e da norma ABNT NBR 14095.
+              </p>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
+                Trabalhamos exclusivamente com equipamentos de fornecedores certificados <strong>UL 300</strong>, garantindo que cada instalação atenda aos mais rigorosos padrões internacionais de desempenho e segurança.
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {features.map((f, i) => (
+                <div key={i} style={{ display: "flex", gap: "1rem", alignItems: "flex-start", padding: "1.25rem", background: "var(--gray-50)", borderLeft: "3px solid var(--red)" }}>
+                  <div style={{ color: "var(--red)", flexShrink: 0, marginTop: "0.1rem" }}>{f.icon}</div>
+                  <div>
+                    <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.0625rem", color: "var(--gray-900)", marginBottom: "0.3rem" }}>{f.title}</div>
+                    <p style={{ color: "var(--gray-600)", fontSize: "0.875rem", lineHeight: 1.65 }}>{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FORNECEDORES CERTIFICADOS */}
+      <section style={{ padding: "5rem 0", background: "var(--gray-900)" }}>
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+            <div className="section-label" style={{ color: "rgba(255,255,255,0.5)" }}>Parceiros Técnicos</div>
+            <div className="divider-red" style={{ margin: "0 auto 1.25rem" }} />
+            <h2 className="text-headline" style={{ color: "#fff", marginBottom: "1rem" }}>Fornecedores Certificados UL 300</h2>
+            <p style={{ color: "var(--gray-400)", maxWidth: "600px", margin: "0 auto", lineHeight: 1.75, fontSize: "0.9375rem" }}>
+              Trabalhamos com os principais fabricantes mundiais de sistemas saponificantes, todos certificados pelas normas internacionais UL 300, NFPA 17A e EN 17446. Isso garante que cada instalação seja rastreável, auditável e aprovada pelo Corpo de Bombeiros.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "1.5rem" }}>
+            {suppliers.map((s) => (
+              <div key={s.name} style={{ background: "var(--gray-800)", borderTop: "3px solid var(--red)", padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {/* Header */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div>
+                    <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.375rem", color: "#fff", lineHeight: 1.1 }}>{s.name}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--gray-400)", marginTop: "0.25rem" }}>{s.flag} {s.country}</div>
+                  </div>
+                  <div style={{ background: "var(--red)", color: "#fff", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.1em", padding: "0.25rem 0.625rem", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                    {s.cert.split(" · ")[0]}
+                  </div>
+                </div>
+
+                {/* Product */}
+                <div style={{ borderLeft: "2px solid var(--red)", paddingLeft: "0.875rem" }}>
+                  <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gray-400)", marginBottom: "0.2rem" }}>Produto Principal</div>
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1rem", color: "rgba(255,255,255,0.9)" }}>{s.product}</div>
+                </div>
+
+                {/* Description */}
+                <p style={{ color: "var(--gray-400)", fontSize: "0.875rem", lineHeight: 1.7 }}>{s.description}</p>
+
+                {/* Highlights */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  {s.highlights.map((h, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", color: "rgba(255,255,255,0.7)" }}>
+                      <CheckCircle size={13} style={{ color: "var(--red)", flexShrink: 0 }} />
+                      {h}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Certifications */}
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "auto", paddingTop: "0.5rem", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                  {s.cert.split(" · ").map((c) => (
+                    <span key={c} style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", padding: "0.2rem 0.5rem", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>{c}</span>
+                  ))}
+                </div>
+
+                {/* Link */}
+                <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8125rem", fontWeight: 600, color: "var(--red)", marginTop: "0.25rem" }}>
+                  Conhecer o fabricante <ExternalLink size={12} />
+                </a>
+              </div>
+            ))}
+          </div>
+
+          {/* Nota de rodapé */}
+          <p style={{ textAlign: "center", marginTop: "2.5rem", color: "var(--gray-400)", fontSize: "0.8125rem", lineHeight: 1.7 }}>
+            A seleção do fabricante é definida em projeto conforme disponibilidade de peças, especificações técnicas da cozinha e exigências do Corpo de Bombeiros local.
+          </p>
+        </div>
+      </section>
+
+      {/* NORMS */}
+      <section className="section-light" style={{ padding: "5rem 0" }}>
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <div className="section-label">Base Normativa</div>
+            <div className="divider-red" style={{ margin: "0 auto 1.25rem" }} />
+            <h2 className="text-headline">Normas Técnicas Aplicáveis</h2>
+            <p className="text-subhead" style={{ maxWidth: "560px", margin: "1rem auto 0" }}>
+              Todos os projetos são elaborados em conformidade com as normas ABNT, NFPA, UL e Instruções Técnicas do Corpo de Bombeiros.
+            </p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: "1.25rem" }}>
+            {norms.map((n) => (
+              <div key={n.code} style={{ background: "#fff", borderTop: "3px solid var(--red)", padding: "1.5rem 1.75rem" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.25rem", color: "var(--red)", marginBottom: "0.35rem" }}>{n.code}</div>
+                <div style={{ fontWeight: 600, color: "var(--gray-900)", fontSize: "0.9375rem", marginBottom: "0.5rem" }}>{n.title}</div>
+                <p style={{ color: "var(--gray-600)", fontSize: "0.8125rem", lineHeight: 1.7, fontStyle: "italic" }}>"{n.excerpt}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PROCESS */}
+      <section style={{ padding: "5rem 0", background: "#fff" }}>
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <div className="section-label">Como executamos</div>
+            <div className="divider-red" style={{ margin: "0 auto 1.25rem" }} />
+            <h2 className="text-headline">Etapas da Execução</h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: "1.5rem" }}>
+            {process.map((p) => (
+              <div key={p.step} style={{ borderTop: "3px solid var(--red)", paddingTop: "1.25rem" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "2rem", color: "var(--gray-200)", lineHeight: 1, marginBottom: "0.5rem" }}>{p.step}</div>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.5rem" }}>{p.title}</div>
+                <p style={{ color: "var(--gray-600)", fontSize: "0.875rem", lineHeight: 1.7 }}>{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* VIDEO */}
+      <section className="section-dark" style={{ padding: "4rem 0" }}>
+        <div className="container">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "3rem", alignItems: "center" }}>
+            <div>
+              <div className="section-label" style={{ color: "rgba(255,255,255,0.6)" }}>Veja na prática</div>
+              <div className="divider-red" />
+              <h2 className="text-headline" style={{ color: "#fff", marginBottom: "1rem" }}>Sistema em Operação</h2>
+              <p style={{ color: "var(--gray-400)", lineHeight: 1.75 }}>
+                Sistema Saponificante em Coifa seguindo a atualização da NBR 14095 — Demonstração real de instalação e funcionamento com intertravamento de gás e exaustão.
+              </p>
+            </div>
+            <div className="video-wrapper" style={{ maxWidth: "560px" }}>
+              <iframe src="https://www.youtube.com/embed/5J0vIP-oec4?rel=0&modestbranding=1" title="Sistema Saponificante — Demonstração" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowFullScreen loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section style={{ padding: "5rem 0", background: "#fff" }}>
+        <div className="container" style={{ maxWidth: "800px", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <div className="section-label">Dúvidas Frequentes</div>
+            <div className="divider-red" style={{ margin: "0 auto 1.25rem" }} />
+            <h2 className="text-headline">Perguntas sobre este serviço</h2>
+          </div>
+          {faqs.map((f, i) => (
+            <details key={i} className="faq-item">
+              <summary style={{ padding: "1.25rem 0", fontWeight: 600, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", listStyle: "none", color: "var(--gray-900)", fontSize: "0.9375rem" }}>
+                {f.q}
+                <span style={{ color: "var(--red)", fontSize: "1.25rem", lineHeight: 1, flexShrink: 0, marginLeft: "1rem" }}>+</span>
+              </summary>
+              <p style={{ paddingBottom: "1.25rem", color: "var(--gray-600)", lineHeight: 1.75, fontSize: "0.9375rem" }}>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* RELATED */}
+      <section className="section-light" style={{ padding: "4rem 0" }}>
+        <div className="container">
+          <div style={{ marginBottom: "2rem" }}>
+            <div className="section-label">Veja também</div>
+            <h2 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "var(--gray-900)" }}>Outros Serviços</h2>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
+            {[
+              { title: "Sistema de Supressão por CO₂", href: "/sistema-supressao-co2" },
+              { title: "Detector de Gás GLP/GN", href: "/detector-gas" },
+              { title: "Projeto de Exaustão", href: "/projeto-exaustao" },
+              { title: "Alarme de Incêndio", href: "/alarme-incendio" },
+              { title: "Vistoria e Laudo com ART", href: "/vistoria-laudo-art" },
+            ].map((r) => (
+              <Link key={r.href} href={r.href} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.25rem", border: "1.5px solid var(--gray-200)", background: "#fff", color: "var(--gray-700)", fontSize: "0.875rem", fontWeight: 500, transition: "border-color 0.2s,color 0.2s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--red)"; (e.currentTarget as HTMLElement).style.color = "var(--red)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-200)"; (e.currentTarget as HTMLElement).style.color = "var(--gray-700)"; }}>
+                {r.title} <ArrowRight size={12} />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ background: "var(--red)", padding: "5rem 0" }}>
+        <div className="container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "3rem", alignItems: "center" }}>
+          <div>
+            <h2 className="text-headline" style={{ color: "#fff", marginBottom: "1rem" }}>Precisa de Sistema Saponificante para sua Cozinha?</h2>
+            <p style={{ color: "rgba(255,255,255,0.82)", lineHeight: 1.75 }}>
+              Projetamos e instalamos sistemas saponificantes com intertravamento de gás e exaustão, utilizando equipamentos certificados UL 300. Aprovação no Corpo de Bombeiros e ART incluídos. Atendemos BH, MG e todo o Brasil.
+            </p>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Link href="/contato" className="btn-outline-white" style={{ justifyContent: "center" }}>
+              Solicitar Orçamento <ArrowRight size={14} />
+            </Link>
+            <a href="https://wa.me/5531973581278" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", color: "#fff", fontSize: "0.875rem", fontWeight: 600 }}>
+              <Phone size={14} /> (31) 97358-1278
+            </a>
+          </div>
+        </div>
+      </section>
+    </Layout>
   );
 }
