@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE_URL = "https://co2firepro-tyjdurrr.manus.space";
+const SITE_URL = "https://www.co2contraincendio.com.br";
 const SITE_NAME = "CO₂ Contra Incêndio";
 const DEFAULT_DESCRIPTION =
   "Especialistas em sistemas fixos de combate a incêndio: supressão por CO₂, saponificante para coifas, hidrantes, alarmes e detectores. Projetos ABNT · NFPA · Corpo de Bombeiros. Atendemos BH e todo o Brasil.";

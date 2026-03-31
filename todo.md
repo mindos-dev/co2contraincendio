@@ -42,3 +42,6 @@
 - [x] SEO: meta tags dinâmicas por página (SEOHead component em todas as páginas principais)
 - [x] SEO: performance (preload fonts, headers de segurança X-Content-Type-Options, X-Frame-Options)
 - [x] Adicionar /coifas ao menu de navegação (Sistema Saponificante — Coifas)
+- [x] Atualizar domínio para co2contraincendio.com.br em sitemap.xml, robots.txt e SEOHead
+- [x] Atualizar URLs canônicas e Schema.org em todas as páginas para co2contraincendio.com.br
+- [x] Atualizar URL no script de sincronização do GitHub

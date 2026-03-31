@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import Layout from "./Layout";
 import { ArrowRight, CheckCircle, Phone } from "lucide-react";
 
-const SITE_URL = "https://co2firepro-tyjdurrr.manus.space";
+const SITE_URL = "https://www.co2contraincendio.com.br";
 
 interface Norm { code: string; title: string; excerpt: string; }
 interface FAQ { q: string; a: string; }

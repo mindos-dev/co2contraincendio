@@ -104,10 +104,10 @@ export default function Home() {
   const homeSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": "https://co2firepro-tyjdurrr.manus.space/#business",
+    "@id": "https://www.co2contraincendio.com.br/#business",
     "name": "CO\u2082 Contra Inc\u00eandio",
     "description": "Especialistas em sistemas fixos de combate a inc\u00eandio: supress\u00e3o por CO\u2082, saponificante para coifas, hidrantes, alarmes e detectores em Belo Horizonte e todo o Brasil.",
-    "url": "https://co2firepro-tyjdurrr.manus.space",
+    "url": "https://www.co2contraincendio.com.br",
     "telephone": "+55-31-97358-1278",
     "email": "co2contraincendio@gmail.com",
     "address": {
@@ -119,7 +119,7 @@ export default function Home() {
     "geo": { "@type": "GeoCoordinates", "latitude": -19.9167, "longitude": -43.9345 },
     "openingHours": "Mo-Fr 08:00-18:00",
     "priceRange": "$$",
-    "image": "https://co2firepro-tyjdurrr.manus.space/favicon.svg",
+    "image": "https://www.co2contraincendio.com.br/favicon.svg",
     "sameAs": ["https://www.co2contraincendio.com"]
   };
 
