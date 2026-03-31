@@ -248,6 +248,171 @@ export default function SistemaSaponificante() {
         </div>
       </section>
 
+      {/* FABRICANTES EXPANDIDOS */}
+      <section style={{ padding: "5rem 0", background: "#f8f8f8" }}>
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+            <div className="section-label">Tecnologia dos Fabricantes</div>
+            <div className="divider-red" style={{ margin: "0 auto 1.25rem" }} />
+            <h2 className="text-headline">Conheça Cada Sistema em Detalhe</h2>
+            <p className="text-subhead" style={{ maxWidth: "600px", margin: "1rem auto 0" }}>
+              Cada fabricante possui uma abordagem técnica distinta. Entenda as características de cada sistema para a melhor especificação do seu projeto.
+            </p>
+          </div>
+
+          {/* AMEREX */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center", marginBottom: "5rem", background: "#fff", padding: "3rem", borderTop: "4px solid #C8102E" }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+                <span style={{ fontSize: "2rem" }}>🇺🇸</span>
+                <div>
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "var(--gray-900)", lineHeight: 1 }}>AMEREX FIRE SYSTEMS</div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", color: "#C8102E", textTransform: "uppercase" }}>EUA · UL 300 · NFPA 17A · LPCB</div>
+                </div>
+              </div>
+              <div style={{ borderLeft: "3px solid #C8102E", paddingLeft: "1rem", marginBottom: "1.5rem" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.125rem", color: "var(--gray-900)" }}>Sistema KP — Kitchen Protection</div>
+                <div style={{ fontSize: "0.8125rem", color: "var(--gray-500)", marginTop: "0.2rem" }}>Líder mundial em proteção de cozinhas comerciais</div>
+              </div>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, fontSize: "0.9375rem", marginBottom: "1.5rem" }}>
+                O sistema Amerex KP é o mais instalado no mundo para proteção de cozinhas comerciais. Sua tecnologia exclusiva <strong>Zone Defense</strong> permite reconfigurar os equipamentos de cocção sem necessidade de reprojeto do sistema — uma vantagem operacional crítica para restaurantes e hotéis que renovam seus equipamentos periodicamente.
+              </p>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, fontSize: "0.9375rem", marginBottom: "1.75rem" }}>
+                O sistema <strong>STRIKE</strong> (Sistema de Detecção Eletrônica) substitui os tradicionais cabos e fusíveis mecânicos sujeitos ao acúmulo de gordura, garantindo detecção confiável mesmo em ambientes de alta carga de vapores de óleo. Cada evento de acionamento é registrado em log para auditoria e relatórios de conformidade.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                {["Cobertura Zone Defense", "Sistema STRIKE eletrônico", "Detecção por tubo pneumático", "Log de eventos para auditoria", "Aprovado UL 300 e NFPA 17A", "Certificação LPCB (Reino Unido)"].map((item) => (
+                  <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", fontSize: "0.8125rem", color: "var(--gray-700)" }}>
+                    <CheckCircle size={13} style={{ color: "#C8102E", flexShrink: 0, marginTop: "0.15rem" }} />
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <a href="https://www.amerex-fire.com/kp" target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginTop: "2rem", background: "#C8102E", color: "#fff", padding: "0.75rem 1.5rem", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none" }}>
+                Ver Catálogo Amerex KP <ExternalLink size={14} />
+              </a>
+            </div>
+            <div style={{ background: "var(--gray-100)", padding: "2rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #C8102E" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>COMO FUNCIONA O ZONE DEFENSE</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>O sistema divide a coifa em zonas independentes. Cada zona possui seus próprios bicos difusores e detectores, permitindo que o operador reorganize os equipamentos de cocção sem alterar o projeto hidráulico do sistema.</p>
+              </div>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #C8102E" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>TOTALMENTE AUTOMÁTICO</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Detecta e suprime incêndios automaticamente. Não requer alimentação elétrica para acionamento — o sistema opera por pressão pneumática, garantindo funcionamento mesmo em falta de energia.</p>
+              </div>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #C8102E" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>DETECÇÃO RÁPIDA</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Protege zonas de cozimento diretamente acima de onde um incêndio pode ocorrer. Resposta rápida — totalmente operacional 24 horas por dia, 7 dias por semana.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* DEFENDER */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center", marginBottom: "5rem", background: "#fff", padding: "3rem", borderTop: "4px solid #1A3A6B" }}>
+            <div style={{ background: "var(--gray-100)", padding: "2rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #1A3A6B" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>SÉRIE DC — SISTEMA MECÂNICO</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Ideal para pequenas e médias cozinhas. Acionamento mecânico por fusível térmico, sem necessidade de painel elétrico. Solução robusta e de baixo custo de manutenção para restaurantes, padarias e lanchonetes.</p>
+              </div>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #1A3A6B" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>SÉRIE DP — SISTEMA PNEUMÁTICO</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Para grandes instalações industriais, hotéis e cozinhas hospitalares. Tubo de detecção pneumático pressurizado percorre toda a coifa, com detecção direta sobre cada equipamento de cocção.</p>
+              </div>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #1A3A6B" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>REFERÊNCIA EM 40+ PAÍSES</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Instalado em hotéis, restaurantes e hospitais na Europa, Oriente Médio e Ásia. Primeiro sistema aprovado pela norma europeia EN 17446:2021 — o padrão mais rigoroso do mundo para proteção de cozinhas.</p>
+              </div>
+            </div>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+                <span style={{ fontSize: "2rem" }}>🇪🇺</span>
+                <div>
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "var(--gray-900)", lineHeight: 1 }}>DEFENDER</div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", color: "#1A3A6B", textTransform: "uppercase" }}>Turquia / Europa · EN 17446:2021 · UL 300</div>
+                </div>
+              </div>
+              <div style={{ borderLeft: "3px solid #1A3A6B", paddingLeft: "1rem", marginBottom: "1.5rem" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.125rem", color: "var(--gray-900)" }}>Séries DC, DM, DP</div>
+                <div style={{ fontSize: "0.8125rem", color: "var(--gray-500)", marginTop: "0.2rem" }}>Primeiro aprovado pela norma europeia EN 17446:2021</div>
+              </div>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, fontSize: "0.9375rem", marginBottom: "1.5rem" }}>
+                A Defender é a fabricante turca que conquistou o mercado europeu ao se tornar a <strong>primeira empresa do mundo a obter aprovação conforme a norma EN 17446:2021</strong> — o novo padrão europeu para sistemas de supressão de incêndio em cozinhas comerciais, mais rigoroso que o UL 300 americano em diversos critérios de desempenho.
+              </p>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, fontSize: "0.9375rem", marginBottom: "1.75rem" }}>
+                Suas três séries de produtos cobrem todo o espectro de aplicações: da pequena cozinha de restaurante (Série DC, mecânica) até grandes instalações industriais com múltiplas linhas de cocção (Série DP, pneumática). A Série DM oferece um modelo intermediário com detecção mista.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                {["Primeiro aprovado EN 17446:2021", "Séries mecânica, mista e pneumática", "Catálogo corporativo completo", "Referências em 40+ países", "Aprovado UL 300 (EUA)", "Hotéis, hospitais e indústrias"].map((item) => (
+                  <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", fontSize: "0.8125rem", color: "var(--gray-700)" }}>
+                    <CheckCircle size={13} style={{ color: "#1A3A6B", flexShrink: 0, marginTop: "0.15rem" }} />
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <a href="https://www.defender.com.tr/" target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginTop: "2rem", background: "#1A3A6B", color: "#fff", padding: "0.75rem 1.5rem", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none" }}>
+                Ver Site Defender <ExternalLink size={14} />
+              </a>
+            </div>
+          </div>
+
+          {/* ROTAREX TRIPLESTAR */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center", background: "#fff", padding: "3rem", borderTop: "4px solid #2D6A4F" }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+                <span style={{ fontSize: "2rem" }}>🇱🇺</span>
+                <div>
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "var(--gray-900)", lineHeight: 1 }}>ROTAREX FIREDETEC</div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", color: "#2D6A4F", textTransform: "uppercase" }}>Luxemburgo · UL 300 · EN 17446 · NFPA 17A</div>
+                </div>
+              </div>
+              <div style={{ borderLeft: "3px solid #2D6A4F", paddingLeft: "1rem", marginBottom: "1.5rem" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.125rem", color: "var(--gray-900)" }}>TRIPLESTAR — Sistema Pré-Engenheirado</div>
+                <div style={{ fontSize: "0.8125rem", color: "var(--gray-500)", marginTop: "0.2rem" }}>Sistema completo em uma única caixa — sem cálculo preliminar</div>
+              </div>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, fontSize: "0.9375rem", marginBottom: "1.5rem" }}>
+                O <strong>TRIPLESTAR</strong> é a solução mais inovadora da Rotarex FireDETEC para proteção de cozinhas comerciais. Trata-se de um sistema <strong>pré-engenheirado completo fornecido em uma única caixa</strong>, que elimina a necessidade de cálculo hidráulico preliminar — o instalador apenas seleciona o modelo correto para o número de zonas da cozinha (3 a 9 zonas) e instala seguindo o manual.
+              </p>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, fontSize: "0.9375rem", marginBottom: "1.75rem" }}>
+                A tecnologia <strong>FireDETEC</strong> utiliza um tubo de detecção pneumático pressurizado a nitrogênio seco (16 bar) que percorre toda a coifa. Ao detectar calor excessivo, o tubo rompe no ponto mais quente, liberando a pressão que aciona o cilindro de agente saponificante — tudo sem energia elétrica, sem eletrônica e sem manutenção complexa.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                {["Sistema completo em uma caixa", "Tubo FireDETEC pressurizado (16 bar)", "Sem energia elétrica para acionamento", "Proteção de 3 a 9 zonas", "Sem cálculo hidráulico preliminar", "Aprovado UL 300, EN 17446, NFPA 17A"].map((item) => (
+                  <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", fontSize: "0.8125rem", color: "var(--gray-700)" }}>
+                    <CheckCircle size={13} style={{ color: "#2D6A4F", flexShrink: 0, marginTop: "0.15rem" }} />
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <a href="https://rotarexfiretec.com/category/commercial-kitchen-fire-protection" target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginTop: "2rem", background: "#2D6A4F", color: "#fff", padding: "0.75rem 1.5rem", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none" }}>
+                Ver TRIPLESTAR <ExternalLink size={14} />
+              </a>
+            </div>
+            <div style={{ background: "var(--gray-100)", padding: "2rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #2D6A4F" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>UM SISTEMA COMPLETO PRÉ-ENGENHADO E PROJETADO</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Projetado para proteger cozinhas comerciais. Tudo o que você precisa em uma caixa.</p>
+              </div>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #2D6A4F" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>TOTALMENTE AUTOMÁTICO</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Detecta e suprime incêndios automaticamente. Não requer alimentação elétrica.</p>
+              </div>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #2D6A4F" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>DETECÇÃO RÁPIDA</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Protege zonas de cozimento diretamente acima de onde um incêndio pode ocorrer. Resposta rápida — totalmente operacional 24 horas por dia, 7 dias por semana.</p>
+              </div>
+              <div style={{ background: "#fff", padding: "1.5rem", borderTop: "3px solid #2D6A4F" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "1.125rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>TECNOLOGIA COMPROVADA</div>
+                <p style={{ fontSize: "0.875rem", color: "var(--gray-600)", lineHeight: 1.7 }}>Já protegendo milhares de instalações em todo o mundo. Instalação rápida e etapas de manutenção simples.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* NORMS */}
       <section className="section-light" style={{ padding: "5rem 0" }}>
         <div className="container">
