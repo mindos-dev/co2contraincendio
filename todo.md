@@ -60,3 +60,4 @@
 - [x] Corrigir alterações pendentes e gerar checkpoint válido para publicação
 - [x] Atualizar todas as URLs do site de www.co2contraincendio.com para co2contraincendio.co (substituído por co2contra.com)
 - [x] Atualizar todas as URLs do site para o domínio definitivo co2contra.com
+- [x] Criar imagem Open Graph 1200x630px para co2contra.com (CDN: d2xsxph8kpxj0f.cloudfront.net)

@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 
 const SITE_URL = "https://co2contra.com";
 const SITE_NAME = "CO₂ Contra Incêndio";
-const DEFAULT_OG_IMAGE = "https://co2contra.com/og-image.jpg";
+const DEFAULT_OG_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/og-image-co2_5f89db3b.png";
 const DEFAULT_DESCRIPTION =
   "Especialistas em sistemas fixos de combate a incêndio em Belo Horizonte: supressão por CO₂, saponificante para coifas, hidrantes, alarmes e detectores. Projetos ABNT · NFPA · Corpo de Bombeiros.";
 
