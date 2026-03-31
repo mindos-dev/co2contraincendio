@@ -27,3 +27,8 @@
 - [x] Página /coifas: lapidar ou criar no padrão UL do projeto, baseada no conteúdo de co2contraincendio.com/coifas
 - [x] Seção de vídeo impactante na página /coifas para aumentar engajamento
 - [x] Formulário de orçamento rápido abaixo da seção de vídeos em /coifas (tRPC + DB + notificação ao proprietário)
+- [ ] Inserir seções Defender e Rotarex na página SistemaSaponificante no padrão da seção TRIPLESTAR
+- [ ] Seções expandidas imagem+texto lateral para Amerex, Defender e Rotarex na página SistemaSaponificante
+- [x] Pesquisar fabricantes: Intelbras, Bral, Seguri Max, Ascavel, Sky Fire (detecção fumaça/alarme incêndio)
+- [x] Gerar artigos de blog sobre detecção de fumaça e alarme de incêndio com base nos fabricantes pesquisados
+- [x] Inserir artigos no banco de dados e exibir na página de blog do projeto

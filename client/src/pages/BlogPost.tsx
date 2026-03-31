@@ -275,6 +275,190 @@ const articleContent: Record<string, { html: string }> = {
 <p>Não há uma vida útil definida para cilindros de CO₂, desde que aprovados nos testes hidrostáticos periódicos. Cilindros reprovados no teste hidrostático devem ser descartados e substituídos.</p>
     `,
   },
+
+  "intelbras-sistema-alarme-incendio-nbr-17240": {
+    html: `
+<h2>Intelbras e a Liderança no Mercado Brasileiro de Alarme de Incêndio</h2>
+<p>A <strong>Intelbras S/A</strong> consolidou-se como a principal fabricante brasileira de sistemas de detecção e alarme de incêndio (SDAI), oferecendo um portfólio completo que abrange desde detectores autônomos para residências até centrais endereçáveis para grandes complexos industriais e hospitalares. Um marco histórico da empresa foi ser a <strong>primeira fabricante nacional a obter certificação de conformidade acreditada conforme ABNT NBR 7240</strong>, o que garante que seus produtos atendem aos mais rigorosos critérios de desempenho e confiabilidade do mercado brasileiro.</p>
+
+<h2>Portfólio de Produtos: Convencional vs. Endereçável</h2>
+<p>A linha de produtos da Intelbras para proteção contra incêndio é estrategicamente dividida em dois grandes grupos, atendendo diferentes escalas e complexidades de projeto:</p>
+
+<h3>Sistemas Convencionais</h3>
+<p>As centrais convencionais (CIC 06L, CIC 12L, CIC 24L) são indicadas para projetos de pequeno e médio porte, onde o custo-benefício é prioritário. Neste modelo, os dispositivos são agrupados por zonas, e o painel indica apenas qual zona foi ativada — não o dispositivo exato. São amplamente utilizadas em condomínios residenciais, pequenos comércios e edificações com até quatro pavimentos.</p>
+
+<h3>Sistemas Endereçáveis</h3>
+<p>As centrais endereçáveis (CIE 1060, CIE 1125, CIE 1250, CIE 2500) são a escolha técnica para grandes edificações, como hospitais, shoppings, aeroportos e plantas industriais. Cada dispositivo possui um endereço único no laço, permitindo que o painel identifique com precisão o ponto exato de disparo. Até 16 centrais CIE 1250 podem ser interconectadas, formando uma rede de monitoramento para complexos de grande porte.</p>
+
+<h2>Principais Dispositivos do Portfólio Intelbras</h2>
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%;border-collapse:collapse;">
+  <thead><tr style="background:#c00;color:#fff;"><th>Dispositivo</th><th>Modelo</th><th>Tecnologia</th><th>Aplicação</th></tr></thead>
+  <tbody>
+    <tr><td>Detector de Fumaça Óptico Endereçável</td><td>DFE 521</td><td>Câmara óptica de dispersão</td><td>Ambientes com fumaça visível</td></tr>
+    <tr><td>Detector de Fumaça Óptico Convencional</td><td>DFC 421</td><td>Câmara óptica</td><td>Residencial e comercial</td></tr>
+    <tr><td>Detector Térmico Endereçável</td><td>DTE 521</td><td>Termistor NTC</td><td>Cozinhas, garagens, caldeiras</td></tr>
+    <tr><td>Acionador Manual com Sirene</td><td>AME 522</td><td>2 em 1 (acionador + sirene)</td><td>Rotas de fuga e escadas</td></tr>
+    <tr><td>Sirene Audiovisual</td><td>SAV 521</td><td>Piezoelétrica + LED estroboscópico</td><td>Ambientes ruidosos</td></tr>
+    <tr><td>Detector de Gás</td><td>DGC 423</td><td>Eletroquímico</td><td>Cozinhas e garagens</td></tr>
+    <tr><td>Módulo Gateway</td><td>GW 521</td><td>Protocolo aberto (BACnet/Modbus)</td><td>Integração com BMS predial</td></tr>
+  </tbody>
+</table>
+
+<h2>Diferencial Tecnológico: Integração 2 em 1 e Gateway BMS</h2>
+<p>Um dos diferenciais mais relevantes da Intelbras é a integração de funções em um único dispositivo. O <strong>Acionador Manual com Sirene AME 522</strong> combina o acionador manual e a sirene audiovisual em um único ponto de instalação, reduzindo o número de dispositivos, o cabeamento necessário e os custos de infraestrutura. Para projetos de alta complexidade, o <strong>Módulo Gateway GW 521</strong> permite que as centrais de incêndio se comuniquem com sistemas de gerenciamento predial (BMS) via protocolos abertos como BACnet e Modbus, integrando o SDAI ao ecossistema de automação do edifício.</p>
+
+<h2>Normas Técnicas Atendidas</h2>
+<p>Os produtos Intelbras para alarme de incêndio são desenvolvidos em conformidade com as seguintes normas:</p>
+<ul>
+  <li><strong>ABNT NBR 17240:2010</strong> — Sistemas de detecção e alarme de incêndio: projeto, instalação, comissionamento e manutenção</li>
+  <li><strong>ABNT NBR 7240</strong> — Sistemas de detecção e alarme de incêndio: requisitos de desempenho dos componentes</li>
+  <li><strong>ABNT NBR 9441</strong> — Execução de sistemas de detecção e alarme de incêndio (norma substituída, referência histórica)</li>
+  <li><strong>EN 54</strong> — Padrão europeu para componentes de sistemas de detecção de incêndio</li>
+</ul>
+
+<blockquote>"A certificação conforme ABNT NBR 7240 garante que o sistema foi testado e aprovado pelos mais rigorosos critérios de desempenho e confiabilidade, sendo a Intelbras a primeira fabricante nacional a atingir esse nível de conformidade acreditada."</blockquote>
+
+<h2>Como a CO₂ Contra Incêndio Integra o SDAI Intelbras</h2>
+<p>A <strong>CO₂ Contra Incêndio</strong>, sob responsabilidade técnica do Eng. Judson Aleixo Sampaio (CREA/MG 142203671-5), especifica e instala sistemas de detecção e alarme Intelbras integrados aos demais sistemas de proteção ativa — CO₂, saponificante e hidrantes. A integração entre o SDAI e o sistema de supressão garante que, ao detectar um incêndio, o painel acione automaticamente a supressão, interrompa o fornecimento de gás e acione as sirenes de evacuação, tudo de forma coordenada e conforme as exigências do CBMMG para obtenção do AVCB.
+    `,
+  },
+
+  "bral-bralarmseg-sistemas-deteccao-industrial": {
+    html: `
+<h2>Bralarmseg: Referência em Proteção Contra Incêndio para Ambientes Industriais</h2>
+<p>A <strong>Bralarmseg Equipamentos Eletrônicos Ltda</strong>, conhecida no mercado como Bral Segurança, é um fabricante brasileiro com sede em Curitiba-PR especializado em sistemas de detecção e alarme de incêndio para ambientes de alta exigência. A empresa se destaca pela robustez de seus produtos industriais, pela fabricação de sirenes de longo alcance com aprovação internacional <strong>EN 54-3</strong> e pelo desenvolvimento de soluções para áreas classificadas — ambientes com risco de explosão onde a maioria dos equipamentos convencionais não pode ser utilizada.</p>
+
+<h2>Tecnologia Microprocessada e Comunicação por Barramento</h2>
+<p>As centrais endereçáveis da Bralarmseg utilizam <strong>tecnologia de microprocessamento de última geração</strong> com comunicação binária via barramento de dois fios. Este modelo de comunicação permite o monitoramento individualizado de centenas de dispositivos em um único laço, com identificação precisa do ponto de disparo e monitoramento contínuo do estado de cada sensor — incluindo alertas de sujeira nos detectores antes que atinjam o limiar de falha, o que facilita a manutenção preventiva e reduz alarmes falsos.</p>
+
+<h2>Linha de Sirenes: Diferencial para Ambientes Industriais</h2>
+<p>Um dos grandes diferenciais da Bralarmseg é sua linha de <strong>sirenes eletromecânicas e eletrônicas de longo alcance</strong>, projetadas para ambientes industriais com alto nível de ruído de fundo. Esses dispositivos possuem aprovação internacional conforme a norma <strong>EN 54-3</strong> (Equipamentos de alarme sonoro para sistemas de detecção de incêndio), o que os torna aceitos em projetos com exigências internacionais de conformidade. A pressão sonora elevada garante que o alarme seja audível mesmo em fundições, plantas de manufatura e galpões logísticos de grande porte.</p>
+
+<h2>Principais Produtos e Aplicações</h2>
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%;border-collapse:collapse;">
+  <thead><tr style="background:#c00;color:#fff;"><th>Produto</th><th>Tecnologia</th><th>Aplicação Principal</th></tr></thead>
+  <tbody>
+    <tr><td>Central Endereçável Microprocessada</td><td>Barramento 2 fios, loop Classe B/A</td><td>Indústrias, hospitais, shoppings</td></tr>
+    <tr><td>Detector de Fumaça Óptico</td><td>Câmara de dispersão óptica</td><td>Ambientes com fumaça visível</td></tr>
+    <tr><td>Detector de Calor Termovelocimétrico</td><td>Sensor de temperatura + taxa de variação</td><td>Cozinhas, caldeiras, garagens</td></tr>
+    <tr><td>Sirene Eletromecânica de Longo Alcance</td><td>Motor eletromecânico, EN 54-3</td><td>Plantas industriais, áreas externas</td></tr>
+    <tr><td>Sirene Eletrônica Audiovisual</td><td>Piezoelétrica + LED, EN 54-3</td><td>Ambientes internos com ruído moderado</td></tr>
+    <tr><td>Acionador Manual Rearmável</td><td>Contato seco com LED de estado</td><td>Rotas de fuga, escadas</td></tr>
+    <tr><td>Painel Repetidor de Indicação</td><td>Display LCD, comunicação RS-485</td><td>Portarias, centrais de segurança</td></tr>
+  </tbody>
+</table>
+
+<h2>Monitoramento Remoto e Integração com Sistemas de Segurança</h2>
+<p>As centrais Bralarmseg suportam protocolos de monitoramento remoto via <strong>TCP/IP e linha telefônica</strong>, permitindo que empresas de monitoramento e equipes de segurança recebam alertas em tempo real. O software gerenciador da empresa permite a visualização dos eventos em plantas baixas digitais, facilitando a localização do foco de incêndio e a coordenação da resposta de emergência. Além disso, a integração nativa com sistemas de iluminação de emergência e sinalização industrial oferece um ecossistema de segurança unificado, reduzindo a complexidade de integração entre diferentes sistemas.</p>
+
+<h2>Normas e Certificações</h2>
+<ul>
+  <li><strong>ABNT NBR 17240</strong> — Projeto e instalação de sistemas de detecção e alarme de incêndio</li>
+  <li><strong>EN 54-3</strong> — Certificação europeia para dispositivos de alarme sonoro</li>
+  <li><strong>ABNT NBR 9441</strong> — Referência histórica para execução de sistemas de detecção</li>
+</ul>
+
+<h2>Quando Especificar a Bralarmseg</h2>
+<p>A Bralarmseg é a escolha técnica recomendada para projetos que envolvem <strong>ambientes industriais severos</strong>, grandes áreas externas, plantas com alto nível de ruído de fundo ou instalações que exigem conformidade com normas internacionais para os dispositivos de sinalização. Sua robustez construtiva e as certificações EN 54-3 tornam seus produtos referência para engenheiros que projetam sistemas de proteção em refinarias, plantas químicas, galpões logísticos e infraestruturas críticas.
+    `,
+  },
+
+  "segurimax-sistema-sem-fio-max-fi-retrofit": {
+    html: `
+<h2>Segurimax: Inovação em Sistemas de Alarme de Incêndio com Foco em Custo-Benefício</h2>
+<p>A <strong>Segurimax</strong> é um dos principais players no mercado brasileiro de proteção contra incêndio, reconhecida por oferecer um portfólio que equilibra alta tecnologia e custo-benefício. Seus equipamentos são desenvolvidos em conformidade com a <strong>ABNT NBR 17240</strong> e possuem certificação internacional <strong>CE</strong> e gestão de qualidade <strong>ISO 9001</strong>, garantindo conformidade com as exigências do Corpo de Bombeiros em todo o território nacional.</p>
+
+<h2>O Sistema MAX-FI: Alarme de Incêndio Sem Fio para Retrofit</h2>
+<p>O grande diferencial tecnológico da Segurimax é o <strong>sistema MAX-FI</strong> — uma solução de alarme de incêndio totalmente sem fio que elimina a necessidade de infraestrutura de cabos. Esta tecnologia é especialmente indicada para <strong>retrofit em edificações prontas</strong>, onde a instalação de eletrodutos e cabos seria invasiva, cara e esteticamente indesejável. O MAX-FI é também a solução ideal para prédios históricos tombados pelo patrimônio, onde intervenções estruturais são proibidas ou muito restritas.</p>
+
+<p>O sistema opera com comunicação por radiofrequência bidirecional, garantindo que cada dispositivo confirme o recebimento dos comandos da central. Em caso de falha de comunicação, o sistema gera um alerta de supervisão, mantendo a integridade do monitoramento mesmo sem cabos físicos.</p>
+
+<h2>Linha Completa de Produtos Segurimax</h2>
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%;border-collapse:collapse;">
+  <thead><tr style="background:#c00;color:#fff;"><th>Linha</th><th>Modelo</th><th>Característica Principal</th><th>Indicação</th></tr></thead>
+  <tbody>
+    <tr><td>Convencional</td><td>Central 12V</td><td>Custo-benefício, fácil instalação</td><td>Pequeno e médio porte</td></tr>
+    <tr><td>Endereçável</td><td>Compact 80E</td><td>Até 80 endereços, compacta</td><td>Edificações de médio porte</td></tr>
+    <tr><td>Endereçável</td><td>Smart</td><td>Alta precisão, múltiplos laços</td><td>Hospitais, shoppings</td></tr>
+    <tr><td>Endereçável</td><td>Max Pro</td><td>Alta capacidade, redundância</td><td>Grandes complexos industriais</td></tr>
+    <tr><td>Sem Fio</td><td>MAX-FI</td><td>Wireless bidirecional, retrofit</td><td>Prédios prontos, patrimônio histórico</td></tr>
+    <tr><td>Detector</td><td>Fumaça Linear</td><td>Feixe óptico, grandes vãos</td><td>Galpões, auditórios, igrejas</td></tr>
+    <tr><td>Detector</td><td>Monóxido de Carbono</td><td>Sensor eletroquímico</td><td>Garagens, caldeiras a gás</td></tr>
+  </tbody>
+</table>
+
+<h2>Detector Linear de Fumaça: Proteção de Grandes Vãos</h2>
+<p>Para ambientes com grandes vãos livres — como galpões logísticos, auditórios, igrejas e hangares — a Segurimax oferece o <strong>detector linear de fumaça</strong>, que utiliza um feixe de luz infravermelha projetado entre um emissor e um receptor. Quando a fumaça interrompe ou atenua o feixe acima do limiar configurado, o alarme é acionado. Esta solução é tecnicamente superior aos detectores pontuais nestes ambientes, pois cobre grandes áreas com apenas dois dispositivos, reduzindo custos de instalação e manutenção.</p>
+
+<h2>Conformidade com ABNT NBR 17240</h2>
+<p>A <strong>ABNT NBR 17240:2010</strong> — "Sistemas de detecção e alarme de incêndio — Projeto, instalação, comissionamento e manutenção" — é a norma brasileira que rege todos os aspectos do SDAI, desde o dimensionamento dos detectores até os procedimentos de manutenção preventiva. Todos os produtos da Segurimax são desenvolvidos para atender integralmente a esta norma, garantindo que os projetos que os especificam estejam em conformidade com as exigências do Corpo de Bombeiros para emissão e renovação do AVCB.
+    `,
+  },
+
+  "ascael-40-anos-deteccao-incendio-classe-a": {
+    html: `
+<h2>Ascael: Quatro Décadas Protegendo Vidas com Tecnologia de Ponta</h2>
+<p>A <strong>Ascael — Sistemas de Proteção e Segurança Contra Incêndio</strong> é uma das mais tradicionais fabricantes brasileiras do setor, operando desde 1984 com sede própria em São Bernardo do Campo, SP. Com mais de 40 anos de experiência, a empresa desenvolveu um portfólio robusto de sistemas de detecção e alarme de incêndio que abrange desde centrais convencionais para pequenas edificações até sistemas endereçáveis de alta complexidade com arquitetura de <strong>loop Classe A</strong> — a tecnologia mais confiável disponível para ambientes críticos.</p>
+
+<h2>O que é o Loop Classe A e Por que é Superior</h2>
+<p>A arquitetura de loop <strong>Classe A</strong> (também chamada de Estilo D na NFPA 72) é o padrão mais elevado de confiabilidade para sistemas de detecção de incêndio. Diferente do loop Classe B (Estilo B), onde um rompimento do cabo deixa parte dos dispositivos sem comunicação, o loop Classe A utiliza uma topologia em anel: o cabo parte da central, percorre todos os dispositivos e retorna à central por um caminho diferente. Desta forma, mesmo que o cabo seja cortado ou danificado em um ponto, todos os dispositivos continuam se comunicando normalmente pelo caminho alternativo.</p>
+
+<blockquote>"O loop Classe A garante que o sistema de detecção continue operando normalmente mesmo em caso de rompimento da fiação — uma exigência crítica em ambientes onde a continuidade da proteção é inegociável, como hospitais, data centers e plantas industriais."</blockquote>
+
+<h2>Principais Linhas de Produtos Ascael</h2>
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%;border-collapse:collapse;">
+  <thead><tr style="background:#c00;color:#fff;"><th>Linha</th><th>Modelos</th><th>Arquitetura</th><th>Capacidade</th></tr></thead>
+  <tbody>
+    <tr><td>Endereçável CAX-i</td><td>CAX-i 500, CAX-i 1000</td><td>Loop Classe A/B</td><td>Até 1.000 dispositivos</td></tr>
+    <tr><td>Endereçável HORUS</td><td>HORUS 250, HORUS 500</td><td>Loop Classe A</td><td>Até 500 dispositivos/laço</td></tr>
+    <tr><td>Endereçável ACDE</td><td>ACDE 24/300</td><td>Loop Classe A</td><td>Até 300 dispositivos</td></tr>
+    <tr><td>Convencional</td><td>ACA 24/12, ASAM, Merak</td><td>Zonal</td><td>Até 24 zonas</td></tr>
+    <tr><td>Detectores Ópticos</td><td>ADOC, ADOE</td><td>Câmara óptica</td><td>Endereçável e convencional</td></tr>
+    <tr><td>Detectores Térmicos</td><td>DTX-i</td><td>Termistor NTC</td><td>Endereçável</td></tr>
+    <tr><td>Sirene Audiovisual</td><td>ASAV</td><td>Piezoelétrica + LED</td><td>Convencional e endereçável</td></tr>
+  </tbody>
+</table>
+
+<h2>Inovação: Spray Aerossol para Teste Funcional de Detectores</h2>
+<p>Um diferencial exclusivo da Ascael é a fabricação de <strong>spray aerossol próprio para testes funcionais de detectores de fumaça</strong>. Durante as inspeções periódicas exigidas pela ABNT NBR 17240, é necessário verificar se cada detector responde corretamente à presença de fumaça. O spray aerossol da Ascael simula a fumaça de forma controlada, sem depositar resíduos oleosos ou contaminantes no interior da câmara óptica do sensor, preservando a calibração e a vida útil do detector. Esta solução otimiza o tempo de inspeção e garante a integridade dos sensores ao longo do ciclo de manutenção.</p>
+
+<h2>Certificação ISO 9001:2015 e Conformidade Normativa</h2>
+<p>A Ascael opera sob sistema de gestão da qualidade certificado pela <strong>ISO 9001:2015</strong>, o que garante processos de fabricação padronizados, rastreabilidade de componentes e melhoria contínua. Todos os produtos são desenvolvidos em conformidade com a <strong>ABNT NBR 17240</strong>, sendo frequentemente especificados em projetos que exigem conformidade técnica rigorosa para aprovação no Corpo de Bombeiros e obtenção do AVCB.
+    `,
+  },
+
+  "skyfire-sistema-hibrido-analogico-incendio": {
+    html: `
+<h2>SKYFIRE: Pioneirismo Tecnológico no Mercado Brasileiro de Detecção de Incêndio</h2>
+<p>A <strong>SKYFIRE Comércio de Equipamentos Contra Incêndio Ltda</strong>, com sede em Ribeirão Preto (SP) e unidade em São Paulo, é uma referência consolidada no mercado brasileiro de segurança contra incêndio. A empresa se destaca pelo pioneirismo tecnológico: foi a primeira fabricante nacional a lançar um <strong>sistema híbrido analógico</strong> de detecção de incêndio, que permite a integração de dispositivos cabeados e wireless em uma única central de alarme. Seus equipamentos seguem os rigorosos padrões internacionais <strong>EN 54</strong> (norma europeia para sistemas de detecção de incêndio) e possuem certificação <strong>CE</strong>.</p>
+
+<h2>O Sistema Híbrido Analógico: Tecnologia Exclusiva da SKYFIRE</h2>
+<p>O grande diferencial técnico da SKYFIRE é a <strong>linha CEW de sistemas híbridos analógicos</strong>. Nesta arquitetura inovadora, uma única central de alarme pode gerenciar simultaneamente dispositivos cabeados (conectados por laço convencional ou endereçável) e dispositivos wireless (comunicação por radiofrequência), sem necessidade de conversores ou gateways adicionais. Esta flexibilidade é especialmente valiosa em projetos de retrofit — onde parte da edificação já possui infraestrutura de cabos e outra parte não — e em expansões de sistemas existentes.</p>
+
+<p>A comunicação ponto a ponto utilizada nos dispositivos wireless da SKYFIRE evita interferências e garante a entrega confiável dos sinais de alarme e supervisão, mesmo em ambientes com alta densidade de dispositivos de radiofrequência.</p>
+
+<h2>Portfólio Técnico SKYFIRE</h2>
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%;border-collapse:collapse;">
+  <thead><tr style="background:#c00;color:#fff;"><th>Produto</th><th>Modelo</th><th>Tecnologia</th><th>Capacidade</th></tr></thead>
+  <tbody>
+    <tr><td>Central Endereçável</td><td>JB-QB-5Ei</td><td>Analógica endereçável, EN 54</td><td>Até 500 pontos</td></tr>
+    <tr><td>Central Endereçável Expandida</td><td>JB-QB-5EiX</td><td>Analógica endereçável, EN 54</td><td>Até 2.500 pontos</td></tr>
+    <tr><td>Central Híbrida</td><td>Linha CEW</td><td>Cabeado + wireless, analógica</td><td>Configurável por projeto</td></tr>
+    <tr><td>Detector de Fumaça Óptico</td><td>Série endereçável</td><td>Câmara óptica, EN 54-7</td><td>Endereçável e convencional</td></tr>
+    <tr><td>Detector de Calor</td><td>Série endereçável</td><td>Termistor + termovelocimétrico</td><td>Endereçável</td></tr>
+    <tr><td>Detector de Chama</td><td>Série UV/IR</td><td>Ultravioleta e infravermelho</td><td>Ambientes industriais</td></tr>
+    <tr><td>Detector de Gás</td><td>Série catalítica</td><td>Sensor catalítico/eletroquímico</td><td>GLP, GN, CO</td></tr>
+    <tr><td>Módulo de E/S</td><td>Série MES</td><td>Entrada/saída endereçável</td><td>Integração com outros sistemas</td></tr>
+  </tbody>
+</table>
+
+<h2>Certificações Internacionais: EN 54 e CE</h2>
+<p>A conformidade com a norma europeia <strong>EN 54</strong> — que abrange desde as centrais de controle (EN 54-2) até os detectores de fumaça (EN 54-7), calor (EN 54-5) e dispositivos de alarme sonoro (EN 54-3) — posiciona a SKYFIRE como uma das poucas fabricantes brasileiras com produtos aprovados pelos padrões internacionais mais exigentes. Esta certificação é especialmente relevante para projetos em empresas multinacionais, instalações com requisitos de seguradoras internacionais e obras que exigem conformidade com especificações técnicas globais.</p>
+
+<h2>Garantia de 3 Anos e Suporte Técnico Especializado</h2>
+<p>A SKYFIRE oferece <strong>3 anos de garantia</strong> em seus produtos — prazo superior ao padrão do mercado — e disponibiliza treinamentos técnicos gratuitos para instaladores e capacitadores em suas unidades de Ribeirão Preto e São Paulo. Este compromisso com o suporte pós-venda garante que os sistemas instalados operem dentro dos parâmetros de projeto ao longo de todo o ciclo de vida, atendendo às periodicidades de manutenção exigidas pela <strong>ABNT NBR 17240</strong>.
+    `,
+  },
 };
 
 export default function BlogPost() {
