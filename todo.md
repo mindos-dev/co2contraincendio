@@ -33,3 +33,12 @@
 - [x] Gerar artigos de blog sobre detecção de fumaça e alarme de incêndio com base nos fabricantes pesquisados
 - [x] Inserir artigos no banco de dados e exibir na página de blog do projeto
 - [x] Implementar carrossel de imagens na página inicial com slides temáticos de serviços
+- [x] SEO: meta tags title/description/keywords no index.html (base global)
+- [x] SEO: Open Graph e Twitter Cards para compartilhamento em redes sociais
+- [x] SEO: canonical URL por página via react-helmet-async
+- [x] SEO: Schema.org JSON-LD (LocalBusiness, Service, Article, BreadcrumbList, FAQPage) por página
+- [x] SEO: sitemap.xml com todas as URLs do site (client/public/sitemap.xml)
+- [x] SEO: robots.txt com referência ao sitemap (client/public/robots.txt)
+- [x] SEO: meta tags dinâmicas por página (SEOHead component em todas as páginas principais)
+- [x] SEO: performance (preload fonts, headers de segurança X-Content-Type-Options, X-Frame-Options)
+- [x] Adicionar /coifas ao menu de navegação (Sistema Saponificante — Coifas)

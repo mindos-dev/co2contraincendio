@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import {
   ArrowRight, Play, Shield, Wrench, FileCheck, Flame,
   Droplets, Bell, Wind, ChevronLeft, ChevronRight, CheckCircle
@@ -100,8 +101,37 @@ export default function Home() {
   const go = (n: number) => { setCurrent((c) => (c + n + slides.length) % slides.length); startTimer(); };
   const slide = slides[current];
 
+  const homeSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://co2firepro-tyjdurrr.manus.space/#business",
+    "name": "CO\u2082 Contra Inc\u00eandio",
+    "description": "Especialistas em sistemas fixos de combate a inc\u00eandio: supress\u00e3o por CO\u2082, saponificante para coifas, hidrantes, alarmes e detectores em Belo Horizonte e todo o Brasil.",
+    "url": "https://co2firepro-tyjdurrr.manus.space",
+    "telephone": "+55-31-97358-1278",
+    "email": "co2contraincendio@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Belo Horizonte",
+      "addressRegion": "MG",
+      "addressCountry": "BR"
+    },
+    "geo": { "@type": "GeoCoordinates", "latitude": -19.9167, "longitude": -43.9345 },
+    "openingHours": "Mo-Fr 08:00-18:00",
+    "priceRange": "$$",
+    "image": "https://co2firepro-tyjdurrr.manus.space/favicon.svg",
+    "sameAs": ["https://www.co2contraincendio.com"]
+  };
+
   return (
     <Layout>
+      <SEOHead
+        title="Sistemas Fixos de Combate a Inc\u00eandio — BH"
+        description="Especialistas em sistemas fixos de combate a inc\u00eandio: supress\u00e3o por CO\u2082, saponificante para coifas, hidrantes, alarmes e detectores. Projetos ABNT \u00b7 NFPA \u00b7 Corpo de Bombeiros. Atendemos BH e todo o Brasil."
+        keywords="sistema CO2 incendio, supressao CO2 BH, saponificante coifa, hidrante incendio, alarme incendio Belo Horizonte, detector fumaca, NFPA 12, NBR 12615"
+        canonical="/"
+        schema={homeSchema}
+      />
       {/* HERO CAROUSEL */}
       <section style={{ position: "relative", height: "clamp(520px,80vh,760px)", overflow: "hidden" }}
         onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>

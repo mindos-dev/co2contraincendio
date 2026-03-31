@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import { ArrowRight, Shield, CheckCircle, Award, Phone } from "lucide-react";
 
 const schemaJson = {
@@ -126,6 +127,13 @@ const whyPartners = [
 export default function Parceiros() {
   return (
     <Layout>
+      <SEOHead
+        title="Parceiros T\u00e9cnicos — Fabricantes Certificados"
+        description="Parceiros fabricantes de sistemas de combate a inc\u00eandio: Amerex, Rotarex FireDETEC, Skyfire, Segurimax, Intelbras. Produtos certificados INMETRO e aprovados pelo Corpo de Bombeiros."
+        keywords="parceiros fabricantes incendio, Amerex UL 300, Rotarex FireDETEC, Intelbras alarme, Segurimax detector, Skyfire CO2"
+        canonical="/parceiros"
+        breadcrumbs={[{ name: "Parceiros", url: "/parceiros" }]}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }}

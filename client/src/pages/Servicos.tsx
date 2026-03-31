@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import { ArrowRight, Flame, Droplets, Shield, Bell, Wind, FileCheck, Wrench, AlertTriangle, RefreshCw } from "lucide-react";
 
 const services = [
@@ -62,10 +63,17 @@ const sectors = [
 export default function Servicos() {
   return (
     <Layout>
+      <SEOHead
+        title="Servi\u00e7os de Sistemas de Inc\u00eandio — CO\u2082 Contra Inc\u00eandio"
+        description="Solu\u00e7\u00f5es completas em preven\u00e7\u00e3o e combate a inc\u00eandios: CO\u2082, saponificante, hidrantes, alarmes, detectores de g\u00e1s, vistoria com ART e manuten\u00e7\u00e3o preventiva. Atendemos BH e todo o Brasil."
+        keywords="servicos sistemas incendio, CO2 supressao, saponificante coifa, hidrante mangotinho, alarme incendio, detector gas, vistoria ART, manutencao preventiva"
+        canonical="/servicos"
+        breadcrumbs={[{ name: "Servi\u00e7os", url: "/servicos" }]}
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "ItemList",
-        "name": "Serviços de Combate a Incêndio — CO₂ Contra Incêndio",
+        "name": "Servi\u00e7os de Combate a Inc\u00eandio — CO\u2082 Contra Inc\u00eandio",
         "description": "Soluções completas em prevenção e combate a incêndios para indústrias, hospitais, restaurantes e edificações em todo o Brasil.",
         "url": "https://www.co2contraincendio.com/servicos",
         "itemListElement": services.map((s, i) => ({

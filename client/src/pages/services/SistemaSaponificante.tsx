@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Droplets, Flame, Shield, Settings, CheckCircle, AlertTriangle, ArrowRight, Phone, ExternalLink, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
 import Layout from "../../components/Layout";
+import SEOHead from "../../components/SEOHead";
 import { trpc } from "@/lib/trpc";
 
 const suppliers = [
@@ -99,6 +100,16 @@ export default function SistemaSaponificante() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Sistema Saponificante para Cozinhas — UL 300 · NBR 14095"
+        description="Sistemas fixos de supress\u00e3o com agente saponificante para coifas e cozinhas industriais. Certificados UL 300 e NFPA 17A. Fornecedores: Amerex KP, Defender, Rotarex TRIPLESTAR. Atendemos BH e todo o Brasil."
+        keywords="sistema saponificante coifa, UL 300 cozinha industrial, NBR 14095, NFPA 17A, Amerex KP, Defender saponificante, Rotarex TRIPLESTAR, supressao incendio cozinha"
+        canonical="/coifas"
+        breadcrumbs={[
+          { name: "Servi\u00e7os", url: "/servicos" },
+          { name: "Sistema Saponificante", url: "/coifas" }
+        ]}
+      />
       {/* JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",

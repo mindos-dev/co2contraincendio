@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import { Phone, Mail, MapPin, Clock, ArrowRight, CheckCircle } from "lucide-react";
 
 export default function Contato() {
@@ -29,6 +30,13 @@ export default function Contato() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Contato — Solicite seu Or\u00e7amento"
+        description="Entre em contato com a CO\u2082 Contra Inc\u00eandio para or\u00e7amentos de sistemas de preven\u00e7\u00e3o e combate a inc\u00eandios em Belo Horizonte e Minas Gerais. Resposta em at\u00e9 24h."
+        keywords="contato sistemas incendio BH, orcamento sistema CO2, orcamento saponificante coifa, engenheiro incendio Belo Horizonte"
+        canonical="/contato"
+        breadcrumbs={[{ name: "Contato", url: "/contato" }]}
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "ContactPage",

@@ -1,6 +1,9 @@
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 import Layout from "./Layout";
 import { ArrowRight, CheckCircle, Phone } from "lucide-react";
+
+const SITE_URL = "https://co2firepro-tyjdurrr.manus.space";
 
 interface Norm { code: string; title: string; excerpt: string; }
 interface FAQ { q: string; a: string; }
@@ -23,21 +26,39 @@ interface ServicePageProps {
 export default function ServicePageTemplate({
   meta, hero, intro, features, norms, process, videoId, videoTitle, faqs, related, cta
 }: ServicePageProps) {
+  const pageUrl = typeof window !== "undefined" ? window.location.href : SITE_URL;
+  const serviceSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": meta.title,
+    "description": meta.description,
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "CO\u2082 Contra Inc\u00eandio",
+      "url": SITE_URL,
+      "telephone": "+55-31-97358-1278",
+      "address": { "@type": "PostalAddress", "addressLocality": "Belo Horizonte", "addressRegion": "MG", "addressCountry": "BR" }
+    },
+    "areaServed": [{"@type": "State", "name": "Minas Gerais"}, {"@type": "Country", "name": "Brasil"}]
+  };
+
   return (
     <Layout>
-      {/* JSON-LD per page */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "name": meta.title,
-        "description": meta.description,
-        "provider": {
-          "@type": "LocalBusiness",
-          "name": "CO₂ Contra Incêndio",
-          "address": { "@type": "PostalAddress", "addressLocality": "Belo Horizonte", "addressRegion": "MG", "addressCountry": "BR" }
-        },
-        "areaServed": { "@type": "Country", "name": "Brasil" }
-      })}} />
+      <Helmet>
+        <title>{meta.title} | CO\u2082 Contra Inc\u00eandio — BH</title>
+        <meta name="description" content={meta.description} />
+        <meta name="keywords" content={meta.keywords} />
+        <link rel="canonical" href={pageUrl} />
+        <meta property="og:title" content={`${meta.title} | CO\u2082 Contra Inc\u00eandio`} />
+        <meta property="og:description" content={meta.description} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${meta.title} | CO\u2082 Contra Inc\u00eandio`} />
+        <meta name="twitter:description" content={meta.description} />
+        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
+      </Helmet>
 
       {/* HERO */}
       <section style={{ position: "relative", height: "clamp(380px,55vh,520px)", overflow: "hidden" }}>

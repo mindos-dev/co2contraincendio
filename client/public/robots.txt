@@ -1,0 +1,23 @@
+# CO₂ Contra Incêndio — robots.txt
+# https://co2firepro-tyjdurrr.manus.space
+
+User-agent: *
+Allow: /
+
+# Bloquear rotas de API e autenticação
+Disallow: /api/
+Disallow: /api/trpc/
+Disallow: /api/oauth/
+
+# Sitemap
+Sitemap: https://co2firepro-tyjdurrr.manus.space/sitemap.xml
+
+# Crawl-delay para bots agressivos
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /

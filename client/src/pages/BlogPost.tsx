@@ -1,5 +1,6 @@
 import { Link, useParams } from "wouter";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import { ArrowRight, Clock, Tag, ArrowLeft } from "lucide-react";
 import { blogPosts } from "./Blog";
 
@@ -482,6 +483,16 @@ export default function BlogPost() {
 
   return (
     <Layout>
+      <SEOHead
+        title={post.title}
+        description={post.excerpt}
+        keywords={post.keywords.join(", ")}
+        canonical={`/blog/${slug}`}
+        breadcrumbs={[
+          { name: "Blog", url: "/blog" },
+          { name: post.title, url: `/blog/${slug}` }
+        ]}
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",

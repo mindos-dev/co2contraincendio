@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import {
   ArrowRight, FileCheck, ClipboardList, Search, Flame,
   Shield, CheckCircle, AlertTriangle, Wrench, FileText,
@@ -262,6 +263,13 @@ export default function Projetos() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Projetos de Combate a Inc\u00eandio — Laudos e Vistorias"
+        description="Portf\u00f3lio de projetos executados: sistemas de CO\u2082, saponificante, hidrantes, alarmes e detectores. Laudos t\u00e9cnicos, vistorias e emiss\u00e3o de ART para o Corpo de Bombeiros MG."
+        keywords="projetos sistemas incendio, portfolio CO2, laudo tecnico incendio, vistoria CBMMG, ART engenheiro incendio"
+        canonical="/projetos"
+        breadcrumbs={[{ name: "Projetos", url: "/projetos" }]}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }}

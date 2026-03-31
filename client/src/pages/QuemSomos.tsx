@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import { ArrowRight, Shield, CheckCircle, Target, Eye, Heart } from "lucide-react";
 
 const timeline = [
@@ -19,6 +20,13 @@ const team = [
 export default function QuemSomos() {
   return (
     <Layout>
+      <SEOHead
+        title="Quem Somos — Empresa Especializada em Sistemas de Inc\u00eandio"
+        description="Conhe\u00e7a a CO\u2082 Contra Inc\u00eandio: 15 anos de experi\u00eancia em sistemas fixos de combate a inc\u00eandio em Belo Horizonte e todo o Brasil. Engenheiros habilitados CREA/MG."
+        keywords="empresa sistemas incendio BH, engenharia seguranca incendio, CREA MG, CO2 contra incendio quem somos"
+        canonical="/quem-somos"
+        breadcrumbs={[{ name: "Quem Somos", url: "/quem-somos" }]}
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "LocalBusiness",

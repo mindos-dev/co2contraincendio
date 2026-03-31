@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import { ArrowRight, Clock, Tag } from "lucide-react";
 
 export const blogPosts = [
@@ -138,6 +139,13 @@ export const blogPosts = [
 export default function Blog() {
   return (
     <Layout>
+      <SEOHead
+        title="Blog T\u00e9cnico — Sistemas de Inc\u00eandio e Seguran\u00e7a"
+        description="Artigos t\u00e9cnicos sobre sistemas de preven\u00e7\u00e3o e combate a inc\u00eandios: CO\u2082, saponificante, alarmes, detectores, normas ABNT e NFPA. Conte\u00fado especializado para engenheiros e gestores de seguran\u00e7a."
+        keywords="blog sistemas incendio, artigos tecnicos CO2, normas ABNT incendio, NFPA 12, NBR 17240, alarme incendio, detector fumaca"
+        canonical="/blog"
+        breadcrumbs={[{ name: "Blog", url: "/blog" }]}
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Blog",
