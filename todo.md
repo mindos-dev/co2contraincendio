@@ -1,0 +1,25 @@
+# CO2 Contra Incêndio - TODO
+
+- [x] Página inicial (Home) com apresentação da empresa e serviços principais
+- [x] Página Quem Somos com informações institucionais
+- [x] Página Serviços listando todos os serviços
+- [x] Página serviço: Sistema Supressão CO2
+- [x] Página serviço: Recarga CO2
+- [x] Página serviço: Sistema Saponificante
+- [x] Página serviço: Hidrantes
+- [x] Página serviço: Alarme Incêndio
+- [x] Página serviço: Detector de Gás
+- [x] Página serviço: Vistoria/Laudo/ART
+- [x] Página serviço: Manutenção Preventiva
+- [x] Página serviço: Projeto Exaustão
+- [x] Página de Contato com formulário
+- [x] Seção Blog com listagem de posts
+- [x] Página individual de post do blog
+- [x] Página Projetos com portfólio
+- [x] Página Parceiros
+- [x] Navbar responsivo com menu
+- [x] Footer com informações da empresa
+- [x] Layout wrapper com Navbar e Footer
+- [x] ServicePageTemplate para páginas de serviços
+- [x] Configurar App.tsx com todas as rotas
+- [x] Copiar index.css com estilos globais
