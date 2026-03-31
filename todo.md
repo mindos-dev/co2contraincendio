@@ -42,6 +42,18 @@
 - [x] SEO: meta tags dinâmicas por página (SEOHead component em todas as páginas principais)
 - [x] SEO: performance (preload fonts, headers de segurança X-Content-Type-Options, X-Frame-Options)
 - [x] Adicionar /coifas ao menu de navegação (Sistema Saponificante — Coifas)
-- [x] Atualizar domínio para co2contraincendio.com.br em sitemap.xml, robots.txt e SEOHead
-- [x] Atualizar URLs canônicas e Schema.org em todas as páginas para co2contraincendio.com.br
+- [x] Atualizar domínio para co2contraincendio.com em sitemap.xml, robots.txt e SEOHead
+- [x] Atualizar URLs canônicas e Schema.org em todas as páginas para co2contraincendio.com
 - [x] Atualizar URL no script de sincronização do GitHub
+- [x] SEO Avançado: revisar e reescrever titles/descriptions de todas as páginas com palavras-chave primárias
+- [ ] SEO Avançado: Schema.org completo (LocalBusiness com geo, horário, área de atendimento, avaliações)
+- [ ] SEO Avançado: FAQ Schema nas páginas de serviços para rich snippets
+- [ ] SEO Avançado: preconnect/dns-prefetch para fontes e CDN no index.html
+- [ ] SEO Avançado: lazy loading em todas as imagens e iframes
+- [ ] SEO Avançado: headers de cache e compressão no servidor Express
+- [ ] SEO Avançado: meta robots, viewport e theme-color corretos
+- [ ] SEO Avançado: Open Graph image com dimensões corretas (1200x630)
+- [x] Remover todas as menções à marca Manus do código-fonte visível ao usuário
+- [x] Remover links/referências ao manus.space e manus.computer do código
+- [x] Remover powered by / built with Manus de footer, meta tags e comentários
+- [x] Atualizar domínio de co2contraincendio.com.br para www.co2contraincendio.com em todo o projeto

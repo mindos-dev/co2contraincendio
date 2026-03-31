@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import compression from "compression";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -31,12 +32,19 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
+  // Gzip compression — reduces page size by ~70%, improves Core Web Vitals
+  app.use(compression({ level: 6, threshold: 1024 }));
+
   // SEO & Security headers
   app.use((_req, res, next) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("X-Frame-Options", "SAMEORIGIN");
     res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
     res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    // Cache-Control: HTML pages — no-cache so bots always get fresh content
+    if (res.getHeader("Content-Type")?.toString().includes("text/html")) {
+      res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+    }
     next();
   });
 

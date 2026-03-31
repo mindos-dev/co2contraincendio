@@ -3,7 +3,8 @@ import { Helmet } from "react-helmet-async";
 import Layout from "./Layout";
 import { ArrowRight, CheckCircle, Phone } from "lucide-react";
 
-const SITE_URL = "https://www.co2contraincendio.com.br";
+const SITE_URL = "https://www.co2contraincendio.com";
+const DEFAULT_OG_IMAGE = "https://www.co2contraincendio.com/og-image.jpg";
 
 interface Norm { code: string; title: string; excerpt: string; }
 interface FAQ { q: string; a: string; }
@@ -27,6 +28,30 @@ export default function ServicePageTemplate({
   meta, hero, intro, features, norms, process, videoId, videoTitle, faqs, related, cta
 }: ServicePageProps) {
   const pageUrl = typeof window !== "undefined" ? window.location.href : SITE_URL;
+  const pageSlug = typeof window !== "undefined" ? window.location.pathname : "/";
+
+  // FAQ Schema
+  const faqSchema = faqs && faqs.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(f => ({
+      "@type": "Question",
+      "name": f.q,
+      "acceptedAnswer": { "@type": "Answer", "text": f.a }
+    }))
+  } : null;
+
+  // BreadcrumbList Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+      { "@type": "ListItem", "position": 2, "name": "Serviços", "item": `${SITE_URL}/servicos` },
+      { "@type": "ListItem", "position": 3, "name": meta.title, "item": `${SITE_URL}${pageSlug}` }
+    ]
+  };
+
   const serviceSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -48,16 +73,26 @@ export default function ServicePageTemplate({
         <title>{meta.title} | CO\u2082 Contra Inc\u00eandio — BH</title>
         <meta name="description" content={meta.description} />
         <meta name="keywords" content={meta.keywords} />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <link rel="canonical" href={pageUrl} />
-        <meta property="og:title" content={`${meta.title} | CO\u2082 Contra Inc\u00eandio`} />
+        <meta property="og:title" content={`${meta.title} | CO₂ Contra Incêndio`} />
         <meta property="og:description" content={meta.description} />
         <meta property="og:url" content={pageUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="pt_BR" />
+        <meta property="og:site_name" content="CO₂ Contra Incêndio" />
+        <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={`${meta.title} — CO₂ Contra Incêndio`} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${meta.title} | CO\u2082 Contra Inc\u00eandio`} />
+        <meta name="twitter:title" content={`${meta.title} | CO₂ Contra Incêndio`} />
         <meta name="twitter:description" content={meta.description} />
+        <meta name="twitter:image" content={DEFAULT_OG_IMAGE} />
+        <meta name="twitter:image:alt" content={`${meta.title} — CO₂ Contra Incêndio`} />
         <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        {faqSchema && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
       </Helmet>
 
       {/* HERO */}
