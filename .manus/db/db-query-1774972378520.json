@@ -1,0 +1,9 @@
+{
+  "query": "\nINSERT INTO saas_companies (name, cnpj, email, type, active)\nVALUES ('CO2 Contra Incêndio LTDA', '29.905.123/0001-53', 'admin@co2contraincendio.com.br', 'comercio', 1)\nON DUPLICATE KEY UPDATE name = VALUES(name);\n\nINSERT INTO saas_users (companyId, email, passwordHash, name, role, active)\nVALUES (\n  (SELECT id FROM saas_companies WHERE email = 'admin@co2contraincendio.com.br' LIMIT 1),\n  'admin@co2contraincendio.com.br',\n  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',\n  'Judson Aleixo Sampaio',\n  'admin',\n  1\n)\nON DUPLICATE KEY UPDATE role = 'admin', active = 1;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user FBVYUKsGMSjugUr.47dec1c92c22 --database TyJduRRrx582jr9b7ycCdJ --execute \nINSERT INTO saas_companies (name, cnpj, email, type, active)\nVALUES ('CO2 Contra Incêndio LTDA', '29.905.123/0001-53', 'admin@co2contraincendio.com.br', 'comercio', 1)\nON DUPLICATE KEY UPDATE name = VALUES(name);\n\nINSERT INTO saas_users (companyId, email, passwordHash, name, role, active)\nVALUES (\n  (SELECT id FROM saas_companies WHERE email = 'admin@co2contraincendio.com.br' LIMIT 1),\n  'admin@co2contraincendio.com.br',\n  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',\n  'Judson Aleixo Sampaio',\n  'admin',\n  1\n)\nON DUPLICATE KEY UPDATE role = 'admin', active = 1;\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 580
+}

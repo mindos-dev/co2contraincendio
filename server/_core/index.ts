@@ -6,6 +6,7 @@ import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
+import { runDailyAlertJob } from "../saas-routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 
@@ -87,3 +88,20 @@ async function startServer() {
 }
 
 startServer().catch(console.error);
+
+// ─── Scheduler diário de alertas (07:00 BRT = 10:00 UTC) ─────────────────────
+function scheduleDailyAlerts() {
+  const now = new Date();
+  const next = new Date();
+  next.setUTCHours(10, 0, 0, 0); // 07:00 BRT
+  if (next <= now) next.setUTCDate(next.getUTCDate() + 1);
+  const msUntilNext = next.getTime() - now.getTime();
+  setTimeout(() => {
+    runDailyAlertJob().then(r => console.log("[AlertJob] Concluído:", r));
+    setInterval(() => {
+      runDailyAlertJob().then(r => console.log("[AlertJob] Concluído:", r));
+    }, 24 * 60 * 60 * 1000);
+  }, msUntilNext);
+  console.log(`[AlertJob] Agendado para ${next.toISOString()} (${Math.round(msUntilNext / 60000)} min até próxima execução)`);
+}
+scheduleDailyAlerts();

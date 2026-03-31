@@ -7,6 +7,8 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
+import { SaasAuthProvider } from "./contexts/SaasAuthContext";
+import { getSaasToken } from "./hooks/useSaasToken";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -43,6 +45,10 @@ const trpcClient = trpc.createClient({
     httpBatchLink({
       url: "/api/trpc",
       transformer: superjson,
+      headers() {
+        const t = getSaasToken();
+        return t ? { "x-saas-token": t } : {};
+      },
       fetch(input, init) {
         return globalThis.fetch(input, {
           ...(init ?? {}),
@@ -57,7 +63,9 @@ createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <SaasAuthProvider>
+          <App />
+        </SaasAuthProvider>
       </QueryClientProvider>
     </trpc.Provider>
   </HelmetProvider>

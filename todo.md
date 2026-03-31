@@ -24,42 +24,51 @@
 - [x] Configurar App.tsx com todas as rotas
 - [x] Copiar index.css com estilos globais
 - [x] Carrossel na página inicial com as mesmas imagens e estilo do site co2contraincendio.com
-- [x] Página /coifas: lapidar ou criar no padrão UL do projeto, baseada no conteúdo de co2contraincendio.com/coifas
-- [x] Seção de vídeo impactante na página /coifas para aumentar engajamento
-- [x] Formulário de orçamento rápido abaixo da seção de vídeos em /coifas (tRPC + DB + notificação ao proprietário)
-- [x] Inserir seções Defender e Rotarex na página SistemaSaponificante no padrão da seção TRIPLESTAR
-- [x] Seções expandidas imagem+texto lateral para Amerex, Defender e Rotarex na página SistemaSaponificante
-- [x] Pesquisar fabricantes: Intelbras, Bral, Seguri Max, Ascavel, Sky Fire (detecção fumaça/alarme incêndio)
-- [x] Gerar artigos de blog sobre detecção de fumaça e alarme de incêndio com base nos fabricantes pesquisados
-- [x] Inserir artigos no banco de dados e exibir na página de blog do projeto
-- [x] Implementar carrossel de imagens na página inicial com slides temáticos de serviços
-- [x] SEO: meta tags title/description/keywords no index.html (base global)
-- [x] SEO: Open Graph e Twitter Cards para compartilhamento em redes sociais
+- [x] Página /coifas: lapidar ou criar no padrão UL do projeto
+- [x] Seção de vídeo impactante na página /coifas
+- [x] Formulário de orçamento rápido em /coifas
+- [x] Inserir seções Defender e Rotarex na página SistemaSaponificante
+- [x] Seções expandidas imagem+texto lateral para Amerex, Defender e Rotarex
+- [x] Pesquisar fabricantes: Intelbras, Bral, Seguri Max, Ascavel, Sky Fire
+- [x] Gerar artigos de blog sobre detecção de fumaça e alarme de incêndio
+- [x] Inserir artigos no banco de dados e exibir na página de blog
+- [x] Implementar carrossel de imagens na página inicial
+- [x] SEO: meta tags title/description/keywords
+- [x] SEO: Open Graph e Twitter Cards
 - [x] SEO: canonical URL por página via react-helmet-async
-- [x] SEO: Schema.org JSON-LD (LocalBusiness, Service, Article, BreadcrumbList, FAQPage) por página
-- [x] SEO: sitemap.xml com todas as URLs do site (client/public/sitemap.xml)
-- [x] SEO: robots.txt com referência ao sitemap (client/public/robots.txt)
-- [x] SEO: meta tags dinâmicas por página (SEOHead component em todas as páginas principais)
-- [x] SEO: performance (preload fonts, headers de segurança X-Content-Type-Options, X-Frame-Options)
-- [x] Adicionar /coifas ao menu de navegação (Sistema Saponificante — Coifas)
-- [x] Atualizar domínio para co2contraincendio.com em sitemap.xml, robots.txt e SEOHead
-- [x] Atualizar URLs canônicas e Schema.org em todas as páginas para co2contraincendio.com
-- [x] Atualizar URL no script de sincronização do GitHub
-- [x] SEO Avançado: revisar e reescrever titles/descriptions de todas as páginas com palavras-chave primárias
-- [x] SEO Avançado: Schema.org completo (LocalBusiness com geo, horário, área de atendimento, avaliações)
-- [x] SEO Avançado: FAQ Schema nas páginas de serviços para rich snippets
-- [x] SEO Avançado: preconnect/dns-prefetch para fontes e CDN no index.html
-- [x] SEO Avançado: lazy loading em todas as imagens e iframes
-- [x] SEO Avançado: headers de cache e compressão no servidor Express
-- [x] SEO Avançado: meta robots, viewport e theme-color corretos
-- [x] SEO Avançado: Open Graph image com dimensões corretas (1200x630)
-- [x] Remover todas as menções à marca Manus do código-fonte visível ao usuário
-- [x] Remover links/referências ao manus.space e manus.computer do código
-- [x] Remover powered by / built with Manus de footer, meta tags e comentários
-- [x] Atualizar domínio de co2contraincendio.com.br para www.co2contraincendio.com em todo o projeto
-- [x] Corrigir alterações pendentes e gerar checkpoint válido para publicação
-- [x] Atualizar todas as URLs do site de www.co2contraincendio.com para co2contraincendio.co (substituído por co2contra.com)
-- [x] Atualizar todas as URLs do site para o domínio definitivo co2contra.com
-- [x] Criar imagem Open Graph 1200x630px para co2contra.com (CDN: d2xsxph8kpxj0f.cloudfront.net)
-- [x] Adicionar meta tag de verificação do Google Search Console no index.html (2G7Jr3lgjT6NiCDm3C3AVcSLUAQqKBecrpzji1PUtuw)
-- [x] Adicionar arquivo HTML de verificação do Google Search Console (googled35a310244e2041d.html) na pasta pública
+- [x] SEO: Schema.org JSON-LD por página
+- [x] SEO: sitemap.xml e robots.txt
+- [x] SEO: meta tags dinâmicas por página
+- [x] SEO: performance (preload fonts, headers de segurança)
+- [x] Adicionar /coifas ao menu de navegação
+- [x] Atualizar domínio para co2contra.com em todo o projeto
+- [x] Criar imagem Open Graph 1200x630px
+- [x] Adicionar meta tag de verificação do Google Search Console
+- [x] Adicionar arquivo HTML de verificação do Google Search Console
+
+## Plataforma SaaS — Sprint 1 (Reconstrução Completa)
+- [x] Schema do banco de dados com 8 tabelas (saas_companies, saas_users, equipment, maintenanceRecords, documents, accessLogs, alerts, qrCodeScans)
+- [x] Migração SQL aplicada com sucesso
+- [x] Backend saas-db.ts com todos os helpers de banco de dados
+- [x] Backend saas-routers.ts com endpoints completos (auth, equipment, maintenance, QR, documents, alerts, dashboard, scheduler)
+- [x] Contexto de autenticação SaaS (SaasAuthContext)
+- [x] SaasDashboardLayout com visual industrial nativo do site (navy/vermelho/Barlow)
+- [x] Página de login /app/login com visual industrial
+- [x] Dashboard /app/dashboard com estatísticas e exportação CSV
+- [x] Página de Equipamentos /app/equipamentos com filtro de busca avançado e paginação
+- [x] Página de Manutenções /app/manutencoes
+- [x] Página de QR Codes /app/qrcodes com geração e impressão
+- [x] Página de Alertas /app/alertas com tabelas por status
+- [x] Página de Documentos /app/documentos com upload múltiplo drag-and-drop
+- [x] Página pública /extintor/:code com visual industrial
+- [x] Todas as rotas registradas no App.tsx com SaasAuthProvider
+- [x] Usuário admin criado no banco de dados
+
+## Novos Recursos (Sprint 2)
+- [x] Filtro de busca avançado em Equipamentos (código, tipo, status, localização, categoria NBR)
+- [x] Upload múltiplo de documentos em uma só operação (drag-and-drop multi-arquivo)
+- [x] Exportação CSV da lista de equipamentos com status no Dashboard
+- [x] Scheduler diário: verificar datas → disparar alertas → registrar evento no banco (backend)
+- [x] Backend: procedure equipment.exportCsv (todos os campos + status calculado)
+- [x] Backend: procedure documents.uploadMultiple (S3 + banco em lote)
+- [x] Backend: job de alertas agendado (cron diário)

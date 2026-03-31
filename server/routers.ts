@@ -4,10 +4,12 @@ import { notifyOwner } from "./_core/notification";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { insertOrcamento } from "./db";
+import { saasRouter } from "./saas-routers";
 import { z } from "zod";
 
 export const appRouter = router({
   system: systemRouter,
+  saas: saasRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

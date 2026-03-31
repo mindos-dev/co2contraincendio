@@ -4,6 +4,9 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { SaasAuthProvider } from "./contexts/SaasAuthContext";
+
+// Site público
 import Home from "./pages/Home";
 import QuemSomos from "./pages/QuemSomos";
 import Servicos from "./pages/Servicos";
@@ -22,9 +25,20 @@ import ProjetoExaustao from "./pages/services/ProjetoExaustao";
 import Projetos from "./pages/Projetos";
 import Parceiros from "./pages/Parceiros";
 
+// Plataforma SaaS
+import SaasLogin from "./pages/SaasLogin";
+import ExtintorPublico from "./pages/ExtintorPublico";
+import Dashboard from "./pages/plataforma/Dashboard";
+import Equipamentos from "./pages/plataforma/Equipamentos";
+import Manutencoes from "./pages/plataforma/Manutencoes";
+import QRCodes from "./pages/plataforma/QRCodes";
+import Alertas from "./pages/plataforma/Alertas";
+import Documentos from "./pages/plataforma/Documentos";
+
 function Router() {
   return (
     <Switch>
+      {/* Site público */}
       <Route path="/" component={Home} />
       <Route path="/quem-somos" component={QuemSomos} />
       <Route path="/servicos" component={Servicos} />
@@ -43,6 +57,19 @@ function Router() {
       <Route path="/parceiros" component={Parceiros} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
+
+      {/* Página pública de equipamento via QR Code */}
+      <Route path="/extintor/:code" component={ExtintorPublico} />
+
+      {/* Plataforma SaaS */}
+      <Route path="/app/login" component={SaasLogin} />
+      <Route path="/app/dashboard" component={Dashboard} />
+      <Route path="/app/equipamentos" component={Equipamentos} />
+      <Route path="/app/manutencoes" component={Manutencoes} />
+      <Route path="/app/qrcodes" component={QRCodes} />
+      <Route path="/app/alertas" component={Alertas} />
+      <Route path="/app/documentos" component={Documentos} />
+
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -53,10 +80,12 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <SaasAuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </SaasAuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
