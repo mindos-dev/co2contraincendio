@@ -23,7 +23,7 @@
 - [x] ServicePageTemplate para páginas de serviços
 - [x] Configurar App.tsx com todas as rotas
 - [x] Copiar index.css com estilos globais
-- [ ] Carrossel na página inicial com as mesmas imagens e estilo do site co2contraincendio.com
+- [x] Carrossel na página inicial com as mesmas imagens e estilo do site co2contraincendio.com
 - [x] Página /coifas: lapidar ou criar no padrão UL do projeto, baseada no conteúdo de co2contraincendio.com/coifas
 - [x] Seção de vídeo impactante na página /coifas para aumentar engajamento
 - [x] Formulário de orçamento rápido abaixo da seção de vídeos em /coifas (tRPC + DB + notificação ao proprietário)
@@ -32,3 +32,4 @@
 - [x] Pesquisar fabricantes: Intelbras, Bral, Seguri Max, Ascavel, Sky Fire (detecção fumaça/alarme incêndio)
 - [x] Gerar artigos de blog sobre detecção de fumaça e alarme de incêndio com base nos fabricantes pesquisados
 - [x] Inserir artigos no banco de dados e exibir na página de blog do projeto
+- [x] Implementar carrossel de imagens na página inicial com slides temáticos de serviços

@@ -8,36 +8,40 @@ import {
 
 const slides = [
   {
-    id: 1, label: "Sistema Fixo de Incêndio",
+    id: 1, label: "Sistema Fixo de Supressão por CO₂",
     title: "Sistemas Inteligentes de\nPrevenção e Combate\na Incêndios",
-    sub: "Na CO₂ Engenharia, desenvolvemos projetos personalizados com sistemas de supressão por CO₂, saponificantes, hidrantes e alarmes. Conformidade ABNT, NFPA e Corpo de Bombeiros.",
+    sub: "Projetos personalizados com sistemas de supressão por CO₂, saponificantes, hidrantes e alarmes. Conformidade ABNT, NFPA e Corpo de Bombeiros. Atendemos BH e todo o Brasil.",
     cta1: { label: "Solicitar Orçamento", href: "/contato" },
-    cta2: { label: "Nossos Serviços", href: "/sistema-supressao-co2" },
-    bg: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1600&q=80",
+    cta2: { label: "Ver Sistema CO₂", href: "/sistema-supressao-co2" },
+    bg: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/slide-co2-system_be6134a2.jpg",
+    badge: "NBR 12615 · NFPA 12 · UL Listed",
   },
   {
-    id: 2, label: "Sistema Saponificante",
-    title: "Proteção Especializada\npara Cozinhas\nIndustriais",
-    sub: "Sistemas fixos com agente saponificante para coifas, dutos e equipamentos de cocção. Solução obrigatória conforme normas do Corpo de Bombeiros.",
+    id: 2, label: "Sistema Saponificante para Coifas",
+    title: "Proteção Especializada\npara Cozinhas\nIndustriais e Restaurantes",
+    sub: "Sistemas fixos com agente saponificante Amerex KP, Defender e Rotarex TRIPLESTAR para coifas, dutos e equipamentos de cocção. Certificação UL 300 e NBR 14095.",
     cta1: { label: "Ver Sistema Saponificante", href: "/sistema-saponificante" },
     cta2: { label: "Agendar Vistoria", href: "/contato" },
-    bg: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&q=80",
+    bg: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/slide-kitchen-suppression_dcfa9e35.jpg",
+    badge: "UL 300 · EN 17446 · NFPA 17A",
   },
   {
-    id: 3, label: "Alarme e Detecção",
-    title: "Alarmes Endereçáveis\ne Detectores de\nFumaça e Gás",
-    sub: "SDAI com detecção precisa e rápida resposta. Sistemas convencionais e endereçáveis para indústrias, hospitais, shoppings e restaurantes.",
+    id: 3, label: "Alarme de Incêndio e Detecção de Gás",
+    title: "SDAI Endereçável\ne Detectores de\nFumaça e Gás",
+    sub: "Sistemas de detecção e alarme de incêndio convencionais e endereçáveis. Detectores ópticos, iônicos e lineares para indústrias, hospitais, shoppings e restaurantes.",
     cta1: { label: "Ver Alarmes", href: "/alarme-incendio" },
     cta2: { label: "Detector de Gás", href: "/detector-gas" },
-    bg: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80",
+    bg: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/slide-fire-alarm_7f1dbdfa.jpg",
+    badge: "NBR 17240 · IT CBMMG",
   },
   {
-    id: 4, label: "Vistoria e Laudo com ART",
-    title: "Vistoria Técnica\ncom Laudo e ART\npara AVCB",
-    sub: "Elaboramos laudos técnicos com ART para obtenção e renovação do AVCB em Belo Horizonte e Minas Gerais.",
+    id: 4, label: "Instalação e Manutenção Profissional",
+    title: "Instalação Técnica\nde Sistemas Fixos\nde Supressão",
+    sub: "Equipe especializada em instalação, comissionamento e manutenção preventiva de sistemas de supressão por CO₂ e saponificante. Engenheiro responsável com ART.",
     cta1: { label: "Agendar Vistoria", href: "/contato" },
-    cta2: { label: "Saiba Mais", href: "/vistoria-laudo-art" },
-    bg: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80",
+    cta2: { label: "Manutenção Preventiva", href: "/manutencao-preventiva" },
+    bg: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/slide-kitchen-install_2169cc97.jpg",
+    badge: "CREA/MG 142203671-5 · ART",
   },
 ];
 
@@ -106,8 +110,13 @@ export default function Home() {
         ))}
         <div className="hero-overlay" style={{ position: "absolute", inset: 0, zIndex: 2 }} />
         <div className="container" style={{ position: "relative", zIndex: 3, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <div style={{ maxWidth: "640px" }}>
-            <div style={{ display: "inline-block", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.7)", marginBottom: "1rem" }}>{slide.label}</div>
+          <div style={{ maxWidth: "660px" }}>
+            {slide.badge && (
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "var(--red)", color: "#fff", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.75rem", marginBottom: "1rem" }}>
+                <Shield size={10} />{slide.badge}
+              </div>
+            )}
+            <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.65)", marginBottom: "0.75rem", display: "block" }}>{slide.label}</div>
             <h1 className="text-display" style={{ color: "#fff", marginBottom: "1.25rem", whiteSpace: "pre-line" }}>{slide.title}</h1>
             <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", lineHeight: 1.75, marginBottom: "2rem", maxWidth: "520px" }}>{slide.sub}</p>
             <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
