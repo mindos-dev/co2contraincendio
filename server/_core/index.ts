@@ -61,6 +61,12 @@ async function startServer() {
       createContext,
     })
   );
+  // Google Search Console verification file — must be served BEFORE SPA fallback
+  app.get("/googled35a310244e2041d.html", (_req, res) => {
+    res.setHeader("Content-Type", "text/html");
+    res.send("google-site-verification: googled35a310244e2041d.html");
+  });
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
