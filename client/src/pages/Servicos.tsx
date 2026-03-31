@@ -75,12 +75,12 @@ export default function Servicos() {
         "@type": "ItemList",
         "name": "Servi\u00e7os de Combate a Inc\u00eandio — CO\u2082 Contra Inc\u00eandio",
         "description": "Soluções completas em prevenção e combate a incêndios para indústrias, hospitais, restaurantes e edificações em todo o Brasil.",
-        "url": "https://www.co2contraincendio.com/servicos",
+        "url": "https://co2contra.com/servicos",
         "itemListElement": services.map((s, i) => ({
           "@type": "ListItem",
           "position": i + 1,
           "name": s.title,
-          "url": `https://www.co2contraincendio.com${s.href}`,
+          "url": `https://co2contra.com${s.href}`,
         }))
       })}} />
 

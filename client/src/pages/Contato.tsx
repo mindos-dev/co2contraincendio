@@ -42,12 +42,12 @@ export default function Contato() {
         "@type": "ContactPage",
         "name": "Contato — CO₂ Contra Incêndio",
         "description": "Entre em contato com a CO₂ Contra Incêndio para orçamentos de sistemas de prevenção e combate a incêndios em Belo Horizonte e Minas Gerais.",
-        "url": "https://www.co2contraincendio.com/contato",
+        "url": "https://co2contra.com/contato",
         "mainEntity": {
           "@type": "LocalBusiness",
           "name": "CO₂ Contra Incêndio",
           "telephone": "+55-31-97358-1278",
-          "email": "contato@co2contraincendio.com",
+          "email": "contato@co2contra.comm",
           "address": { "@type": "PostalAddress", "addressLocality": "Belo Horizonte", "addressRegion": "MG", "addressCountry": "BR" }
         }
       })}} />
@@ -137,7 +137,7 @@ export default function Contato() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", marginBottom: "2.5rem" }}>
                 {[
                   { icon: <Phone size={18} />, title: "Telefone / WhatsApp", lines: ["(31) 97358-1278", "Atendimento imediato via WhatsApp"] },
-                  { icon: <Mail size={18} />, title: "E-mail", lines: ["contato@co2contraincendio.com", "Respondemos em até 24 horas"] },
+                  { icon: <Mail size={18} />, title: "E-mail", lines: ["contato@co2contra.comm", "Respondemos em até 24 horas"] },
                   { icon: <MapPin size={18} />, title: "Localização", lines: ["Belo Horizonte — MG", "Atendemos todo o Brasil"] },
                   { icon: <Clock size={18} />, title: "Horário de Atendimento", lines: ["Segunda a Sexta: 8h às 18h", "Sábado: 8h às 12h"] },
                 ].map(c => (

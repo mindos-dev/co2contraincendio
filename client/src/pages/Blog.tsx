@@ -151,8 +151,8 @@ export default function Blog() {
         "@type": "Blog",
         "name": "Blog Técnico — CO₂ Contra Incêndio",
         "description": "Artigos técnicos sobre sistemas de prevenção e combate a incêndios: CO₂, saponificante, alarmes, detectores, normas ABNT e NFPA.",
-        "url": "https://www.co2contraincendio.com/blog",
-        "publisher": { "@type": "Organization", "name": "CO₂ Contra Incêndio", "url": "https://www.co2contraincendio.com" }
+        "url": "https://co2contra.com/blog",
+        "publisher": { "@type": "Organization", "name": "CO₂ Contra Incêndio", "url": "https://co2contra.com" }
       })}} />
 
       {/* HERO */}

@@ -8,7 +8,7 @@ const schemaJson = {
   "@type": "WebPage",
   "name": "Parceiros Técnicos — CO₂ Contra Incêndio",
   "description": "Parceiros fabricantes de sistemas de combate a incêndio: Amerex, Rotarex FireDETEC, Skyfire, Segurimax, Intelbras. Produtos certificados INMETRO e aprovados pelo Corpo de Bombeiros.",
-  "url": "https://www.co2contraincendio.com/parceiros",
+  "url": "https://co2contra.com/parceiros",
   "provider": {
     "@type": "LocalBusiness",
     "name": "CO₂ Contra Incêndio",

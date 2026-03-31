@@ -500,8 +500,8 @@ export default function BlogPost() {
         "description": post.excerpt,
         "datePublished": post.date,
         "author": { "@type": "Organization", "name": "CO₂ Contra Incêndio" },
-        "publisher": { "@type": "Organization", "name": "CO₂ Contra Incêndio", "url": "https://www.co2contraincendio.com" },
-        "url": `https://www.co2contraincendio.com/blog/${slug}`,
+        "publisher": { "@type": "Organization", "name": "CO₂ Contra Incêndio", "url": "https://co2contra.com" },
+        "url": `https://co2contra.com/blog/${slug}`,
         "keywords": post.keywords.join(", "),
       })}} />
 

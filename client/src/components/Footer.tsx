@@ -149,11 +149,11 @@ export default function Footer() {
               </li>
               <li style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
                 <Mail size={15} style={{ color: "var(--red)", flexShrink: 0 }} />
-                <a href="mailto:contato@co2contraincendio.com" style={{ color: "var(--gray-400)", fontSize: "0.8125rem", transition: "color 0.18s" }}
+                <a href="mailto:contato@co2contra.comm" style={{ color: "var(--gray-400)", fontSize: "0.8125rem", transition: "color 0.18s" }}
                   onMouseEnter={(e) => { (e.target as HTMLElement).style.color = "#fff"; }}
                   onMouseLeave={(e) => { (e.target as HTMLElement).style.color = "var(--gray-400)"; }}
                 >
-                  contato@co2contraincendio.com
+                  contato@co2contra.comm
                 </a>
               </li>
             </ul>

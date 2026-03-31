@@ -15,7 +15,7 @@ const schemaJson = {
   "provider": {
     "@type": "LocalBusiness",
     "name": "CO₂ Contra Incêndio",
-    "url": "https://www.co2contraincendio.com",
+    "url": "https://co2contra.com",
     "telephone": "+55-31-97358-1278",
     "address": {
       "@type": "PostalAddress",

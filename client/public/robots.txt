@@ -1,5 +1,5 @@
 # CO₂ Contra Incêndio — robots.txt
-# https://www.co2contraincendio.com
+# https://co2contra.com
 
 User-agent: *
 Allow: /
@@ -10,7 +10,7 @@ Disallow: /api/trpc/
 Disallow: /api/oauth/
 
 # Sitemap
-Sitemap: https://www.co2contraincendio.com/sitemap.xml
+Sitemap: https://co2contra.com/sitemap.xml
 
 # Crawl-delay para bots agressivos
 User-agent: AhrefsBot

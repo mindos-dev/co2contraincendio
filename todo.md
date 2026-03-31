@@ -58,3 +58,5 @@
 - [x] Remover powered by / built with Manus de footer, meta tags e comentários
 - [x] Atualizar domínio de co2contraincendio.com.br para www.co2contraincendio.com em todo o projeto
 - [x] Corrigir alterações pendentes e gerar checkpoint válido para publicação
+- [x] Atualizar todas as URLs do site de www.co2contraincendio.com para co2contraincendio.co (substituído por co2contra.com)
+- [x] Atualizar todas as URLs do site para o domínio definitivo co2contra.com

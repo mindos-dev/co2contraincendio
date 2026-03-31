@@ -3,8 +3,8 @@ import { Helmet } from "react-helmet-async";
 import Layout from "./Layout";
 import { ArrowRight, CheckCircle, Phone } from "lucide-react";
 
-const SITE_URL = "https://www.co2contraincendio.com";
-const DEFAULT_OG_IMAGE = "https://www.co2contraincendio.com/og-image.jpg";
+const SITE_URL = "https://co2contra.com";
+const DEFAULT_OG_IMAGE = "https://co2contra.com/og-image.jpg";
 
 interface Norm { code: string; title: string; excerpt: string; }
 interface FAQ { q: string; a: string; }
