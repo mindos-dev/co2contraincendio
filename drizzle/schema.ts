@@ -25,4 +25,18 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+// Tabela de solicitações de orçamento rápido
+export const orcamentos = mysqlTable("orcamentos", {
+  id: int("id").autoincrement().primaryKey(),
+  nome: varchar("nome", { length: 120 }).notNull(),
+  telefone: varchar("telefone", { length: 30 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  empresa: varchar("empresa", { length: 160 }),
+  servico: varchar("servico", { length: 80 }).notNull().default("sistema-saponificante"),
+  mensagem: text("mensagem"),
+  status: mysqlEnum("status", ["novo", "em_andamento", "respondido"]).default("novo").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Orcamento = typeof orcamentos.$inferSelect;
+export type InsertOrcamento = typeof orcamentos.$inferInsert;

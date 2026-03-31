@@ -26,3 +26,4 @@
 - [ ] Carrossel na página inicial com as mesmas imagens e estilo do site co2contraincendio.com
 - [x] Página /coifas: lapidar ou criar no padrão UL do projeto, baseada no conteúdo de co2contraincendio.com/coifas
 - [x] Seção de vídeo impactante na página /coifas para aumentar engajamento
+- [x] Formulário de orçamento rápido abaixo da seção de vídeos em /coifas (tRPC + DB + notificação ao proprietário)

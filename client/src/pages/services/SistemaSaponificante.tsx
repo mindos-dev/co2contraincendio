@@ -1,6 +1,8 @@
-import { Droplets, Flame, Shield, Settings, CheckCircle, AlertTriangle, ArrowRight, Phone, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { Droplets, Flame, Shield, Settings, CheckCircle, AlertTriangle, ArrowRight, Phone, ExternalLink, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
 import Layout from "../../components/Layout";
+import { trpc } from "@/lib/trpc";
 
 const suppliers = [
   {
@@ -76,6 +78,25 @@ const faqs = [
 ];
 
 export default function SistemaSaponificante() {
+  const [form, setForm] = useState({ nome: "", telefone: "", email: "", empresa: "", mensagem: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const submitMutation = trpc.orcamento.submit.useMutation({
+    onSuccess: () => setSubmitted(true),
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.nome.trim() || !form.telefone.trim()) return;
+    submitMutation.mutate({
+      nome: form.nome,
+      telefone: form.telefone,
+      email: form.email || undefined,
+      empresa: form.empresa || undefined,
+      servico: "sistema-saponificante",
+      mensagem: form.mensagem || undefined,
+    });
+  };
+
   return (
     <Layout>
       {/* JSON-LD */}
@@ -372,6 +393,158 @@ export default function SistemaSaponificante() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FORMULARIO DE ORCAMENTO RAPIDO */}
+      <section style={{ background: "var(--gray-50)", padding: "5rem 0", borderTop: "4px solid var(--red)" }}>
+        <div className="container">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "4rem", alignItems: "start" }}>
+
+            {/* Lado esquerdo: proposta de valor */}
+            <div>
+              <div className="section-label">Resposta em até 2 horas</div>
+              <div className="divider-red" />
+              <h2 className="text-headline" style={{ marginBottom: "1rem" }}>Solicite seu Orçamento Agora</h2>
+              <p style={{ color: "var(--gray-600)", lineHeight: 1.8, marginBottom: "2rem", fontSize: "0.9375rem" }}>
+                Ficou interessado no que viu nos vídeos? Preencha o formulário ao lado e nossa equipe técnica entrará em contato em até <strong>2 horas úteis</strong> com uma proposta personalizada para a sua cozinha.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                {[
+                  { icon: <CheckCircle size={18} style={{ color: "var(--red)", flexShrink: 0 }} />, title: "Orçamento sem compromisso", desc: "Visita técnica gratuita para levantamento dos equipamentos e dimensionamento do sistema." },
+                  { icon: <CheckCircle size={18} style={{ color: "var(--red)", flexShrink: 0 }} />, title: "Projeto + ART incluídos", desc: "Elaboramos o projeto técnico e a ART do engenheiro responsável sem custo adicional." },
+                  { icon: <CheckCircle size={18} style={{ color: "var(--red)", flexShrink: 0 }} />, title: "Aprovado no Corpo de Bombeiros", desc: "Acompanhamos todo o processo de aprovação junto ao CBMMG até a emissão do laudo." },
+                  { icon: <CheckCircle size={18} style={{ color: "var(--red)", flexShrink: 0 }} />, title: "Equipamentos certificados UL 300", desc: "Trabalhamos apenas com fabricantes certificados: Amerex, Defender e Rotarex." },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: "flex", gap: "0.875rem", alignItems: "flex-start" }}>
+                    {item.icon}
+                    <div>
+                      <div style={{ fontWeight: 600, color: "var(--gray-900)", fontSize: "0.9375rem", marginBottom: "0.2rem" }}>{item.title}</div>
+                      <p style={{ color: "var(--gray-600)", fontSize: "0.8125rem", lineHeight: 1.6 }}>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: "2rem", padding: "1.25rem", background: "#fff", borderLeft: "3px solid var(--red)" }}>
+                <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gray-400)", marginBottom: "0.5rem" }}>Preferência por WhatsApp?</div>
+                <a href="https://wa.me/5531973581278" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--red)", fontWeight: 700, fontSize: "1rem" }}>
+                  <Phone size={16} /> (31) 97358-1278
+                </a>
+              </div>
+            </div>
+
+            {/* Lado direito: formulario */}
+            <div style={{ background: "#fff", padding: "2.5rem", borderTop: "3px solid var(--red)" }}>
+              {submitted ? (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1rem", minHeight: "340px", textAlign: "center" }}>
+                  <CheckCircle2 size={48} style={{ color: "var(--red)" }} />
+                  <h3 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "var(--gray-900)" }}>Solicitação Recebida!</h3>
+                  <p style={{ color: "var(--gray-600)", lineHeight: 1.7, maxWidth: "320px" }}>
+                    Nossa equipe técnica recebeu seu pedido e entrará em contato em até <strong>2 horas úteis</strong>. Verifique também seu WhatsApp.
+                  </p>
+                  <button
+                    onClick={() => { setSubmitted(false); setForm({ nome: "", telefone: "", email: "", empresa: "", mensagem: "" }); }}
+                    style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "var(--red)", fontWeight: 600, background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
+                  >
+                    Enviar nova solicitação
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  <div>
+                    <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.375rem", color: "var(--gray-900)", marginBottom: "0.25rem" }}>Orçamento Rápido</div>
+                    <p style={{ color: "var(--gray-400)", fontSize: "0.8125rem" }}>Preencha os campos abaixo. Resposta em até 2 horas úteis.</p>
+                  </div>
+
+                  {/* Nome + Telefone */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                      <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--gray-700)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Nome *</label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Seu nome"
+                        value={form.nome}
+                        onChange={e => setForm(f => ({ ...f, nome: e.target.value }))}
+                        style={{ padding: "0.625rem 0.875rem", border: "1.5px solid var(--gray-200)", fontSize: "0.9375rem", outline: "none", background: "var(--gray-50)", color: "var(--gray-900)", width: "100%" }}
+                      />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                      <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--gray-700)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Telefone / WhatsApp *</label>
+                      <input
+                        required
+                        type="tel"
+                        placeholder="(31) 9 0000-0000"
+                        value={form.telefone}
+                        onChange={e => setForm(f => ({ ...f, telefone: e.target.value }))}
+                        style={{ padding: "0.625rem 0.875rem", border: "1.5px solid var(--gray-200)", fontSize: "0.9375rem", outline: "none", background: "var(--gray-50)", color: "var(--gray-900)", width: "100%" }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email + Empresa */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                      <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--gray-700)", letterSpacing: "0.05em", textTransform: "uppercase" }}>E-mail</label>
+                      <input
+                        type="email"
+                        placeholder="seu@email.com"
+                        value={form.email}
+                        onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                        style={{ padding: "0.625rem 0.875rem", border: "1.5px solid var(--gray-200)", fontSize: "0.9375rem", outline: "none", background: "var(--gray-50)", color: "var(--gray-900)", width: "100%" }}
+                      />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                      <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--gray-700)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Empresa / Estabelecimento</label>
+                      <input
+                        type="text"
+                        placeholder="Nome do estabelecimento"
+                        value={form.empresa}
+                        onChange={e => setForm(f => ({ ...f, empresa: e.target.value }))}
+                        style={{ padding: "0.625rem 0.875rem", border: "1.5px solid var(--gray-200)", fontSize: "0.9375rem", outline: "none", background: "var(--gray-50)", color: "var(--gray-900)", width: "100%" }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Mensagem */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                    <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--gray-700)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Mensagem (opcional)</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Descreva brevemente sua cozinha: quantos equipamentos, tipo de estabelecimento, cidade..."
+                      value={form.mensagem}
+                      onChange={e => setForm(f => ({ ...f, mensagem: e.target.value }))}
+                      style={{ padding: "0.625rem 0.875rem", border: "1.5px solid var(--gray-200)", fontSize: "0.9375rem", outline: "none", background: "var(--gray-50)", color: "var(--gray-900)", resize: "vertical", fontFamily: "inherit", lineHeight: 1.6 }}
+                    />
+                  </div>
+
+                  {/* Erro */}
+                  {submitMutation.isError && (
+                    <div style={{ padding: "0.75rem 1rem", background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626", fontSize: "0.875rem" }}>
+                      Ocorreu um erro ao enviar. Tente novamente ou entre em contato pelo WhatsApp.
+                    </div>
+                  )}
+
+                  {/* Botao */}
+                  <button
+                    type="submit"
+                    disabled={submitMutation.isPending}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", background: submitMutation.isPending ? "var(--gray-400)" : "var(--red)", color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1rem", letterSpacing: "0.08em", textTransform: "uppercase", padding: "0.875rem 2rem", border: "none", cursor: submitMutation.isPending ? "not-allowed" : "pointer", transition: "background 0.2s", marginTop: "0.25rem" }}
+                  >
+                    {submitMutation.isPending ? (
+                      <><Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> Enviando...</>
+                    ) : (
+                      <><Send size={15} /> Solicitar Orçamento Gratuito</>
+                    )}
+                  </button>
+
+                  <p style={{ fontSize: "0.75rem", color: "var(--gray-400)", textAlign: "center", lineHeight: 1.5 }}>
+                    Ao enviar, você concorda com nossa política de privacidade. Seus dados não serão compartilhados com terceiros.
+                  </p>
+                </form>
+              )}
             </div>
           </div>
         </div>
