@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useSaasAuth } from "@/contexts/SaasAuthContext";
 
@@ -11,14 +11,23 @@ const NAV_ITEMS: NavItem[] = [
   { label: "QR Codes", path: "/app/qrcodes", icon: "▦" },
   { label: "Alertas", path: "/app/alertas", icon: "⚠" },
   { label: "Documentos", path: "/app/documentos", icon: "📄" },
+  { label: "Notificações", path: "/app/notificacoes", icon: "🔔" },
   { label: "Clientes", path: "/app/clientes", icon: "🏢", adminOnly: true },
 ];
 
 export default function SaasDashboardLayout({ children }: { children: React.ReactNode }) {
-  const [location] = useLocation();
-  const { user, logout, isAdmin } = useSaasAuth();
+  const [location, setLocation] = useLocation();
+  const { user, logout, isAdmin, isAuthenticated } = useSaasAuth();
   const [collapsed, setCollapsed] = useState(false);
   const visible = NAV_ITEMS.filter(i => !i.adminOnly || isAdmin);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setLocation("/app/login");
+    }
+  }, [isAuthenticated, setLocation]);
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className="flex min-h-screen" style={{ background: "#F2F2F2" }}>

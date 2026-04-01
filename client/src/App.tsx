@@ -4,8 +4,6 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { SaasAuthProvider } from "./contexts/SaasAuthContext";
-
 // Site público
 import Home from "./pages/Home";
 import QuemSomos from "./pages/QuemSomos";
@@ -34,7 +32,8 @@ import Manutencoes from "./pages/plataforma/Manutencoes";
 import QRCodes from "./pages/plataforma/QRCodes";
 import Alertas from "./pages/plataforma/Alertas";
 import Documentos from "./pages/plataforma/Documentos";
-
+import Notificacoes from "./pages/plataforma/Notificacoes";
+import Clientes from "./pages/plataforma/Clientes";
 function Router() {
   return (
     <Switch>
@@ -69,7 +68,8 @@ function Router() {
       <Route path="/app/qrcodes" component={QRCodes} />
       <Route path="/app/alertas" component={Alertas} />
       <Route path="/app/documentos" component={Documentos} />
-
+       <Route path="/app/notificacoes" component={Notificacoes} />
+      <Route path="/app/clientes" component={Clientes} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -80,12 +80,10 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <SaasAuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </SaasAuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

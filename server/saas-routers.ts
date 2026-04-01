@@ -33,13 +33,16 @@ import {
   getMaintenanceByEquipment,
   getSaasUserByEmail,
   getSaasUserById,
+  getNotificationSettingsByCompany,
   getSubscriptionByCompany,
   updateCompany,
   updateDocumentStatus,
   updateEquipment,
+  upsertNotificationSettings,
 } from "./saas-db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
+import { sendAlertNotification } from "./notifications";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "co2-saas-secret-2025";
 
@@ -87,6 +90,7 @@ export async function runDailyAlertJob() {
   try {
     const expiring = await getExpiringEquipment(30);
     const expired = await getExpiredEquipment();
+    let notifSent = 0;
     for (const eq of expiring) {
       await createAlertEvent({
         equipmentId: eq.id,
@@ -94,6 +98,15 @@ export async function runDailyAlertJob() {
         alertType: "proximo_vencimento",
         message: `Equipamento ${eq.code} vence em breve (${eq.nextMaintenanceDate})`,
       });
+      if (eq.companyId) {
+        const cfg = await getNotificationSettingsByCompany(eq.companyId);
+        if (cfg) {
+          const emails: string[] = cfg.emailEnabled && cfg.emailRecipients ? JSON.parse(cfg.emailRecipients) : [];
+          const phones: string[] = cfg.whatsappEnabled && cfg.whatsappNumbers ? JSON.parse(cfg.whatsappNumbers) : [];
+          for (const email of emails) { const r = await sendAlertNotification({ email, type: "proximo_vencimento", equipment: eq }); if (r.some(x => x.success)) notifSent++; }
+          for (const phone of phones) { const r = await sendAlertNotification({ whatsappPhone: phone, type: "proximo_vencimento", equipment: eq }); if (r.some(x => x.success)) notifSent++; }
+        }
+      }
     }
     for (const eq of expired) {
       await createAlertEvent({
@@ -103,9 +116,18 @@ export async function runDailyAlertJob() {
         message: `Equipamento ${eq.code} está VENCIDO desde ${eq.nextMaintenanceDate}`,
       });
       await updateEquipment(eq.id, { status: "vencido" });
+      if (eq.companyId) {
+        const cfg = await getNotificationSettingsByCompany(eq.companyId);
+        if (cfg) {
+          const emails: string[] = cfg.emailEnabled && cfg.emailRecipients ? JSON.parse(cfg.emailRecipients) : [];
+          const phones: string[] = cfg.whatsappEnabled && cfg.whatsappNumbers ? JSON.parse(cfg.whatsappNumbers) : [];
+          for (const email of emails) { const r = await sendAlertNotification({ email, type: "vencido", equipment: eq }); if (r.some(x => x.success)) notifSent++; }
+          for (const phone of phones) { const r = await sendAlertNotification({ whatsappPhone: phone, type: "vencido", equipment: eq }); if (r.some(x => x.success)) notifSent++; }
+        }
+      }
     }
-    console.log(`[AlertJob] ${expiring.length} próximos, ${expired.length} vencidos`);
-    return { expiring: expiring.length, expired: expired.length };
+    console.log(`[AlertJob] ${expiring.length} próximos, ${expired.length} vencidos, ${notifSent} notificações enviadas`);
+    return { expiring: expiring.length, expired: expired.length, notifSent };
   } catch (err) {
     console.error("[AlertJob] Erro:", err);
     return { error: String(err) };
@@ -460,6 +482,45 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
     stats: saasAuthProcedure
       .input(z.object({ companyId: z.number().optional() }))
       .query(({ input }) => getDashboardStats(input.companyId)),
+  }),
+
+  notifications: router({
+    getSettings: saasAuthProcedure
+      .input(z.object({ companyId: z.number() }))
+      .query(({ input }) => getNotificationSettingsByCompany(input.companyId)),
+    saveSettings: saasAuthProcedure
+      .input(z.object({
+        companyId: z.number(),
+        emailEnabled: z.boolean(),
+        whatsappEnabled: z.boolean(),
+        emailRecipients: z.array(z.string().email()).optional(),
+        whatsappNumbers: z.array(z.string()).optional(),
+        daysBeforeAlert: z.number().min(1).max(365).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return upsertNotificationSettings({
+          companyId: input.companyId,
+          emailEnabled: input.emailEnabled,
+          whatsappEnabled: input.whatsappEnabled,
+          emailRecipients: input.emailRecipients ? JSON.stringify(input.emailRecipients) : null,
+          whatsappNumbers: input.whatsappNumbers ? JSON.stringify(input.whatsappNumbers) : null,
+          daysBeforeAlert: input.daysBeforeAlert ?? 30,
+        });
+      }),
+    testEmail: saasAuthProcedure
+      .input(z.object({ email: z.string().email(), companyId: z.number() }))
+      .mutation(async ({ input }) => {
+        const fakeEq = { code: "TESTE-001", installationLocation: "Teste de configuração", nextMaintenanceDate: new Date() };
+        const results = await sendAlertNotification({ email: input.email, type: "proximo_vencimento", equipment: fakeEq, companyName: "Teste" });
+        return { results };
+      }),
+    testWhatsapp: saasAuthProcedure
+      .input(z.object({ phone: z.string(), companyId: z.number() }))
+      .mutation(async ({ input }) => {
+        const fakeEq = { code: "TESTE-001", installationLocation: "Teste de configuração", nextMaintenanceDate: new Date() };
+        const results = await sendAlertNotification({ whatsappPhone: input.phone, type: "proximo_vencimento", equipment: fakeEq, companyName: "Teste" });
+        return { results };
+      }),
   }),
 
   subscriptions: router({

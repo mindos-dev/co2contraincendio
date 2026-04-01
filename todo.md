@@ -72,3 +72,15 @@
 - [x] Backend: procedure equipment.exportCsv (todos os campos + status calculado)
 - [x] Backend: procedure documents.uploadMultiple (S3 + banco em lote)
 - [x] Backend: job de alertas agendado (cron diário)
+
+## Notificações Automáticas (Sprint 3)
+- [ ] Backend: módulo notifications.ts (WhatsApp via Evolution API + e-mail via Nodemailer)
+- [ ] Backend: tabela notification_settings no banco (destinatários, canais, templates)
+- [ ] Backend: integrar notificações ao runDailyAlertJob
+- [ ] Backend: procedure saas.notifications.getSettings / saveSettings
+- [ ] Frontend: página /app/notificacoes com configuração de destinatários e canais
+- [ ] Frontend: toggle ativar/desativar WhatsApp e e-mail por empresa
+- [ ] Frontend: campo de número WhatsApp e e-mail do responsável
+- [ ] Frontend: botão "Testar notificação" para validar configuração
+- [ ] Secrets: EVOLUTION_API_URL, EVOLUTION_API_KEY, EVOLUTION_INSTANCE
+- [ ] Secrets: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM

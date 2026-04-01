@@ -6,6 +6,7 @@ import {
   documents,
   equipment,
   maintenanceRecords,
+  notificationSettings,
   saasCompanies,
   saasUsers,
   subscriptions,
@@ -14,6 +15,7 @@ import {
   type InsertDocument,
   type InsertEquipment,
   type InsertMaintenanceRecord,
+  type InsertNotificationSettings,
   type InsertSaasCompany,
   type InsertSaasUser,
   type InsertSubscription,
@@ -292,6 +294,26 @@ export async function acknowledgeAlert(id: number) {
   const db = await getDb();
   if (!db) return;
   return db.update(alertEvents).set({ acknowledged: true }).where(eq(alertEvents.id, id));
+}
+
+// ─── Notification Settings ───────────────────────────────────────────────────
+
+export async function getNotificationSettingsByCompany(companyId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(notificationSettings).where(eq(notificationSettings.companyId, companyId));
+  return rows[0] ?? null;
+}
+
+export async function upsertNotificationSettings(data: Omit<InsertNotificationSettings, "id" | "updatedAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const existing = await getNotificationSettingsByCompany(data.companyId);
+  if (existing) {
+    return db.update(notificationSettings).set(data).where(eq(notificationSettings.companyId, data.companyId));
+  } else {
+    return db.insert(notificationSettings).values(data);
+  }
 }
 
 // ─── Dashboard Stats ─────────────────────────────────────────────────────────

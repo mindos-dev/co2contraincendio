@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `notification_settings` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`companyId` int NOT NULL,\n\t`emailEnabled` boolean NOT NULL DEFAULT false,\n\t`whatsappEnabled` boolean NOT NULL DEFAULT false,\n\t`emailRecipients` text,\n\t`whatsappNumbers` text,\n\t`daysBeforeAlert` int NOT NULL DEFAULT 30,\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `notification_settings_id` PRIMARY KEY(`id`)\n);\nALTER TABLE `notification_settings` ADD CONSTRAINT `notification_settings_companyId_saas_companies_id_fk` FOREIGN KEY (`companyId`) REFERENCES `saas_companies`(`id`) ON DELETE no action ON UPDATE no action;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user FBVYUKsGMSjugUr.47dec1c92c22 --database TyJduRRrx582jr9b7ycCdJ --execute CREATE TABLE `notification_settings` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`companyId` int NOT NULL,\n\t`emailEnabled` boolean NOT NULL DEFAULT false,\n\t`whatsappEnabled` boolean NOT NULL DEFAULT false,\n\t`emailRecipients` text,\n\t`whatsappNumbers` text,\n\t`daysBeforeAlert` int NOT NULL DEFAULT 30,\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `notification_settings_id` PRIMARY KEY(`id`)\n);\nALTER TABLE `notification_settings` ADD CONSTRAINT `notification_settings_companyId_saas_companies_id_fk` FOREIGN KEY (`companyId`) REFERENCES `saas_companies`(`id`) ON DELETE no action ON UPDATE no action;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1666
+}

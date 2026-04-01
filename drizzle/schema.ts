@@ -198,3 +198,17 @@ export const alertEvents = mysqlTable("alert_events", {
 });
 export type AlertEvent = typeof alertEvents.$inferSelect;
 export type InsertAlertEvent = typeof alertEvents.$inferInsert;
+
+// ─── Configurações de Notificação ─────────────────────────────────────────────
+export const notificationSettings = mysqlTable("notification_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  emailEnabled: boolean("emailEnabled").default(false).notNull(),
+  whatsappEnabled: boolean("whatsappEnabled").default(false).notNull(),
+  emailRecipients: text("emailRecipients"),    // JSON array de e-mails
+  whatsappNumbers: text("whatsappNumbers"),    // JSON array de números
+  daysBeforeAlert: int("daysBeforeAlert").default(30).notNull(), // dias antes do vencimento
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type NotificationSettings = typeof notificationSettings.$inferSelect;
+export type InsertNotificationSettings = typeof notificationSettings.$inferInsert;
