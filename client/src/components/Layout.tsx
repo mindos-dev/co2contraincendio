@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* WhatsApp float */}
       <a
-        href="https://wa.me/5531973581278?text=Olá! Gostaria de solicitar um orçamento."
+        href="https://wa.me/5531997383115?text=Olá! Gostaria de solicitar um orçamento."
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float"

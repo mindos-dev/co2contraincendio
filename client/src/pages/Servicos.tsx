@@ -158,7 +158,7 @@ export default function Servicos() {
           <p style={{ color: "rgba(255,255,255,0.82)", maxWidth: "520px", margin: "0 auto 2rem", lineHeight: 1.75 }}>Entre em contato com nossa equipe técnica. Analisamos seu caso e apresentamos a solução mais adequada para sua necessidade.</p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/contato" className="btn-outline-white">Solicitar Orçamento <ArrowRight size={14} /></Link>
-            <a href="https://wa.me/5531973581278" target="_blank" rel="noopener noreferrer" className="btn-outline-white">WhatsApp</a>
+            <a href="https://wa.me/5531997383115" target="_blank" rel="noopener noreferrer" className="btn-outline-white">WhatsApp</a>
           </div>
         </div>
       </section>

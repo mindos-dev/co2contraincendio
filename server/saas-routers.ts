@@ -5,6 +5,16 @@ import QRCode from "qrcode";
 import { z } from "zod";
 import { router, publicProcedure } from "./_core/trpc";
 import {
+  searchOperis,
+  getChunksByModule,
+  getChunksByType,
+  getPendingItems,
+  getSystemStatus,
+  ingestChunk,
+  type KnowledgeModule,
+  type KnowledgeChunkType,
+} from "./operis-knowledge";
+import {
   acknowledgeAlert,
   createAccessLog,
   createAlertEvent,
@@ -585,5 +595,63 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
         })).min(1).max(500),
       }))
       .mutation(({ input }) => importCompaniesFromCsv(input.rows)),
+  }),
+
+  // ── OPERIS KNOWLEDGE LAYER ─────────────────────────────────────────────────
+  knowledge: router({
+    /** Busca semântica no knowledge base do OPERIS */
+    search: saasAuthProcedure
+      .input(z.object({
+        query: z.string().min(2).max(200),
+        limit: z.number().min(1).max(20).default(8),
+      }))
+      .query(({ input }) => searchOperis(input.query, input.limit)),
+
+    /** Retorna chunks por módulo */
+    byModule: saasAuthProcedure
+      .input(z.object({ module: z.string() }))
+      .query(({ input }) => getChunksByModule(input.module as KnowledgeModule)),
+
+    /** Retorna chunks por tipo */
+    byType: saasAuthProcedure
+      .input(z.object({ type: z.string() }))
+      .query(({ input }) => getChunksByType(input.type as KnowledgeChunkType)),
+
+    /** Retorna todos os itens pendentes ou com erro (por prioridade) */
+    pending: saasAuthProcedure
+      .query(() => getPendingItems()),
+
+    /** Retorna o status geral do sistema */
+    systemStatus: saasAuthProcedure
+      .query(() => getSystemStatus()),
+
+    /** Ingere um novo chunk no knowledge base */
+    ingest: saasAdminProcedure
+      .input(z.object({
+        id: z.string(),
+        module: z.string(),
+        type: z.string(),
+        title: z.string().min(3).max(200),
+        content: z.string().min(10).max(5000),
+        keywords: z.array(z.string()).min(1).max(30),
+        relatedModules: z.array(z.string()).default([]),
+        status: z.enum(["done", "pending", "error", "partial"]).default("pending"),
+        priority: z.enum(["critical", "high", "medium", "low"]).default("medium"),
+        suggestedActions: z.array(z.string()).optional(),
+      }))
+      .mutation(({ input }) =>
+        ingestChunk({
+          id: input.id,
+          module: input.module as KnowledgeModule,
+          type: input.type as KnowledgeChunkType,
+          title: input.title,
+          content: input.content,
+          keywords: input.keywords,
+          relatedModules: input.relatedModules as KnowledgeModule[],
+          status: input.status,
+          priority: input.priority,
+          suggestedActions: input.suggestedActions,
+        })
+      ),
   }),
 });

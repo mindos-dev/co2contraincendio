@@ -39,10 +39,10 @@ export default function Navbar() {
             Atendemos Belo Horizonte, Minas Gerais e todo o Brasil
           </span>
           <a
-            href="tel:+5531973581278"
+            href="tel:+5531997383115"
             style={{ color: "#fff", fontSize: "0.75rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.35rem" }}
           >
-            <Phone size={12} /> (31) 97358-1278
+            <Phone size={12} /> (31) 9 9738-3115
           </a>
         </div>
       </div>

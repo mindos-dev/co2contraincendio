@@ -38,7 +38,7 @@ export default function Footer() {
           </div>
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
             <Link href="/contato" className="btn-outline-white">Solicitar Orçamento</Link>
-            <a href="https://wa.me/5531973581278" target="_blank" rel="noopener noreferrer" className="btn-outline-white">
+            <a href="https://wa.me/5531997383115" target="_blank" rel="noopener noreferrer" className="btn-outline-white">
               WhatsApp
             </a>
           </div>
@@ -140,20 +140,20 @@ export default function Footer() {
               </li>
               <li style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
                 <Phone size={15} style={{ color: "var(--red)", flexShrink: 0 }} />
-                <a href="tel:+5531973581278" style={{ color: "var(--gray-400)", fontSize: "0.8125rem", transition: "color 0.18s" }}
+                <a href="tel:+5531997383115" style={{ color: "var(--gray-400)", fontSize: "0.8125rem", transition: "color 0.18s" }}
                   onMouseEnter={(e) => { (e.target as HTMLElement).style.color = "#fff"; }}
                   onMouseLeave={(e) => { (e.target as HTMLElement).style.color = "var(--gray-400)"; }}
                 >
-                  (31) 97358-1278
+                  (31) 9 9738-3115
                 </a>
               </li>
               <li style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
                 <Mail size={15} style={{ color: "var(--red)", flexShrink: 0 }} />
-                <a href="mailto:contato@co2contra.comm" style={{ color: "var(--gray-400)", fontSize: "0.8125rem", transition: "color 0.18s" }}
+                <a href="mailto:co2contraincendio@gmail.com" style={{ color: "var(--gray-400)", fontSize: "0.8125rem", transition: "color 0.18s" }}
                   onMouseEnter={(e) => { (e.target as HTMLElement).style.color = "#fff"; }}
                   onMouseLeave={(e) => { (e.target as HTMLElement).style.color = "var(--gray-400)"; }}
                 >
-                  contato@co2contra.comm
+                  co2contraincendio@gmail.com
                 </a>
               </li>
             </ul>

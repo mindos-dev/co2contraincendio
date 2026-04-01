@@ -33,7 +33,7 @@ export default function QuemSomos() {
         "name": "CO₂ Contra Incêndio",
         "description": "Empresa especializada em sistemas de prevenção e combate a incêndios em Belo Horizonte e Minas Gerais.",
         "url": "https://co2contra.com",
-        "telephone": "+55-31-97358-1278",
+        "telephone": "+55-31-9 9738-3115",
         "address": { "@type": "PostalAddress", "addressLocality": "Belo Horizonte", "addressRegion": "MG", "addressCountry": "BR" },
         "foundingDate": "2008",
         "areaServed": { "@type": "Country", "name": "Brasil" },

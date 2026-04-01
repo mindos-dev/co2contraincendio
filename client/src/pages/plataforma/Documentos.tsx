@@ -3,7 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { useSaasAuth } from "@/contexts/SaasAuthContext";
 import SaasDashboardLayout from "@/components/SaasDashboardLayout";
 
-type DocFile = { name: string; text: string; status: "pending" | "processing" | "done" | "error"; result?: Record<string, unknown>; error?: string };
+type DocFile = { name: string; text: string; base64: string; mimeType: string; status: "pending" | "processing" | "done" | "error"; result?: Record<string, unknown>; error?: string };
 
 export default function Documentos() {
   const { user } = useSaasAuth();
@@ -16,21 +16,31 @@ export default function Documentos() {
   const uploadMutation = trpc.saas.documents.uploadMultiple.useMutation();
   const processLlmMutation = trpc.saas.documents.processWithLlm.useMutation();
 
-  const readFileText = (file: File): Promise<string> => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = e => resolve(e.target?.result as string ?? "");
-    reader.onerror = reject;
-    reader.readAsText(file);
-  });
+  /** Lê qualquer arquivo como DataURL (base64) — suporta PDF, imagens e texto */
+  const readFileAsDataUrl = (file: File): Promise<{ base64: string; text: string; mimeType: string }> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const dataUrl = e.target?.result as string ?? "";
+        const base64 = dataUrl.includes(",") ? dataUrl.split(",")[1] : dataUrl;
+        const mimeType = file.type || (file.name.endsWith(".pdf") ? "application/pdf" : "application/octet-stream");
+        // Para texto puro decodifica; para PDF/binário usa placeholder para o LLM
+        let text = "";
+        try { text = mimeType.startsWith("text/") ? atob(base64) : `[Arquivo: ${file.name} (${mimeType})]`; } catch { text = `[${file.name}]`; }
+        resolve({ base64, text, mimeType });
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
 
   const addFiles = async (fileList: FileList) => {
     const newFiles: DocFile[] = [];
     for (const f of Array.from(fileList)) {
       try {
-        const text = await readFileText(f);
-        newFiles.push({ name: f.name, text, status: "pending" });
+        const { base64, text, mimeType } = await readFileAsDataUrl(f);
+        newFiles.push({ name: f.name, text, base64, mimeType, status: "pending" });
       } catch {
-        newFiles.push({ name: f.name, text: "", status: "error", error: "Erro ao ler arquivo" });
+        newFiles.push({ name: f.name, text: "", base64: "", mimeType: "application/octet-stream", status: "error", error: "Erro ao ler arquivo" });
       }
     }
     setFiles(prev => [...prev, ...newFiles]);
@@ -41,9 +51,13 @@ export default function Documentos() {
     for (const file of pending) {
       setFiles(prev => prev.map(f => f.name === file.name ? { ...f, status: "processing" as const } : f));
       try {
+        const docType = file.mimeType === "application/pdf" ? "laudo"
+          : file.name.toLowerCase().includes("nf") || file.name.toLowerCase().includes("nota") ? "nota_fiscal"
+          : file.name.toLowerCase().includes("os") || file.name.toLowerCase().includes("ordem") ? "ordem_servico"
+          : "outro";
         const uploaded = await uploadMutation.mutateAsync({
           companyId: companyId ?? 0,
-          files: [{ name: file.name, base64: btoa(unescape(encodeURIComponent(file.text))), mimeType: "text/plain", type: "outro" }],
+          files: [{ name: file.name, base64: file.base64, mimeType: file.mimeType, type: docType }],
         });
         const docId = (uploaded.results[0] as { documentId?: number })?.documentId;
         let result: Record<string, unknown> = { uploaded: true };

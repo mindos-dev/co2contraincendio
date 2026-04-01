@@ -108,7 +108,7 @@ export default function Home() {
     "name": "CO\u2082 Contra Inc\u00eandio",
     "description": "Especialistas em sistemas fixos de combate a inc\u00eandio: supress\u00e3o por CO\u2082, saponificante para coifas, hidrantes, alarmes e detectores em Belo Horizonte e todo o Brasil.",
     "url": "https://co2contra.com",
-    "telephone": "+55-31-97358-1278",
+    "telephone": "+55-31-9 9738-3115",
     "email": "co2contraincendio@gmail.com",
     "address": {
       "@type": "PostalAddress",
@@ -350,7 +350,7 @@ export default function Home() {
           <p style={{ color:"rgba(255,255,255,0.82)", maxWidth:"560px", margin:"0 auto 2.5rem", lineHeight:1.75 }}>Entre em contato com nossa equipe técnica. Atendemos Belo Horizonte, Minas Gerais e todo o Brasil com rigor técnico, rapidez e conformidade normativa.</p>
           <div style={{ display:"flex", gap:"1rem", justifyContent:"center", flexWrap:"wrap" }}>
             <Link href="/contato" className="btn-outline-white">Solicitar Orçamento <ArrowRight size={14} /></Link>
-            <a href="https://wa.me/5531973581278" target="_blank" rel="noopener noreferrer" className="btn-outline-white">WhatsApp</a>
+            <a href="https://wa.me/5531997383115" target="_blank" rel="noopener noreferrer" className="btn-outline-white">WhatsApp</a>
           </div>
         </div>
       </section>

@@ -556,7 +556,7 @@ export default function BlogPost() {
                 <p style={{ color: "rgba(255,255,255,0.82)", lineHeight: 1.75, marginBottom: "1.5rem" }}>Nossa equipe técnica está pronta para avaliar sua necessidade e apresentar a solução mais adequada.</p>
                 <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                   <Link href="/contato" className="btn-outline-white">Solicitar Orçamento <ArrowRight size={14} /></Link>
-                  <a href="https://wa.me/5531973581278" target="_blank" rel="noopener noreferrer" className="btn-outline-white">WhatsApp</a>
+                  <a href="https://wa.me/5531997383115" target="_blank" rel="noopener noreferrer" className="btn-outline-white">WhatsApp</a>
                 </div>
               </div>
             </div>

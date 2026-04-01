@@ -2,17 +2,31 @@ import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "../components/Layout";
 import SEOHead from "../components/SEOHead";
-import { Phone, Mail, MapPin, Clock, ArrowRight, CheckCircle } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 export default function Contato() {
   const [form, setForm] = useState({ nome: "", empresa: "", telefone: "", email: "", servico: "", mensagem: "" });
   const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  const submitMutation = trpc.orcamento.submit.useMutation({
+    onSuccess: () => { setSent(true); setFormError(""); },
+    onError: (e) => { setFormError(e.message || "Erro ao enviar. Tente novamente ou use o WhatsApp."); },
+  });
+  const loading = submitMutation.isPending;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => { setLoading(false); setSent(true); }, 1200);
+    setFormError("");
+    submitMutation.mutate({
+      nome: form.nome,
+      telefone: form.telefone,
+      email: form.email || undefined,
+      empresa: form.empresa || undefined,
+      servico: form.servico || "Não informado",
+      mensagem: form.mensagem || undefined,
+    });
   };
 
   const services = [
@@ -46,8 +60,8 @@ export default function Contato() {
         "mainEntity": {
           "@type": "LocalBusiness",
           "name": "CO₂ Contra Incêndio",
-          "telephone": "+55-31-97358-1278",
-          "email": "contato@co2contra.comm",
+          "telephone": "+55-31-9 9738-3115",
+          "email": "co2contraincendio@gmail.com",
           "address": { "@type": "PostalAddress", "addressLocality": "Belo Horizonte", "addressRegion": "MG", "addressCountry": "BR" }
         }
       })}} />
@@ -85,7 +99,7 @@ export default function Contato() {
                   <CheckCircle size={40} style={{ color: "var(--red)", margin: "0 auto 1rem" }} />
                   <h3 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "1.375rem", color: "var(--gray-900)", marginBottom: "0.75rem" }}>Mensagem enviada!</h3>
                   <p style={{ color: "var(--gray-600)", lineHeight: 1.75 }}>Nossa equipe técnica entrará em contato em até 24 horas. Você também pode nos chamar pelo WhatsApp para atendimento imediato.</p>
-                  <a href="https://wa.me/5531973581278" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ marginTop: "1.5rem", display: "inline-flex" }}>Chamar no WhatsApp</a>
+                  <a href="https://wa.me/5531997383115" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ marginTop: "1.5rem", display: "inline-flex" }}>Chamar no WhatsApp</a>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -102,7 +116,7 @@ export default function Contato() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                     <div>
                       <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--gray-700)", marginBottom: "0.35rem" }}>Telefone / WhatsApp *</label>
-                      <input required value={form.telefone} onChange={e => setForm({ ...form, telefone: e.target.value })} placeholder="(31) 97358-1278" style={{ width: "100%", padding: "0.75rem 1rem", border: "1.5px solid var(--gray-200)", fontSize: "0.9375rem", outline: "none", background: "#fff", boxSizing: "border-box" }} onFocus={e => e.target.style.borderColor = "var(--red)"} onBlur={e => e.target.style.borderColor = "var(--gray-200)"} />
+                      <input required value={form.telefone} onChange={e => setForm({ ...form, telefone: e.target.value })} placeholder="(31) 9 9738-3115" style={{ width: "100%", padding: "0.75rem 1rem", border: "1.5px solid var(--gray-200)", fontSize: "0.9375rem", outline: "none", background: "#fff", boxSizing: "border-box" }} onFocus={e => e.target.style.borderColor = "var(--red)"} onBlur={e => e.target.style.borderColor = "var(--gray-200)"} />
                     </div>
                     <div>
                       <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--gray-700)", marginBottom: "0.35rem" }}>E-mail</label>
@@ -120,6 +134,12 @@ export default function Contato() {
                     <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--gray-700)", marginBottom: "0.35rem" }}>Mensagem *</label>
                     <textarea required value={form.mensagem} onChange={e => setForm({ ...form, mensagem: e.target.value })} placeholder="Descreva sua necessidade: tipo de estabelecimento, área aproximada, urgência..." rows={5} style={{ width: "100%", padding: "0.75rem 1rem", border: "1.5px solid var(--gray-200)", fontSize: "0.9375rem", outline: "none", background: "#fff", resize: "vertical", boxSizing: "border-box" }} onFocus={e => e.target.style.borderColor = "var(--red)"} onBlur={e => e.target.style.borderColor = "var(--gray-200)"} />
                   </div>
+                  {formError && (
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "#FEF2F2", border: "1px solid #FECACA", padding: "0.75rem 1rem", color: "#B91C1C", fontSize: "0.875rem" }}>
+                      <AlertCircle size={16} />
+                      <span>{formError}</span>
+                    </div>
+                  )}
                   <button type="submit" disabled={loading} className="btn-primary" style={{ justifyContent: "center", opacity: loading ? 0.7 : 1 }}>
                     {loading ? "Enviando..." : <><span>Enviar Mensagem</span> <ArrowRight size={14} /></>}
                   </button>
@@ -136,8 +156,8 @@ export default function Contato() {
 
               <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", marginBottom: "2.5rem" }}>
                 {[
-                  { icon: <Phone size={18} />, title: "Telefone / WhatsApp", lines: ["(31) 97358-1278", "Atendimento imediato via WhatsApp"] },
-                  { icon: <Mail size={18} />, title: "E-mail", lines: ["contato@co2contra.comm", "Respondemos em até 24 horas"] },
+                  { icon: <Phone size={18} />, title: "Telefone / WhatsApp", lines: ["(31) 9 9738-3115", "Atendimento imediato via WhatsApp"] },
+                  { icon: <Mail size={18} />, title: "E-mail", lines: ["co2contraincendio@gmail.com", "Respondemos em até 24 horas"] },
                   { icon: <MapPin size={18} />, title: "Localização", lines: ["Belo Horizonte — MG", "Atendemos todo o Brasil"] },
                   { icon: <Clock size={18} />, title: "Horário de Atendimento", lines: ["Segunda a Sexta: 8h às 18h", "Sábado: 8h às 12h"] },
                 ].map(c => (
@@ -151,7 +171,7 @@ export default function Contato() {
                 ))}
               </div>
 
-              <a href="https://wa.me/5531973581278?text=Olá! Preciso de um orçamento para sistema de incêndio." target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
+              <a href="https://wa.me/5531997383115?text=Olá! Preciso de um orçamento para sistema de incêndio." target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
                 Chamar no WhatsApp <ArrowRight size={14} />
               </a>
 

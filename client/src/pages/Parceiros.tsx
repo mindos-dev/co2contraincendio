@@ -12,7 +12,7 @@ const schemaJson = {
   "provider": {
     "@type": "LocalBusiness",
     "name": "CO₂ Contra Incêndio",
-    "telephone": "+55-31-97358-1278",
+    "telephone": "+55-31-9 9738-3115",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Belo Horizonte",
@@ -168,7 +168,7 @@ export default function Parceiros() {
           </p>
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
             <Link href="/contato" className="btn-primary">Solicitar Orçamento <ArrowRight size={14} /></Link>
-            <a href="https://wa.me/5531973581278?text=Olá! Gostaria de informações sobre os equipamentos." target="_blank" rel="noopener noreferrer" className="btn-outline-white">WhatsApp</a>
+            <a href="https://wa.me/5531997383115?text=Olá! Gostaria de informações sobre os equipamentos." target="_blank" rel="noopener noreferrer" className="btn-outline-white">WhatsApp</a>
           </div>
         </div>
       </section>
@@ -179,8 +179,8 @@ export default function Parceiros() {
           <span style={{ color: "#fff", fontSize: "0.9375rem", fontWeight: 600 }}>
             Equipamentos originais com garantia de fabricante — Atendemos BH e todo o Brasil
           </span>
-          <a href="tel:+5531973581278" style={{ color: "#fff", fontSize: "0.875rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.4rem" }}>
-            <Phone size={14} /> (31) 97358-1278
+          <a href="tel:+5531997383115" style={{ color: "#fff", fontSize: "0.875rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <Phone size={14} /> (31) 9 9738-3115
           </a>
         </div>
       </div>
@@ -404,7 +404,7 @@ export default function Parceiros() {
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/contato" className="btn-primary">Solicitar Orçamento <ArrowRight size={14} /></Link>
-            <a href="https://wa.me/5531973581278?text=Olá! Gostaria de informações sobre equipamentos de incêndio." target="_blank" rel="noopener noreferrer" className="btn-outline-white">
+            <a href="https://wa.me/5531997383115?text=Olá! Gostaria de informações sobre equipamentos de incêndio." target="_blank" rel="noopener noreferrer" className="btn-outline-white">
               WhatsApp
             </a>
           </div>
