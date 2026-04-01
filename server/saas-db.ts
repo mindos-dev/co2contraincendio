@@ -350,3 +350,164 @@ export async function getDashboardStats(companyId?: number) {
     byCategory: byCategory.map(r => ({ category: r.category, count: Number(r.count) })),
   };
 }
+
+// ─── Reports ─────────────────────────────────────────────────────────────────
+
+export async function getUsageReport() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const today = new Date().toISOString().split("T")[0];
+  const in30days = new Date(Date.now() + 30 * 86400000).toISOString().split("T")[0];
+  const in90days = new Date(Date.now() + 90 * 86400000).toISOString().split("T")[0];
+
+  const [
+    totalCompanies, activeCompanies,
+    totalEquipment, expiredEquipment, expiringEquipment,
+    totalMaintenance, totalDocuments, totalAlerts, unacknowledgedAlerts,
+    equipmentByCategory, equipmentByStatus, maintenanceByType,
+    recentAlerts, companiesWithEquipment,
+  ] = await Promise.all([
+    db.select({ count: sql<number>`count(*)` }).from(saasCompanies),
+    db.select({ count: sql<number>`count(*)` }).from(saasCompanies).where(eq(saasCompanies.active, true)),
+    db.select({ count: sql<number>`count(*)` }).from(equipment),
+    db.select({ count: sql<number>`count(*)` }).from(equipment).where(sql`${equipment.nextMaintenanceDate} < ${today}`),
+    db.select({ count: sql<number>`count(*)` }).from(equipment).where(
+      and(sql`${equipment.nextMaintenanceDate} >= ${today}`, sql`${equipment.nextMaintenanceDate} <= ${in30days}`)
+    ),
+    db.select({ count: sql<number>`count(*)` }).from(maintenanceRecords),
+    db.select({ count: sql<number>`count(*)` }).from(documents),
+    db.select({ count: sql<number>`count(*)` }).from(alertEvents),
+    db.select({ count: sql<number>`count(*)` }).from(alertEvents).where(eq(alertEvents.acknowledged, false)),
+    db.select({ category: equipment.category, count: sql<number>`count(*)` }).from(equipment).groupBy(equipment.category),
+    db.select({ status: equipment.status, count: sql<number>`count(*)` }).from(equipment).groupBy(equipment.status),
+    db.select({ serviceType: maintenanceRecords.serviceType, count: sql<number>`count(*)` }).from(maintenanceRecords).groupBy(maintenanceRecords.serviceType),
+    db.select().from(alertEvents).orderBy(desc(alertEvents.sentAt)).limit(10),
+    db.select({
+      companyId: equipment.companyId,
+      total: sql<number>`count(*)`,
+      expired: sql<number>`sum(case when ${equipment.nextMaintenanceDate} < ${today} then 1 else 0 end)`,
+      expiring: sql<number>`sum(case when ${equipment.nextMaintenanceDate} >= ${today} and ${equipment.nextMaintenanceDate} <= ${in90days} then 1 else 0 end)`,
+    }).from(equipment).groupBy(equipment.companyId),
+  ]);
+
+  return {
+    summary: {
+      totalCompanies: Number(totalCompanies[0]?.count ?? 0),
+      activeCompanies: Number(activeCompanies[0]?.count ?? 0),
+      totalEquipment: Number(totalEquipment[0]?.count ?? 0),
+      expiredEquipment: Number(expiredEquipment[0]?.count ?? 0),
+      expiringEquipment: Number(expiringEquipment[0]?.count ?? 0),
+      okEquipment: Number(totalEquipment[0]?.count ?? 0) - Number(expiredEquipment[0]?.count ?? 0) - Number(expiringEquipment[0]?.count ?? 0),
+      totalMaintenance: Number(totalMaintenance[0]?.count ?? 0),
+      totalDocuments: Number(totalDocuments[0]?.count ?? 0),
+      totalAlerts: Number(totalAlerts[0]?.count ?? 0),
+      unacknowledgedAlerts: Number(unacknowledgedAlerts[0]?.count ?? 0),
+    },
+    equipmentByCategory: equipmentByCategory.map(r => ({ category: r.category ?? "N/A", count: Number(r.count) })),
+    equipmentByStatus: equipmentByStatus.map(r => ({ status: r.status ?? "N/A", count: Number(r.count) })),
+    maintenanceByType: maintenanceByType.map(r => ({ type: r.serviceType ?? "N/A", count: Number(r.count) })),
+    recentAlerts,
+    companiesWithEquipment: companiesWithEquipment.map(r => ({
+      companyId: r.companyId,
+      total: Number(r.total ?? 0),
+      expired: Number(r.expired ?? 0),
+      expiring: Number(r.expiring ?? 0),
+    })),
+    generatedAt: new Date().toISOString(),
+  };
+}
+
+export async function getCompanyReport(companyId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const today = new Date().toISOString().split("T")[0];
+  const in30days = new Date(Date.now() + 30 * 86400000).toISOString().split("T")[0];
+
+  const [company, allEquipment, allMaintenance, allAlerts, allDocs, subscription] = await Promise.all([
+    db.select().from(saasCompanies).where(eq(saasCompanies.id, companyId)).limit(1),
+    db.select().from(equipment).where(eq(equipment.companyId, companyId)).orderBy(equipment.code),
+    db.select().from(maintenanceRecords)
+      .innerJoin(equipment, eq(maintenanceRecords.equipmentId, equipment.id))
+      .where(eq(equipment.companyId, companyId))
+      .orderBy(desc(maintenanceRecords.serviceDate)).limit(50),
+    db.select().from(alertEvents).where(eq(alertEvents.companyId, companyId)).orderBy(desc(alertEvents.sentAt)).limit(20),
+    db.select().from(documents).where(eq(documents.companyId, companyId)).orderBy(desc(documents.createdAt)).limit(20),
+    db.select().from(subscriptions).where(eq(subscriptions.companyId, companyId)).limit(1),
+  ]);
+
+  const expired = allEquipment.filter(e => e.nextMaintenanceDate && e.nextMaintenanceDate.toISOString().split("T")[0] < today);
+  const expiring = allEquipment.filter(e => {
+    const d = e.nextMaintenanceDate?.toISOString().split("T")[0];
+    return d && d >= today && d <= in30days;
+  });
+
+  return {
+    company: company[0] ?? null,
+    subscription: subscription[0] ?? null,
+    equipment: {
+      all: allEquipment,
+      total: allEquipment.length,
+      expired: expired.length,
+      expiring: expiring.length,
+      ok: allEquipment.length - expired.length - expiring.length,
+      byCategory: allEquipment.reduce((acc, e) => {
+        const cat = e.category ?? "N/A";
+        acc[cat] = (acc[cat] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+    },
+    recentMaintenance: allMaintenance,
+    recentAlerts: allAlerts,
+    recentDocuments: allDocs,
+    generatedAt: new Date().toISOString(),
+  };
+}
+
+// ─── Import Companies from CSV ───────────────────────────────────────────────
+
+export async function importCompaniesFromCsv(rows: Array<{
+  name: string;
+  cnpj?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  type?: string;
+}>) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+
+  const results: Array<{ name: string; status: "created" | "skipped"; id?: number }> = [];
+
+  for (const row of rows) {
+    if (!row.name?.trim()) {
+      results.push({ name: row.name ?? "(vazio)", status: "skipped" });
+      continue;
+    }
+    try {
+      const existing = await db.select({ id: saasCompanies.id })
+        .from(saasCompanies).where(eq(saasCompanies.name, row.name.trim())).limit(1);
+
+      if (existing.length > 0) {
+        results.push({ name: row.name, status: "skipped", id: existing[0].id });
+        continue;
+      }
+
+      const inserted = await db.insert(saasCompanies).values({
+        name: row.name.trim(),
+        cnpj: row.cnpj?.trim() ?? null,
+        email: row.email?.trim() ?? null,
+        phone: row.phone?.trim() ?? null,
+        address: row.address?.trim() ?? null,
+        type: (row.type?.trim() as "shopping" | "industria" | "comercio" | "residencial" | "outro") ?? "comercio",
+        active: true,
+      });
+      results.push({ name: row.name, status: "created", id: Number((inserted as { insertId?: number }).insertId ?? 0) });
+    } catch {
+      results.push({ name: row.name, status: "skipped" });
+    }
+  }
+
+  return results;
+}

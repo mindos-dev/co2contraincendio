@@ -34,6 +34,7 @@ import Alertas from "./pages/plataforma/Alertas";
 import Documentos from "./pages/plataforma/Documentos";
 import Notificacoes from "./pages/plataforma/Notificacoes";
 import Clientes from "./pages/plataforma/Clientes";
+import Relatorios from "./pages/plataforma/Relatorios";
 function Router() {
   return (
     <Switch>
@@ -70,6 +71,7 @@ function Router() {
       <Route path="/app/documentos" component={Documentos} />
        <Route path="/app/notificacoes" component={Notificacoes} />
       <Route path="/app/clientes" component={Clientes} />
+      <Route path="/app/relatorios" component={Relatorios} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -13,6 +13,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Documentos", path: "/app/documentos", icon: "📄" },
   { label: "Notificações", path: "/app/notificacoes", icon: "🔔" },
   { label: "Clientes", path: "/app/clientes", icon: "🏢", adminOnly: true },
+  { label: "Relatórios", path: "/app/relatorios", icon: "📊", adminOnly: true },
 ];
 
 export default function SaasDashboardLayout({ children }: { children: React.ReactNode }) {

@@ -84,3 +84,13 @@
 - [x] Frontend: botão "Testar notificação" para validar configuração
 - [x] Secrets: EVOLUTION_API_URL, EVOLUTION_API_KEY, EVOLUTION_INSTANCE (aguardando credenciais do usuário)
 - [x] Secrets: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM (aguardando credenciais do usuário)
+
+## Sprint 4 — Relatório de Uso + Módulo de Clientes Expandido
+
+- [x] Backend: endpoint saas.reports.usage — estatísticas gerais da plataforma
+- [x] Backend: endpoint saas.reports.company — relatório detalhado por empresa
+- [x] Backend: endpoint saas.reports.exportUsageCsv — exportação CSV da plataforma
+- [x] Backend: endpoint saas.importCompanies.fromCsv — importação em lote via CSV
+- [x] Frontend: página /app/relatorios com estatísticas, gráficos de barras e exportação CSV
+- [x] Frontend: Clientes.tsx expandido com painel de detalhes, relatório por cliente, importação CSV e busca
+- [x] Rota /app/relatorios registrada no App.tsx e no menu lateral (adminOnly)

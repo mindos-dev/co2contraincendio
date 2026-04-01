@@ -39,6 +39,9 @@ import {
   updateDocumentStatus,
   updateEquipment,
   upsertNotificationSettings,
+  getUsageReport,
+  getCompanyReport,
+  importCompaniesFromCsv,
 } from "./saas-db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
@@ -523,11 +526,10 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
       }),
   }),
 
-  subscriptions: router({
+   subscriptions: router({
     get: saasAuthProcedure
       .input(z.object({ companyId: z.number() }))
       .query(({ input }) => getSubscriptionByCompany(input.companyId)),
-
     create: saasAdminProcedure
       .input(z.object({
         companyId: z.number(),
@@ -541,5 +543,47 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
         if (input.endDate) data.endDate = new Date(input.endDate);
         return createSubscription(data as Parameters<typeof createSubscription>[0]);
       }),
+  }),
+
+  reports: router({
+    usage: saasAdminProcedure.query(() => getUsageReport()),
+
+    company: saasAuthProcedure
+      .input(z.object({ companyId: z.number() }))
+      .query(({ input }) => getCompanyReport(input.companyId)),
+
+    exportUsageCsv: saasAdminProcedure.query(async () => {
+      const report = await getUsageReport();
+      if (!report) return { csv: "" };
+      const rows = [
+        { metrica: "Total de Empresas", valor: report.summary.totalCompanies },
+        { metrica: "Empresas Ativas", valor: report.summary.activeCompanies },
+        { metrica: "Total de Equipamentos", valor: report.summary.totalEquipment },
+        { metrica: "Equipamentos OK", valor: report.summary.okEquipment },
+        { metrica: "Equipamentos Vencendo (30d)", valor: report.summary.expiringEquipment },
+        { metrica: "Equipamentos Vencidos", valor: report.summary.expiredEquipment },
+        { metrica: "Total de Manutenções", valor: report.summary.totalMaintenance },
+        { metrica: "Total de Documentos", valor: report.summary.totalDocuments },
+        { metrica: "Total de Alertas", valor: report.summary.totalAlerts },
+        { metrica: "Alertas Pendentes", valor: report.summary.unacknowledgedAlerts },
+        { metrica: "Gerado em", valor: report.generatedAt },
+      ];
+      return { csv: buildCsv(rows as Record<string, unknown>[]) };
+    }),
+  }),
+
+  importCompanies: router({
+    fromCsv: saasAdminProcedure
+      .input(z.object({
+        rows: z.array(z.object({
+          name: z.string(),
+          cnpj: z.string().optional(),
+          email: z.string().optional(),
+          phone: z.string().optional(),
+          address: z.string().optional(),
+          type: z.string().optional(),
+        })).min(1).max(500),
+      }))
+      .mutation(({ input }) => importCompaniesFromCsv(input.rows)),
   }),
 });
