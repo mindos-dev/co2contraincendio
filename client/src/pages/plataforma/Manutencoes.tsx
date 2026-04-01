@@ -22,6 +22,10 @@ export default function Manutencoes() {
     onSuccess: () => { setShowModal(false); setForm({ equipmentId: "", serviceType: "inspecao", serviceDate: "", description: "", technicianName: "", nextMaintenanceDate: "" }); void refetch(); },
     onError: (e: { message: string }) => setFormError(e.message),
   });
+  const [alertSuccess, setAlertSuccess] = useState<string | null>(null);
+  const triggerAlertMutation = trpc.saas.maintenance.triggerAlert.useMutation({
+    onSuccess: (data) => { setAlertSuccess(`Alerta criado para ${data.equipmentCode}`); setTimeout(() => setAlertSuccess(null), 4000); },
+  });
 
   return (
     <SaasDashboardLayout>
@@ -37,11 +41,16 @@ export default function Manutencoes() {
           </button>
         </div>
 
+        {alertSuccess && (
+          <div style={{ background: "#FFF7ED", border: "1px solid #FED7AA", padding: "10px 16px", marginBottom: 12, fontSize: 13, color: "#92400E", display: "flex", alignItems: "center", gap: 8 }}>
+            ⚠️ {alertSuccess}
+          </div>
+        )}
         <div style={{ background: "#fff", border: "1px solid #D8D8D8" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#111111" }}>
-                {["EQUIPAMENTO", "TIPO DE SERVIÇO", "DATA", "TÉCNICO", "PRÓX. MANUTENÇÃO", "DESCRIÇÃO"].map(h => (
+                {["EQUIPAMENTO", "TIPO DE SERVIÇO", "DATA", "TÉCNICO", "PRÓX. MANUTENÇÃO", "DESCRIÇÃO", "ALERTA"].map(h => (
                   <th key={h} style={{ padding: "11px 14px", textAlign: "left", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", color: "#D8D8D8" }}>{h}</th>
                 ))}
               </tr>
@@ -63,6 +72,15 @@ export default function Manutencoes() {
                   <td style={{ padding: "10px 14px", fontSize: 12, color: "#4A4A4A" }}>{m.technicianName ?? "—"}</td>
                   <td style={{ padding: "10px 14px", fontSize: 12, color: "#4A4A4A" }}>{m.nextMaintenanceDate ? String(m.nextMaintenanceDate).split("T")[0] : "—"}</td>
                   <td style={{ padding: "10px 14px", fontSize: 12, color: "#4A4A4A", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.description ?? "—"}</td>
+                  <td style={{ padding: "10px 14px" }}>
+                    <button
+                      onClick={() => triggerAlertMutation.mutate({ equipmentId: m.equipment ? (m as Maint & { equipmentId?: number }).equipmentId ?? 0 : 0, alertType: "sem_manutencao", message: `Alerta manual: ${m.equipment?.code ?? "equipamento"} — ${SERVICE_LABELS[m.serviceType ?? ""] ?? m.serviceType}` })}
+                      disabled={triggerAlertMutation.isPending}
+                      style={{ padding: "4px 10px", background: "transparent", border: "1px solid #D97706", color: "#D97706", fontSize: 10, fontWeight: 700, letterSpacing: "0.04em", cursor: "pointer", fontFamily: "inherit" }}
+                    >
+                      ⚠ ALERTAR
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

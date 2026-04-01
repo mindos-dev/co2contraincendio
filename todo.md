@@ -98,26 +98,26 @@
 ## OPERIS Intelligence Layer — Transformação da Plataforma
 
 ### Priority Zero — Correções Críticas
-- [ ] Corrigir e-mail co2contra.comm → co2contraincendio@gmail.com (Footer.tsx, Contato.tsx)
-- [ ] Corrigir telefone 97358-1278 → 9 9738-3115 (Contato.tsx, Footer.tsx, Navbar.tsx)
-- [ ] Conectar formulário de Contato ao endpoint trpc.orcamento.submit
+- [x] Corrigir e-mail co2contra.comm → co2contraincendio@gmail.com (Footer.tsx, Contato.tsx)
+- [x] Corrigir telefone 97358-1278 → 9 9738-3115 (Contato.tsx, Footer.tsx, Navbar.tsx)
+- [x] Conectar formulário de Contato ao endpoint trpc.orcamento.submit
 
 ### Knowledge Layer
-- [ ] Criar módulo server/operis-knowledge.ts com chunks JSON do memorial
-- [ ] Criar índice semântico com tags por módulo/tipo/keywords
-- [ ] Criar endpoint tRPC saas.knowledge.search (search_operis)
-- [ ] Criar endpoint tRPC saas.knowledge.ingest (ingestão de novos documentos)
+- [x] Criar módulo server/operis-knowledge.ts com chunks JSON do memorial
+- [x] Criar índice semântico com tags por módulo/tipo/keywords
+- [x] Criar endpoint tRPC saas.knowledge.search (search_operis)
+- [x] Criar endpoint tRPC saas.knowledge.ingest (ingeção de novos documentos)
 
 ### Module Connections
-- [ ] Conectar Equipamentos → QR system (link direto para /extintor/:code)
-- [ ] Conectar Manutenção → alert system (trigger manual de alerta)
-- [ ] Corrigir FileReader para readAsDataURL() em PDFs binários
-- [ ] Adicionar suporte a imagens (.jpg, .png) no upload de documentos
+- [x] Conectar Equipamentos → QR system (link direto para /extintor/:code)
+- [x] Conectar Manutenção → alert system (trigger manual de alerta)
+- [x] Corrigir FileReader para readAsDataURL() em PDFs binários
+- [x] Adicionar suporte a imagens (.jpg, .png) no upload de documentos
 
 ### QR Code Fix
-- [ ] Exibir imagem PNG do QR Code na página /app/qrcodes
-- [ ] Adicionar botão "Gerar QR" individual por equipamento
+- [x] Exibir imagem PNG do QR Code na página /app/qrcodes
+- [x] Adicionar botão "Gerar QR" individual por equipamento
 
 ### Intelligent Search UI
-- [ ] Criar página /app/busca com busca semântica sobre o knowledge base
-- [ ] Adicionar item "🔍 Busca Inteligente" no menu lateral do SaasDashboardLayout
+- [x] Criar página /app/busca com busca semântica sobre o knowledge base
+- [x] Adicionar item "🧠 Busca Inteligente" no menu lateral do SaasDashboardLayout

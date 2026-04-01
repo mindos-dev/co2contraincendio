@@ -95,10 +95,10 @@ export default function Documentos() {
           onClick={() => fileInputRef.current?.click()}
           style={{ border: `2px dashed ${dragging ? "#C8102E" : "#D8D8D8"}`, background: dragging ? "#FFF5F5" : "#FAFAFA", padding: "32px", textAlign: "center", cursor: "pointer", marginBottom: 20, transition: "all 0.15s" }}
         >
-          <input ref={fileInputRef} type="file" multiple accept=".txt,.pdf,.csv" style={{ display: "none" }} onChange={e => { if (e.target.files) void addFiles(e.target.files); e.target.value = ""; }} />
+          <input ref={fileInputRef} type="file" multiple accept=".txt,.pdf,.csv,.jpg,.jpeg,.png" style={{ display: "none" }} onChange={e => { if (e.target.files) void addFiles(e.target.files); e.target.value = ""; }} />
           <div style={{ fontSize: 32, marginBottom: 8 }}>📄</div>
           <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 16, letterSpacing: "0.04em", color: "#111111" }}>ARRASTE MÚLTIPLOS ARQUIVOS AQUI</div>
-          <div style={{ fontSize: 12, color: "#8A8A8A", marginTop: 6 }}>ou clique para selecionar — TXT, PDF, CSV — múltiplos arquivos de uma só vez</div>
+          <div style={{ fontSize: 12, color: "#8A8A8A", marginTop: 6 }}>ou clique para selecionar — TXT, PDF, CSV, JPG, PNG — múltiplos arquivos de uma só vez</div>
         </div>
 
         {files.length > 0 && (

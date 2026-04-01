@@ -384,6 +384,27 @@ export const saasRouter = router({
         }
         return createMaintenance(data as Parameters<typeof createMaintenance>[0]);
       }),
+
+    /** Trigger manual de alerta a partir de uma manutenção */
+    triggerAlert: saasAuthProcedure
+      .input(z.object({
+        equipmentId: z.number(),
+        alertType: z.enum(["vencido", "proximo_vencimento", "sem_manutencao"]),
+        message: z.string().min(5).max(500),
+        severity: z.enum(["critical", "warning", "info"]).default("warning"),
+      }))
+      .mutation(async ({ input }) => {
+        const equipment = await getEquipmentById(input.equipmentId);
+        if (!equipment) throw new TRPCError({ code: "NOT_FOUND", message: "Equipamento não encontrado" });
+        const alert = await createAlertEvent({
+          equipmentId: input.equipmentId,
+          alertType: input.alertType,
+          message: input.message,
+          sentAt: new Date(),
+          acknowledged: false,
+        });
+        return { success: true, alertId: (alert as { insertId?: number }).insertId, equipmentCode: equipment.code };
+      }),
   }),
 
   documents: router({
