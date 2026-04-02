@@ -104,7 +104,7 @@ export default function OperisLogo({
             marginTop: "1px",
           }}
         >
-          Inspeção e Laudos Inteligentes
+          Conformidade que protege. Tecnologia que comprova.
         </div>
       </div>
     </div>

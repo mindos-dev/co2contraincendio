@@ -106,6 +106,23 @@ export default function OperisHeroBanner() {
           {/* LOGO OPERIS IA */}
           <OperisLogo size="lg" dark animate style={{ marginBottom: "2rem" }} />
 
+          {/* Slogan */}
+          <p
+            style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 700,
+              fontSize: "clamp(1.1rem, 2vw, 1.4rem)",
+              color: "#ffffff",
+              letterSpacing: "0.03em",
+              textTransform: "uppercase",
+              marginBottom: "1rem",
+              lineHeight: 1.3,
+            }}
+          >
+            Conformidade que protege.
+            <span style={{ color: "#C8102E" }}> Tecnologia que comprova.</span>
+          </p>
+
           {/* Descrição */}
           <p
             style={{
