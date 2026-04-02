@@ -746,6 +746,43 @@ export default function SistemaSaponificante() {
         </div>
       </section>
 
+      {/* OPERIS INTEGRATION */}
+      <section style={{ padding: "4rem 0", background: "var(--gray-900)" }}>
+        <div className="container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "3rem", alignItems: "center" }}>
+          <div>
+            <div className="section-label" style={{ color: "var(--red)" }}>Plataforma OPERIS</div>
+            <div className="divider-red" style={{ marginBottom: "1.25rem" }} />
+            <h2 className="text-headline" style={{ color: "#fff", marginBottom: "1rem" }}>Gerencie seu Sistema Saponificante com Tecnologia</h2>
+            <p style={{ color: "var(--gray-300)", lineHeight: 1.75, marginBottom: "1.5rem" }}>
+              O OPERIS é nossa plataforma digital de gestão de sistemas de incêndio. Cada equipamento do seu sistema saponificante recebe um QR Code único para rastreamento completo do ciclo de vida: instalação, manutenções, recargas, laudos e alertas automáticos de vencimento.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {[
+                "QR Code em cada equipamento para histórico completo",
+                "Alertas automáticos de manutenção semestral (ABNT NBR 14095)",
+                "Documentação digital: laudos, ARTs e certificados",
+                "Relatórios de conformidade para o Corpo de Bombeiros",
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+                  <span style={{ color: "var(--red)", fontWeight: 700, marginTop: "0.1rem" }}>✓</span>
+                  <span style={{ color: "var(--gray-300)", fontSize: "0.875rem", lineHeight: 1.6 }}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Link href="/app/login" className="btn-primary" style={{ justifyContent: "center" }}>
+              Acessar Plataforma OPERIS
+            </Link>
+            <Link href="/contato" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", color: "var(--gray-300)", fontSize: "0.875rem", fontWeight: 500, padding: "0.75rem", border: "1px solid var(--gray-700)", transition: "border-color 0.2s" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--red)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-700)"; }}>
+              Solicitar Vistoria Gratuita
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* RELATED */}
       <section className="section-light" style={{ padding: "4rem 0" }}>
         <div className="container">

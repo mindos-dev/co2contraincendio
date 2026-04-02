@@ -2,16 +2,19 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X, ChevronDown, Phone } from "lucide-react";
 
-const services = [
+const servicesMain = [
   { label: "Sistema de Supressão por CO₂", href: "/sistema-supressao-co2" },
-  { label: "Recarga de CO₂", href: "/recarga-co2" },
   { label: "Sistema Saponificante (Wet Chemical)", href: "/sistema-saponificante" },
   { label: "Hidrantes", href: "/hidrantes" },
   { label: "Alarme de Incêndio", href: "/alarme-incendio" },
   { label: "Detector de Gás GLP/GN", href: "/detector-gas" },
   { label: "Vistoria e Laudo com ART", href: "/vistoria-laudo-art" },
-  { label: "Manutenção Preventiva", href: "/manutencao-preventiva" },
   { label: "Projeto de Exaustão", href: "/projeto-exaustao" },
+];
+
+const servicesContratos = [
+  { label: "Manutenção Preventiva", href: "/manutencao-preventiva" },
+  { label: "Recarga de CO₂", href: "/recarga-co2" },
 ];
 
 export default function Navbar() {
@@ -114,12 +117,12 @@ export default function Navbar() {
               {servicesOpen && (
                 <div style={{
                   position: "absolute", top: "100%", left: 0,
-                  background: "#fff", minWidth: "280px",
+                  background: "#fff", minWidth: "290px",
                   boxShadow: "0 8px 40px rgba(0,0,0,0.15)",
                   borderTop: "3px solid var(--red)",
                   zIndex: 200,
                 }}>
-                  {services.map((s) => (
+                  {servicesMain.map((s) => (
                     <Link
                       key={s.href}
                       href={s.href}
@@ -129,10 +132,29 @@ export default function Navbar() {
                         borderBottom: "1px solid var(--gray-100)",
                         transition: "background 0.15s, color 0.15s",
                       }}
-                      onMouseEnter={(e) => { (e.target as HTMLElement).style.background = "var(--gray-50)"; (e.target as HTMLElement).style.color = "var(--red)"; }}
-                      onMouseLeave={(e) => { (e.target as HTMLElement).style.background = ""; (e.target as HTMLElement).style.color = "var(--gray-800)"; }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--gray-50)"; (e.currentTarget as HTMLElement).style.color = "var(--red)"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.color = "var(--gray-800)"; }}
                     >
                       {s.label}
+                    </Link>
+                  ))}
+                  <div style={{ padding: "0.4rem 1.25rem", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--red)", background: "var(--gray-50)", borderTop: "2px solid var(--gray-200)", borderBottom: "1px solid var(--gray-100)" }}>
+                    Contratos de Manutenção
+                  </div>
+                  {servicesContratos.map((s) => (
+                    <Link
+                      key={s.href}
+                      href={s.href}
+                      style={{
+                        display: "block", padding: "0.75rem 1.25rem",
+                        fontSize: "0.8125rem", fontWeight: 600, color: "var(--red)",
+                        borderBottom: "1px solid var(--gray-100)",
+                        transition: "background 0.15s",
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--gray-50)"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; }}
+                    >
+                      ✔ {s.label}
                     </Link>
                   ))}
                 </div>
@@ -195,13 +217,25 @@ export default function Navbar() {
                 <div style={{ color: "var(--gray-400)", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "0.75rem 0 0.5rem" }}>
                   Serviços
                 </div>
-                {services.map((s) => (
+                {servicesMain.map((s) => (
                   <Link
                     key={s.href}
                     href={s.href}
                     style={{ display: "block", padding: "0.6rem 0.75rem", color: "var(--gray-200)", fontSize: "0.875rem", borderBottom: "1px solid var(--gray-700)" }}
                   >
                     {s.label}
+                  </Link>
+                ))}
+                <div style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--red)", borderBottom: "1px solid var(--gray-700)", marginTop: "0.25rem" }}>
+                  Contratos de Manutenção
+                </div>
+                {servicesContratos.map((s) => (
+                  <Link
+                    key={s.href}
+                    href={s.href}
+                    style={{ display: "block", padding: "0.6rem 0.75rem", color: "var(--red)", fontSize: "0.875rem", fontWeight: 600, borderBottom: "1px solid var(--gray-700)" }}
+                  >
+                    ✔ {s.label}
                   </Link>
                 ))}
               </div>

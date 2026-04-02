@@ -124,9 +124,9 @@
 
 ## OPERIS Comercial — Motor de Vendas e SEO
 
-- [ ] Reescrever Projetos.tsx com 7 categorias de portfólio + artigos SEO técnicos
-- [ ] Expandir ManutencaoPreventiva.tsx com conteúdo robusto e SEO
-- [ ] Expandir SistemaSaponificante.tsx com seção de projetos e integração OPERIS
-- [ ] Corrigir navegação: substituir "Projeto de Exaustão" por "PROJETOS" no menu
-- [ ] Adicionar Manutenção e Recarga como destaques no menu de Serviços
-- [ ] Integrar links de "Solicitar Vistoria" nas páginas de projeto para o módulo OPERIS
+- [x] Reescrever Projetos.tsx com 7 categorias de portfólio + artigos SEO técnicos
+- [x] Expandir ManutencaoPreventiva.tsx com conteúdo robusto e SEO
+- [x] Expandir SistemaSaponificante.tsx com seção de projetos e integração OPERIS
+- [x] Corrigir navegação: substituir "Projeto de Exaustão" por "PROJETOS" no menu (já estava correto; reorganizado dropdown)
+- [x] Adicionar Manutenção e Recarga como destaques no menu de Serviços (seção Contratos em vermelho)
+- [x] Integrar links de "Solicitar Vistoria" nas páginas de projeto para o módulo OPERIS (ServicePageTemplate + SistemaSaponificante)
