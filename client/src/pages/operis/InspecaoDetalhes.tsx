@@ -19,7 +19,9 @@ import {
   ChevronDown,
   ChevronUp,
   Zap,
+  Share2,
 } from "lucide-react";
+import ShareButton from "@/components/ShareButton";
 
 const RISK_COLORS: Record<string, string> = {
   R1: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
@@ -50,6 +52,7 @@ export default function InspecaoDetalhes() {
   const [observations, setObservations] = useState<Record<number, string>>({});
   const [analyzingItem, setAnalyzingItem] = useState<number | null>(null);
   const [generatingReport, setGeneratingReport] = useState(false);
+  const [generatedSlug, setGeneratedSlug] = useState<string | null>(null);
   const [uploadingItem, setUploadingItem] = useState<number | null>(null);
   const [itemImages, setItemImages] = useState<Record<number, string[]>>({});
 
@@ -74,7 +77,8 @@ export default function InspecaoDetalhes() {
     onSuccess: (data) => {
       toast.success("Laudo gerado com sucesso!");
       setGeneratingReport(false);
-      window.open(`/operis/laudo/${data.reportId}`, "_blank");
+      setGeneratedSlug(data.publicSlug);
+      window.open(`/operis/laudo/${data.publicSlug}`, "_blank");
     },
     onError: (err) => {
       toast.error("Erro ao gerar laudo: " + err.message);
@@ -385,24 +389,38 @@ export default function InspecaoDetalhes() {
                     IA irá analisar todos os itens e gerar laudo completo com classificação de risco
                   </p>
                 </div>
-                <Button
-                  className="bg-[#e63946] hover:bg-[#c1121f] text-white shrink-0 ml-3"
-                  size="sm"
-                  onClick={handleGenerateReport}
-                  disabled={generatingReport}
-                >
-                  {generatingReport ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Gerando...
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-4 h-4 mr-2" />
-                      Gerar Laudo
-                    </>
+                <div className="flex items-center gap-2 shrink-0 ml-3">
+                  <Button
+                    className="bg-[#e63946] hover:bg-[#c1121f] text-white"
+                    size="sm"
+                    onClick={handleGenerateReport}
+                    disabled={generatingReport}
+                  >
+                    {generatingReport ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Gerando...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Gerar Laudo
+                      </>
+                    )}
+                  </Button>
+                  {generatedSlug && (
+                    <ShareButton
+                      slug={generatedSlug}
+                      baseUrl={typeof window !== "undefined" ? window.location.origin : ""}
+                      trigger={
+                        <Button variant="outline" size="sm" className="border-[#e63946]/40 text-[#e63946] hover:bg-[#e63946]/10 gap-1">
+                          <Share2 className="w-4 h-4" />
+                          Compartilhar
+                        </Button>
+                      }
+                    />
                   )}
-                </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

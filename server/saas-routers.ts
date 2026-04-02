@@ -82,7 +82,7 @@ export const saasAuthProcedure = publicProcedure.use(async ({ ctx, next }) => {
   return next({ ctx: { ...ctx, saasUser: payload } });
 });
 
-const saasAdminProcedure = saasAuthProcedure.use(async ({ ctx, next }) => {
+export const saasAdminProcedure = saasAuthProcedure.use(async ({ ctx, next }) => {
   const user = (ctx as { saasUser: { role: string } }).saasUser;
   if (!["superadmin", "admin"].includes(user.role)) {
     throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito a administradores" });

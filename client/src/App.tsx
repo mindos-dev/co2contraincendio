@@ -57,6 +57,7 @@ import OperisHome from "./pages/operis/OperisHome";
 import NovaInspecao from "./pages/operis/NovaInspecao";
 import InspecaoDetalhes from "./pages/operis/InspecaoDetalhes";
 import LaudoPublico from "./pages/operis/LaudoPublico";
+import AdminOperis from "./pages/operis/AdminOperis";
 function Router() {
   return (
     <Switch>
@@ -116,6 +117,7 @@ function Router() {
       <Route path="/operis/nova" component={NovaInspecao} />
       <Route path="/operis/inspecao/:id" component={InspecaoDetalhes} />
       <Route path="/operis/laudo/:slug" component={LaudoPublico} />
+      <Route path="/operis/admin" component={AdminOperis} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

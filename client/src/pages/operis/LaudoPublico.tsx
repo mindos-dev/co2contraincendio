@@ -10,6 +10,7 @@ import DOMPurify from "dompurify";
 import { Printer, Shield, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import ShareButton from "@/components/ShareButton";
 
 const RISK_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   R1: { label: "Risco Mínimo", color: "bg-green-100 text-green-800 border-green-300", icon: <CheckCircle className="w-4 h-4" /> },
@@ -92,6 +93,17 @@ export default function LaudoPublico() {
               {riskInfo.icon}
               {riskInfo.label}
             </Badge>
+            {slug && (
+              <ShareButton
+                slug={slug}
+                baseUrl={typeof window !== "undefined" ? window.location.origin : ""}
+                trigger={
+                  <Button variant="outline" size="sm" className="border-white/30 text-white hover:bg-white/10 gap-2">
+                    Compartilhar
+                  </Button>
+                }
+              />
+            )}
             <Button
               onClick={() => window.print()}
               variant="outline"

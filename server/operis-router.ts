@@ -17,7 +17,8 @@ import {
   saasUsers,
   saasCompanies,
 } from "../drizzle/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, count, sql } from "drizzle-orm";
+import { saasAdminProcedure } from "./saas-routers";
 import {
   analyzeInspectionImages,
   generateTechnicalReport,
@@ -438,6 +439,107 @@ export const operisRouter = router({
         .where(eq(operisReports.id, input.reportId));
 
       return { signatureUrl: url };
+    }),
+
+  // ─── PAINEL ADMIN ────────────────────────────────────────────────────────────
+
+  // Estatísticas globais para o painel admin
+  adminStats: saasAdminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const [totalInspections] = await db.select({ count: count() }).from(operisInspections);
+    const [totalReports] = await db.select({ count: count() }).from(operisReports);
+    const riskDist = await db
+      .select({ risk: operisInspections.globalRisk, cnt: count() })
+      .from(operisInspections)
+      .groupBy(operisInspections.globalRisk);
+    const [nonConformities] = await db
+      .select({ count: count() })
+      .from(operisInspectionItems)
+      .where(eq(operisInspectionItems.status, "nao_conforme"));
+    const technicians = await db
+      .select({
+        id: saasUsers.id,
+        name: saasUsers.name,
+        email: saasUsers.email,
+        inspectionCount: sql<number>`COUNT(${operisInspections.id})`,
+      })
+      .from(saasUsers)
+      .leftJoin(operisInspections, eq(operisInspections.userId, saasUsers.id))
+      .where(eq(saasUsers.role, "tecnico"))
+      .groupBy(saasUsers.id, saasUsers.name, saasUsers.email);
+    return {
+      totalInspections: totalInspections.count,
+      totalReports: totalReports.count,
+      nonConformities: nonConformities.count,
+      riskDistribution: riskDist,
+      technicians,
+    };
+  }),
+
+  // Listar todas as inspeções (admin — todas as empresas)
+  adminListInspections: saasAdminProcedure
+    .input(z.object({
+      status: z.string().optional(),
+      technicianId: z.number().optional(),
+      page: z.number().min(1).default(1),
+      limit: z.number().min(1).max(50).default(20),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      const offset = (input.page - 1) * input.limit;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const conditions: any[] = [];
+      if (input.status) conditions.push(eq(operisInspections.status, input.status as "em_progresso" | "concluida" | "revisao"));
+      if (input.technicianId) conditions.push(eq(operisInspections.userId, input.technicianId));
+      const rows = await db
+        .select({
+          id: operisInspections.id,
+          systemType: operisInspections.system,
+          status: operisInspections.status,
+          globalRisk: operisInspections.globalRisk,
+          createdAt: operisInspections.createdAt,
+          title: operisInspections.title,
+          client: operisInspections.client,
+          technicianName: saasUsers.name,
+          companyName: saasCompanies.name,
+        })
+        .from(operisInspections)
+        .leftJoin(saasUsers, eq(operisInspections.userId, saasUsers.id))
+        .leftJoin(saasCompanies, eq(operisInspections.companyId, saasCompanies.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(operisInspections.createdAt))
+        .limit(input.limit)
+        .offset(offset);
+      return rows;
+    }),
+
+  // Listar todos os laudos (admin — todas as empresas)
+  adminListReports: saasAdminProcedure
+    .input(z.object({ page: z.number().min(1).default(1), limit: z.number().min(1).max(50).default(20) }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      const offset = (input.page - 1) * input.limit;
+      const rows = await db
+        .select({
+          id: operisReports.id,
+          publicSlug: operisReports.publicSlug,
+          globalRisk: operisReports.globalRisk,
+          status: operisReports.status,
+          generatedAt: operisReports.generatedAt,
+          technicianName: saasUsers.name,
+          companyName: saasCompanies.name,
+        })
+        .from(operisReports)
+        .leftJoin(operisInspections, eq(operisReports.inspectionId, operisInspections.id))
+        .leftJoin(saasUsers, eq(operisInspections.userId, saasUsers.id))
+        .leftJoin(saasCompanies, eq(operisInspections.companyId, saasCompanies.id))
+        .orderBy(desc(operisReports.generatedAt))
+        .limit(input.limit)
+        .offset(offset);
+      return rows;
     }),
 
   // Laudo público por slug (SEO) — sem autenticação

@@ -259,3 +259,15 @@
 - [x] Step 5: Injetar dados do técnico (nome, empresa) no prompt de geração de laudo
 - [x] Step 6: Assinatura digital injetada no HTML do laudo antes do print
 - [x] Step 7: Registrar /operis e /operis/laudo no sitemap.xml para SEO
+
+## Painel Admin OPERIS + Compartilhamento de Laudos
+
+- [x] Backend: procedure operis.adminStats (total inspeções, laudos, técnicos, distribuição de risco)
+- [x] Backend: procedure operis.adminListInspections (todas as empresas, filtros por status/técnico, paginação)
+- [x] Backend: procedure operis.adminListReports (todos os laudos com técnico e empresa)
+- [x] Backend: saasAdminProcedure exportada do saas-routers.ts para uso no operis-router.ts
+- [x] Frontend: tela /operis/admin com 3 tabs (Inspeções, Laudos, Técnicos) + KPIs
+- [x] Frontend: componente ShareButton com modal (copiar link, WhatsApp deep link, e-mail mailto)
+- [x] Frontend: botão Compartilhar na tela /operis/laudo/:slug
+- [x] Frontend: botão Compartilhar na tela /operis/inspecao/:id após gerar laudo
+- [x] Registrar rota /operis/admin no App.tsx e no menu lateral (adminOnly)

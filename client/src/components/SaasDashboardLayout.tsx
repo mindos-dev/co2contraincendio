@@ -18,6 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Usuários",        path: "/app/usuarios",      icon: "👤", adminOnly: true, mobileHide: true },
   { label: "Vistoria Mobile", path: "/mobile",            icon: "📱" },
   { label: "OPERIS IA",       path: "/operis",            icon: "🛡️" },
+  { label: "Admin OPERIS",    path: "/operis/admin",      icon: "📋", adminOnly: true, mobileHide: true },
 ];
 
 // Bottom nav mobile: apenas os 5 itens principais
