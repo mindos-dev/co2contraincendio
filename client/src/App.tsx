@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
+import { useEffect } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 // Site público
@@ -58,6 +59,18 @@ import NovaInspecao from "./pages/operis/NovaInspecao";
 import InspecaoDetalhes from "./pages/operis/InspecaoDetalhes";
 import LaudoPublico from "./pages/operis/LaudoPublico";
 import AdminOperis from "./pages/operis/AdminOperis";
+function TitleManager() {
+  const [location] = useLocation();
+  useEffect(() => {
+    if (location.startsWith("/operis") || location.startsWith("/app") || location.startsWith("/mobile")) {
+      document.title = "OPERIS — Inspeção e Laudos Inteligentes";
+    } else {
+      document.title = "CO₂ Contra Incêndio | Sistemas Fixos de Combate a Incêndio — Belo Horizonte, MG";
+    }
+  }, [location]);
+  return null;
+}
+
 function Router() {
   return (
     <Switch>
@@ -130,6 +143,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
+          <TitleManager />
           <Router />
         </TooltipProvider>
       </ThemeProvider>
