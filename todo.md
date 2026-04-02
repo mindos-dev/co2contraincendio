@@ -133,16 +133,16 @@
 
 ## Sistema de Conteúdo Industrial — Sistemas Pré-Engenheirados
 
-- [ ] Pesquisa técnica: Amerex, Rotarex Firetec, Steel Fire, normas ABNT/NFPA
-- [ ] Página principal: /sistemas-pre-engenheirados (visão geral + 8 categorias)
-- [ ] Subpágina: /protecao-veiculos-off-road (escavadeiras, colheitadeiras, mineração)
-- [ ] Subpágina: /protecao-compartimento-motor (water mist + dry chemical + dual agent)
-- [ ] Subpágina: /protecao-maquinas-cnc (Rotarex FireDETEC)
-- [ ] Subpágina: /protecao-paineis-eletricos (agentes limpos + CO2)
-- [ ] Subpágina: /protecao-laboratorios (capelas, armazenamento químico)
-- [ ] Subpágina: /protecao-maquinas-industriais (injeção, prensas — local vs total flooding)
-- [ ] Subpágina: /protecao-cozinhas-industriais (wet chemical / saponificante)
-- [ ] Subpágina: /aplicacoes-especiais (data centers, telecom, hospitais, offshore, turbinas eólicas)
-- [ ] Artigos de blog técnicos para cada sistema (8 artigos no banco de dados)
-- [ ] Integrar rotas no App.tsx e links no Navbar/Footer
-- [ ] SEO: keywords, H1/H2/H3, FAQ por página
+- [x] Pesquisa técnica: Amerex, Rotarex Firetec, Steel Fire, normas ABNT/NFPA
+- [x] Página principal: /sistemas-pre-engenheirados (visão geral + 8 categorias)
+- [x] Subpágina: /protecao-veiculos-off-road (escavadeiras, colheitadeiras, mineração)
+- [x] Subpágina: /protecao-compartimento-motor (water mist + dry chemical + dual agent)
+- [x] Subpágina: /protecao-maquinas-cnc (Rotarex FireDETEC)
+- [x] Subpágina: /protecao-paineis-eletricos (agentes limpos + CO2)
+- [x] Subpágina: /protecao-laboratorios (capelas, armazenamento químico)
+- [x] Subpágina: /protecao-maquinas-industriais (injeção, prensas — local vs total flooding)
+- [x] Subpágina: /protecao-cozinhas-industriais (wet chemical / saponificante) — já coberto por SistemaSaponificante.tsx
+- [x] Subpágina: /aplicacoes-especiais (data centers, telecom, hospitais, offshore, turbinas eólicas, ferroviário, câmaras frias, subestações)
+- [x] Artigos de blog técnicos para cada sistema (6 artigos adicionados ao Blog.tsx)
+- [x] Integrar rotas no App.tsx e links no Navbar/Footer
+- [x] SEO: keywords, H1/H2/H3, FAQ por página (todas as subpáginas têm SEOHead completo)

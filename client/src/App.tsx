@@ -27,7 +27,8 @@ import ProtecaoPaineisEletricos from "./pages/services/ProtecaoPaineisEletricos"
 import ProtecaoLaboratorios from "./pages/services/ProtecaoLaboratorios";
 import ProtecaoCompartimentoMotor from "./pages/services/ProtecaoCompartimentoMotor";
 import ProtecaoMaquinasIndustriais from "./pages/services/ProtecaoMaquinasIndustriais";
-import ProtecaoGeradores from "./pages/services/ProtecaoGeradores";
+import ProtecaoGeradores from "@/pages/services/ProtecaoGeradores";
+import AplicacoesEspeciais from "@/pages/services/AplicacoesEspeciais";
 import Projetos from "./pages/Projetos";
 import Parceiros from "./pages/Parceiros";
 
@@ -70,6 +71,7 @@ function Router() {
       <Route path="/protecao-compartimento-motor" component={ProtecaoCompartimentoMotor} />
       <Route path="/protecao-maquinas-industriais" component={ProtecaoMaquinasIndustriais} />
       <Route path="/protecao-geradores" component={ProtecaoGeradores} />
+          <Route path="/aplicacoes-especiais" component={AplicacoesEspeciais} />
       <Route path="/projetos" component={Projetos} />
       <Route path="/parceiros" component={Parceiros} />
       <Route path="/blog" component={Blog} />

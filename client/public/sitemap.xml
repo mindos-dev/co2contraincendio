@@ -180,6 +180,13 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/protecao-geradores"/>
   </url>
+  <url>
+    <loc>https://co2contra.com/aplicacoes-especiais</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/aplicacoes-especiais"/>
+  </url>
 
   <!-- ===== ARTIGOS DO BLOG ===== -->
   <url>
