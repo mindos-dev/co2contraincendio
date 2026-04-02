@@ -176,3 +176,16 @@
 - [x] Adicionar service worker para suporte offline básico
 - [x] Ajustar layout responsivo mobile-first no dashboard OPERIS
 - [x] Adicionar meta tags Apple/Android para instalação na tela inicial
+
+## Módulo Mobile de Campo — OPERIS Field PWA
+
+- [x] Schema DB: tabelas field_inspections, checklist_answers, inspection_images, field_reports
+- [x] Backend tRPC: field-router.ts com createInspection, saveChecklist, uploadImage, generateReport, listReports, syncOffline
+- [x] Tela /mobile/nova-vistoria — seleção de tipo (PMOC, Incêndio, Elétrica, Outros)
+- [x] Tela /mobile/checklist/:id — checklist dinâmico por tipo com respostas e observações
+- [x] Tela /mobile/upload/:id — câmera + galeria + compressão + upload S3
+- [x] Tela /mobile/laudo/:id — geração via IA + preview HTML + download PDF (print)
+- [x] Tela /mobile/historico — histórico de laudos com filtros por tipo
+- [x] Modo offline: hook useOfflineSync.ts com IndexedDB + auto-sync quando online
+- [x] Atualizar bottom nav mobile com atalho para Vistoria Mobile (/mobile)
+- [x] MobileDashboard /mobile com stats, atalhos rápidos e badge de pendentes offline

@@ -212,3 +212,69 @@ export const notificationSettings = mysqlTable("notification_settings", {
 });
 export type NotificationSettings = typeof notificationSettings.$inferSelect;
 export type InsertNotificationSettings = typeof notificationSettings.$inferInsert;
+
+// ─── Módulo Mobile: Vistorias de Campo ───────────────────────────────────────
+
+export const fieldInspections = mysqlTable("field_inspections", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => saasCompanies.id),
+  technicianId: int("technicianId").references(() => saasUsers.id),
+  type: mysqlEnum("type", ["pmoc", "incendio", "eletrica", "outros"]).notNull(),
+  status: mysqlEnum("status", ["rascunho", "em_andamento", "concluida", "cancelada"]).default("rascunho").notNull(),
+  title: varchar("title", { length: 200 }),
+  notes: text("notes"),
+  location: varchar("location", { length: 300 }),
+  // Sync offline
+  offlineId: varchar("offlineId", { length: 64 }), // UUID gerado no cliente
+  syncedAt: timestamp("syncedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FieldInspection = typeof fieldInspections.$inferSelect;
+export type InsertFieldInspection = typeof fieldInspections.$inferInsert;
+
+// ─── Módulo Mobile: Respostas do Checklist ────────────────────────────────────
+
+export const checklistAnswers = mysqlTable("checklist_answers", {
+  id: int("id").autoincrement().primaryKey(),
+  inspectionId: int("inspectionId").references(() => fieldInspections.id).notNull(),
+  questionKey: varchar("questionKey", { length: 100 }).notNull(), // ex: "extintor_carga"
+  questionText: text("questionText").notNull(),
+  answer: mysqlEnum("answer", ["conforme", "nao_conforme", "nao_aplicavel", "pendente"]).default("pendente").notNull(),
+  observation: text("observation"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ChecklistAnswer = typeof checklistAnswers.$inferSelect;
+export type InsertChecklistAnswer = typeof checklistAnswers.$inferInsert;
+
+// ─── Módulo Mobile: Imagens da Vistoria ──────────────────────────────────────
+
+export const inspectionImages = mysqlTable("inspection_images", {
+  id: int("id").autoincrement().primaryKey(),
+  inspectionId: int("inspectionId").references(() => fieldInspections.id).notNull(),
+  url: text("url").notNull(),
+  fileKey: varchar("fileKey", { length: 300 }).notNull(),
+  caption: varchar("caption", { length: 200 }),
+  mimeType: varchar("mimeType", { length: 50 }).default("image/jpeg"),
+  sizeBytes: int("sizeBytes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type InspectionImage = typeof inspectionImages.$inferSelect;
+export type InsertInspectionImage = typeof inspectionImages.$inferInsert;
+
+// ─── Módulo Mobile: Laudos de Campo ──────────────────────────────────────────
+
+export const fieldReports = mysqlTable("field_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  inspectionId: int("inspectionId").references(() => fieldInspections.id).notNull(),
+  companyId: int("companyId").references(() => saasCompanies.id),
+  type: mysqlEnum("type", ["pmoc", "incendio", "eletrica", "outros"]).notNull(),
+  content: text("content"), // HTML gerado pelo LLM
+  pdfUrl: text("pdfUrl"),   // URL S3 do PDF
+  pdfKey: varchar("pdfKey", { length: 300 }),
+  status: mysqlEnum("status", ["gerando", "pronto", "erro"]).default("gerando").notNull(),
+  generatedAt: timestamp("generatedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type FieldReport = typeof fieldReports.$inferSelect;
+export type InsertFieldReport = typeof fieldReports.$inferInsert;

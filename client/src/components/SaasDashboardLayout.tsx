@@ -16,6 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Relatórios",      path: "/app/relatorios",    icon: "📊", adminOnly: true, mobileHide: true },
   { label: "Busca Inteligente", path: "/app/busca",       icon: "🧠", adminOnly: true, mobileHide: true },
   { label: "Usuários",        path: "/app/usuarios",      icon: "👤", adminOnly: true, mobileHide: true },
+  { label: "Vistoria Mobile", path: "/mobile",            icon: "📱" },
 ];
 
 // Bottom nav mobile: apenas os 5 itens principais
@@ -25,6 +26,7 @@ const MOBILE_NAV = [
   { label: "Manutenções",  path: "/app/manutencoes",  icon: "🔧" },
   { label: "QR Codes",     path: "/app/qrcodes",      icon: "▦" },
   { label: "Alertas",      path: "/app/alertas",      icon: "⚠" },
+  { label: "Vistoria",     path: "/mobile",           icon: "📱" },
 ];
 
 export default function SaasDashboardLayout({ children }: { children: React.ReactNode }) {

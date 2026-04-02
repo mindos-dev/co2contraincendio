@@ -46,6 +46,13 @@ import Clientes from "./pages/plataforma/Clientes";
 import Relatorios from "./pages/plataforma/Relatorios";
 import BuscaInteligente from "./pages/plataforma/BuscaInteligente";
 import Usuarios from "./pages/app/Usuarios";
+// Mobile Field Inspection
+import MobileDashboard from "./pages/mobile/MobileDashboard";
+import NovaVistoria from "./pages/mobile/NovaVistoria";
+import ChecklistVistoria from "./pages/mobile/ChecklistVistoria";
+import UploadImagens from "./pages/mobile/UploadImagens";
+import GerarLaudo from "./pages/mobile/GerarLaudo";
+import HistoricoLaudos from "./pages/mobile/HistoricoLaudos";
 function Router() {
   return (
     <Switch>
@@ -94,6 +101,13 @@ function Router() {
       <Route path="/app/relatorios" component={Relatorios} />
       <Route path="/app/busca" component={BuscaInteligente} />
       <Route path="/app/usuarios" component={Usuarios} />
+      {/* Mobile Field Inspection */}
+      <Route path="/mobile" component={MobileDashboard} />
+      <Route path="/mobile/nova-vistoria" component={NovaVistoria} />
+      <Route path="/mobile/checklist/:id" component={ChecklistVistoria} />
+      <Route path="/mobile/upload/:id" component={UploadImagens} />
+      <Route path="/mobile/laudo/:id" component={GerarLaudo} />
+      <Route path="/mobile/historico" component={HistoricoLaudos} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
