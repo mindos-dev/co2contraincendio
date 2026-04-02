@@ -1,7 +1,7 @@
 /**
  * OperisHeroBanner
  * Banner de destaque para o módulo OPERIS IA — exibido na Home
- * Integra a nova OperisLogo tipográfica futurista
+ * Integra a OperisLogo institucional alinhada ao padrão do site
  */
 
 import { Link } from "wouter";
@@ -12,22 +12,18 @@ const BG_URL =
 
 const features = [
   {
-    icon: "◈",
     label: "IA Generativa",
     desc: "Laudos redigidos automaticamente com análise de risco R1–R5",
   },
   {
-    icon: "◉",
     label: "Inspeções Digitais",
     desc: "Formulários inteligentes com checklist NBR 12615 e NFPA 12",
   },
   {
-    icon: "◫",
     label: "Painel Admin 360°",
     desc: "Gestão de técnicos, laudos e não-conformidades em tempo real",
   },
   {
-    icon: "◎",
     label: "Compartilhamento",
     desc: "Envio de laudos por WhatsApp e e-mail em 1 clique",
   },
@@ -226,18 +222,15 @@ export default function OperisHeroBanner() {
                 el.style.transform = "translateY(0)";
               }}
             >
-              {/* Ícone geométrico */}
+              {/* Marcador institucional — linha vermelha */}
               <div
                 style={{
-                  fontFamily: "monospace",
-                  fontSize: "1.35rem",
-                  color: "#C8102E",
-                  marginBottom: "0.6rem",
-                  lineHeight: 1,
+                  width: "28px",
+                  height: "3px",
+                  background: "#C8102E",
+                  marginBottom: "0.75rem",
                 }}
-              >
-                {f.icon}
-              </div>
+              />
               <div
                 style={{
                   fontFamily: "'Barlow Condensed', sans-serif",
