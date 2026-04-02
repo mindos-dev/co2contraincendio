@@ -41,6 +41,12 @@ export default function OperisHome() {
     em_progresso: inspections?.filter((i) => i.status === "em_progresso").length ?? 0,
     criticas: inspections?.filter((i) => i.globalRisk === "R4" || i.globalRisk === "R5").length ?? 0,
   };
+  const riskDist = ["R1","R2","R3","R4","R5"].map((r) => ({
+    risk: r,
+    count: inspections?.filter((i) => i.globalRisk === r).length ?? 0,
+  }));
+  const riskBarColors: Record<string,string> = { R1:"bg-emerald-500", R2:"bg-yellow-400", R3:"bg-orange-500", R4:"bg-red-500", R5:"bg-red-900" };
+  const maxRisk = Math.max(...riskDist.map((r) => r.count), 1);
 
   return (
     <SaasDashboardLayout>
@@ -81,6 +87,34 @@ export default function OperisHome() {
             </Card>
           ))}
         </div>
+
+        {/* Risk Distribution KPI */}
+        {stats.total > 0 && (
+          <Card className="bg-[#0d1f35] border-slate-700/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-slate-300 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#e63946]" />
+                Distribuição de Risco
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {riskDist.map(({ risk, count }) => (
+                  <div key={risk} className="flex items-center gap-3">
+                    <span className="text-xs text-slate-400 w-6 shrink-0">{risk}</span>
+                    <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${riskBarColors[risk]}`}
+                        style={{ width: `${(count / maxRisk) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-400 w-4 text-right shrink-0">{count}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Sistemas Disponíveis */}
         <Card className="bg-[#0d1f35] border-slate-700/50">

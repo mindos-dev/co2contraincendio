@@ -249,3 +249,13 @@
 ## Bug: OPERIS não aparece no site
 - [x] Diagnosticar por que o módulo OPERIS não estava visível no site (adminOnly: true bloqueava usuários não-admin)
 - [x] Corrigir visibilidade do OPERIS: removido adminOnly, agora visível para todos os usuários autenticados
+
+## Sprint Finalização OPERIS — 7 Passos
+
+- [x] Step 1: Tornar getPublicReport PUBLIC (publicProcedure)
+- [x] Step 1: Criar tela /operis/laudo/:slug sem autenticação (DOMPurify + print)
+- [x] Step 2: Upload de imagem por item no checklist com análise IA automática
+- [x] Step 4: KPIs no OperisHome (total inspeções, distribuição risco R1-R5, não-conformidades)
+- [x] Step 5: Injetar dados do técnico (nome, empresa) no prompt de geração de laudo
+- [x] Step 6: Assinatura digital injetada no HTML do laudo antes do print
+- [x] Step 7: Registrar /operis e /operis/laudo no sitemap.xml para SEO

@@ -50,6 +50,8 @@ export default function InspecaoDetalhes() {
   const [observations, setObservations] = useState<Record<number, string>>({});
   const [analyzingItem, setAnalyzingItem] = useState<number | null>(null);
   const [generatingReport, setGeneratingReport] = useState(false);
+  const [uploadingItem, setUploadingItem] = useState<number | null>(null);
+  const [itemImages, setItemImages] = useState<Record<number, string[]>>({});
 
   const saveItemMutation = trpc.operis.analyzeItem.useMutation({
     onSuccess: () => refetch(),
@@ -95,6 +97,32 @@ export default function InspecaoDetalhes() {
     }
     setAnalyzingItem(itemId);
     analyzeItemMutation.mutate({ inspectionId, itemId: String(itemId), imageUrls });
+  };
+
+  const handleImageUpload = async (itemId: number, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploadingItem(itemId);
+    const uploadedUrls: string[] = [];
+    try {
+      for (const file of Array.from(files).slice(0, 3)) {
+        const formData = new FormData();
+        formData.append("file", file, `operis-item-${itemId}-${Date.now()}.jpg`);
+        const res = await fetch("/api/upload", { method: "POST", body: formData });
+        if (res.ok) {
+          const d = await res.json() as { url: string };
+          uploadedUrls.push(d.url);
+        }
+      }
+      if (uploadedUrls.length > 0) {
+        setItemImages((prev) => ({ ...prev, [itemId]: [...(prev[itemId] ?? []), ...uploadedUrls] }));
+        toast.success(`${uploadedUrls.length} imagem(ns) enviada(s). Analisando com IA...`);
+        handleAnalyzeWithAI(itemId, uploadedUrls);
+      }
+    } catch {
+      toast.error("Erro ao enviar imagem");
+    } finally {
+      setUploadingItem(null);
+    }
   };
 
   const handleGenerateReport = () => {
@@ -301,26 +329,43 @@ export default function InspecaoDetalhes() {
 
 
 
-                      {/* Analyze with AI */}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full text-xs h-8 border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10"
-                        onClick={() => handleAnalyzeWithAI(item.id, [])}
-                        disabled={analyzingItem === item.id}
-                      >
-                        {analyzingItem === item.id ? (
-                          <>
-                            <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                            Analisando com IA...
-                          </>
-                        ) : (
-                          <>
-                            <Zap className="w-3 h-3 mr-1" />
-                            Analisar com IA
-                          </>
+                      {/* Image upload + AI analysis */}
+                      <div className="space-y-2">
+                        {/* Thumbnails */}
+                        {(itemImages[item.id] ?? []).length > 0 && (
+                          <div className="flex gap-1 flex-wrap">
+                            {(itemImages[item.id] ?? []).map((url, i) => (
+                              <img key={i} src={url} alt={`img-${i}`} className="w-12 h-12 object-cover rounded border border-slate-600" />
+                            ))}
+                          </div>
                         )}
-                      </Button>
+                        <label className="w-full">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            multiple
+                            className="hidden"
+                            disabled={uploadingItem === item.id || analyzingItem === item.id}
+                            onChange={(e) => handleImageUpload(item.id, e.target.files)}
+                          />
+                          <div
+                            className={`w-full flex items-center justify-center gap-1.5 text-xs h-8 rounded-md border cursor-pointer transition-colors ${
+                              uploadingItem === item.id || analyzingItem === item.id
+                                ? "border-slate-600 text-slate-500 cursor-not-allowed"
+                                : "border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10"
+                            }`}
+                          >
+                            {uploadingItem === item.id ? (
+                              <><Loader2 className="w-3 h-3 animate-spin" /> Enviando...</>
+                            ) : analyzingItem === item.id ? (
+                              <><Loader2 className="w-3 h-3 animate-spin" /> Analisando com IA...</>
+                            ) : (
+                              <><Camera className="w-3 h-3" /> Foto + Análise IA</>
+                            )}
+                          </div>
+                        </label>
+                      </div>
                     </div>
                   )}
                 </CardContent>

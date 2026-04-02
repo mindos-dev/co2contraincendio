@@ -162,6 +162,10 @@ export async function generateTechnicalReport(inspectionData: {
   client: string;
   unit?: string;
   system: string;
+  technicianName?: string;
+  technicianCrea?: string;
+  companyName?: string;
+  signatureUrl?: string;
   items: Array<{
     item: InspectionItem;
     analysis: ImageAnalysisResult;
@@ -191,27 +195,36 @@ Retorne o laudo em HTML bem formatado (sem tags <html>, <head>, <body> — apena
     )
     .join("\n");
 
+  const techBlock = inspectionData.technicianName
+    ? `\n**Responsável Técnico**: ${inspectionData.technicianName}${inspectionData.technicianCrea ? ` | CREA: ${inspectionData.technicianCrea}` : ""}${inspectionData.companyName ? ` | Empresa: ${inspectionData.companyName}` : ""}`
+    : "";
+
+  const signatureBlock = inspectionData.signatureUrl
+    ? `<div style="margin-top:32px;padding-top:24px;border-top:2px solid #e5e7eb;text-align:center;"><p style="font-size:12px;color:#6b7280;margin-bottom:8px;">Assinatura Digital do Responsável Técnico</p><img src="${inspectionData.signatureUrl}" alt="Assinatura digital" style="max-width:280px;height:auto;border:1px solid #e5e7eb;border-radius:8px;padding:8px;background:#fff;" /></div>`
+    : "";
+
   const userPrompt = `Gere um laudo técnico completo para a seguinte inspeção:
 
 **Título**: ${inspectionData.title}
 **Local**: ${inspectionData.location}
 **Cliente**: ${inspectionData.client}
-${inspectionData.unit ? `**Unidade**: ${inspectionData.unit}` : ""}
+${inspectionData.unit ? `**Unidade**: ${inspectionData.unit}` : ""}${techBlock}
 **Sistema**: ${inspectionData.system}
 
 **Itens Inspecionados**:
 ${itemsSummary}
 
 Estruture o laudo com:
-1. Cabeçalho (dados da inspeção)
+1. Cabeçalho (dados da inspeção, responsável técnico e CREA se disponível)
 2. Objetivo
 3. Metodologia
 4. Resultados (item por item)
 5. Conclusões
 6. Recomendações
-7. Assinatura (espaço para assinatura digital)
+7. Espaço para assinatura digital
 
-Retorne HTML bem formatado.`;
+Retorne HTML bem formatado. Inclua este bloco de assinatura exatamente ao final do conteúdo: ${signatureBlock || "<div style='margin-top:32px;padding-top:24px;border-top:2px solid #e5e7eb;'><p style='color:#6b7280;font-size:12px;'>Assinatura do Responsável Técnico: ___________________________</p></div>"}`;
+
 
   try {
     const response = await invokeLLM({

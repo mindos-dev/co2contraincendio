@@ -6,7 +6,7 @@
 
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { router } from "./_core/trpc";
+import { router, publicProcedure } from "./_core/trpc";
 import { saasAuthProcedure } from "./saas-routers";
 import { getDb } from "./db";
 import { storagePut } from "./storage";
@@ -14,6 +14,8 @@ import {
   operisInspections,
   operisInspectionItems,
   operisReports,
+  saasUsers,
+  saasCompanies,
 } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 import {
@@ -234,6 +236,28 @@ export const operisRouter = router({
         })
         .where(eq(operisInspections.id, input.inspectionId));
 
+      // Buscar dados do técnico responsável (nome + empresa)
+      const [techUser] = await db
+        .select({ name: saasUsers.name, companyId: saasUsers.companyId })
+        .from(saasUsers)
+        .where(eq(saasUsers.id, ctx.saasUser.userId))
+        .limit(1);
+      let companyName: string | undefined;
+      if (techUser?.companyId) {
+        const [co] = await db
+          .select({ name: saasCompanies.name })
+          .from(saasCompanies)
+          .where(eq(saasCompanies.id, techUser.companyId))
+          .limit(1);
+        companyName = co?.name;
+      }
+      // Buscar assinatura existente para este laudo
+      const [existingReport] = await db
+        .select({ signatureUrl: operisReports.signatureUrl })
+        .from(operisReports)
+        .where(eq(operisReports.inspectionId, input.inspectionId))
+        .orderBy(desc(operisReports.generatedAt))
+        .limit(1);
       // Gerar laudo HTML com IA
       const htmlContent = await generateTechnicalReport({
         title: inspection.title,
@@ -241,6 +265,9 @@ export const operisRouter = router({
         client: inspection.client,
         unit: inspection.unit || undefined,
         system: inspection.system,
+        technicianName: techUser?.name ?? undefined,
+        companyName,
+        signatureUrl: existingReport?.signatureUrl ?? undefined,
         items: items.map((item) => {
           const checklistItem = systemItems.find((ci) => ci.id === item.itemId) || {
             id: item.itemId,
@@ -413,8 +440,8 @@ export const operisRouter = router({
       return { signatureUrl: url };
     }),
 
-  // Laudo público por slug (SEO)
-  getPublicReport: saasAuthProcedure
+  // Laudo público por slug (SEO) — sem autenticação
+  getPublicReport: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
       const db = await getDb();

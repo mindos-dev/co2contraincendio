@@ -56,6 +56,7 @@ import HistoricoLaudos from "./pages/mobile/HistoricoLaudos";
 import OperisHome from "./pages/operis/OperisHome";
 import NovaInspecao from "./pages/operis/NovaInspecao";
 import InspecaoDetalhes from "./pages/operis/InspecaoDetalhes";
+import LaudoPublico from "./pages/operis/LaudoPublico";
 function Router() {
   return (
     <Switch>
@@ -114,6 +115,7 @@ function Router() {
       <Route path="/operis" component={OperisHome} />
       <Route path="/operis/nova" component={NovaInspecao} />
       <Route path="/operis/inspecao/:id" component={InspecaoDetalhes} />
+      <Route path="/operis/laudo/:slug" component={LaudoPublico} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
