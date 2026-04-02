@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useSaasAuth } from "@/contexts/SaasAuthContext";
+import OperisLogo from "./OperisLogo";
 
 interface NavItem { label: string; path: string; icon: string; adminOnly?: boolean; mobileHide?: boolean; }
 
@@ -65,7 +66,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
             </div>
             {!collapsed && <div>
               <div style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.06em" }}>CO2 CONTRA INCÊNDIO</div>
-              <div style={{ color: "#8A8A8A", fontSize: 9, letterSpacing: "0.1em" }}>PLATAFORMA OPERIS</div>
+              <OperisLogo size="sm" dark animate={false} style={{ marginTop: 4 }} />
             </div>}
           </div>
 
@@ -117,7 +118,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
             <div style={{ width: 28, height: 28, background: "#C8102E", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ color: "#fff", fontWeight: 900, fontSize: 9, fontFamily: "'Barlow Condensed',sans-serif" }}>CO2</span>
             </div>
-            <div style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: "0.06em" }}>OPERIS</div>
+            <OperisLogo size="sm" dark animate style={{ marginLeft: 2 }} />
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <Link href="/"><span style={{ color: "#8A8A8A", fontSize: 11, cursor: "pointer" }}>← Site</span></Link>

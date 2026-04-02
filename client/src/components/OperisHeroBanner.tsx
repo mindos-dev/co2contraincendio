@@ -1,19 +1,36 @@
 /**
  * OperisHeroBanner
  * Banner de destaque para o módulo OPERIS IA — exibido na Home
- * Visual: fundo industrial com overlay escuro, badge pulsante, KPIs e CTA
+ * Integra a nova OperisLogo tipográfica futurista
  */
 
 import { Link } from "wouter";
+import OperisLogo from "./OperisLogo";
 
 const BG_URL =
   "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/operis-banner-bg-X9xf844jLRZBjSckVPN2xZ.webp";
 
 const features = [
-  { icon: "🤖", label: "IA Generativa", desc: "Laudos redigidos automaticamente com análise de risco" },
-  { icon: "📋", label: "Inspeções Digitais", desc: "Formulários inteligentes com checklist NBR/NFPA" },
-  { icon: "📊", label: "Painel Admin", desc: "Visão 360° de técnicos, laudos e não-conformidades" },
-  { icon: "🔗", label: "Compartilhamento", desc: "Envio de laudos por WhatsApp e e-mail em 1 clique" },
+  {
+    icon: "◈",
+    label: "IA Generativa",
+    desc: "Laudos redigidos automaticamente com análise de risco R1–R5",
+  },
+  {
+    icon: "◉",
+    label: "Inspeções Digitais",
+    desc: "Formulários inteligentes com checklist NBR 12615 e NFPA 12",
+  },
+  {
+    icon: "◫",
+    label: "Painel Admin 360°",
+    desc: "Gestão de técnicos, laudos e não-conformidades em tempo real",
+  },
+  {
+    icon: "◎",
+    label: "Compartilhamento",
+    desc: "Envio de laudos por WhatsApp e e-mail em 1 clique",
+  },
 ];
 
 export default function OperisHeroBanner() {
@@ -22,8 +39,8 @@ export default function OperisHeroBanner() {
       style={{
         position: "relative",
         overflow: "hidden",
-        background: "#0a0a0a",
-        minHeight: "520px",
+        background: "#060606",
+        minHeight: "560px",
         display: "flex",
         alignItems: "center",
       }}
@@ -36,21 +53,21 @@ export default function OperisHeroBanner() {
           backgroundImage: `url(${BG_URL})`,
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
-          opacity: 0.38,
+          opacity: 0.3,
         }}
       />
 
-      {/* Gradient overlay — left dark, right transparent */}
+      {/* Gradient overlay — esquerda escura, direita semi-transparente */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(105deg, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.45) 100%)",
+            "linear-gradient(108deg, rgba(6,6,6,0.98) 0%, rgba(6,6,6,0.88) 50%, rgba(6,6,6,0.55) 100%)",
         }}
       />
 
-      {/* Red accent line top */}
+      {/* Linha vermelha topo */}
       <div
         style={{
           position: "absolute",
@@ -58,110 +75,59 @@ export default function OperisHeroBanner() {
           left: 0,
           right: 0,
           height: "3px",
-          background: "linear-gradient(90deg, #C8102E 0%, #ff4d6d 50%, transparent 100%)",
+          background: "linear-gradient(90deg, #C8102E 0%, #ff4d6d 40%, transparent 100%)",
         }}
       />
 
-      {/* Content */}
+      {/* Grade decorativa sutil */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "linear-gradient(rgba(200,16,46,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(200,16,46,0.04) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Conteúdo */}
       <div
         className="container"
         style={{
           position: "relative",
           zIndex: 2,
-          paddingTop: "4rem",
-          paddingBottom: "4rem",
+          paddingTop: "4.5rem",
+          paddingBottom: "4.5rem",
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "3rem",
+          gridTemplateColumns: "1.1fr 0.9fr",
+          gap: "3.5rem",
           alignItems: "center",
         }}
       >
-        {/* Left — headline */}
+        {/* ── Coluna esquerda: logo + copy + CTAs ── */}
         <div>
-          {/* Badge pulsante */}
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              background: "rgba(200,16,46,0.15)",
-              border: "1px solid rgba(200,16,46,0.5)",
-              borderRadius: "2px",
-              padding: "0.3rem 0.85rem",
-              marginBottom: "1.5rem",
-            }}
-          >
-            <span
-              style={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                background: "#C8102E",
-                display: "inline-block",
-                animation: "pulse-red 1.6s ease-in-out infinite",
-              }}
-            />
-            <span
-              style={{
-                color: "#ff6b6b",
-                fontSize: "0.6875rem",
-                fontWeight: 700,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                fontFamily: "'Barlow Condensed', sans-serif",
-              }}
-            >
-              Plataforma Exclusiva · Inteligência Artificial
-            </span>
-          </div>
+          {/* LOGO OPERIS IA */}
+          <OperisLogo size="lg" dark animate style={{ marginBottom: "2rem" }} />
 
-          {/* Title */}
-          <h2
-            style={{
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontWeight: 900,
-              fontSize: "clamp(2.5rem, 4.5vw, 3.75rem)",
-              lineHeight: 1.0,
-              color: "#fff",
-              textTransform: "uppercase",
-              letterSpacing: "0.02em",
-              marginBottom: "0.5rem",
-            }}
-          >
-            OPERIS
-            <span style={{ color: "#C8102E" }}> IA</span>
-          </h2>
-
+          {/* Descrição */}
           <p
             style={{
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontWeight: 600,
-              fontSize: "clamp(1rem, 2vw, 1.35rem)",
-              color: "#b0b0b0",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              marginBottom: "1.25rem",
-            }}
-          >
-            Sistema Inteligente de Inspeção e Laudos
-          </p>
-
-          <p
-            style={{
-              color: "#9a9a9a",
+              color: "rgba(255,255,255,0.62)",
               fontSize: "0.9375rem",
-              lineHeight: 1.65,
-              maxWidth: "480px",
-              marginBottom: "2rem",
+              lineHeight: 1.7,
+              maxWidth: "500px",
+              marginBottom: "2.25rem",
+              fontFamily: "'Inter', sans-serif",
             }}
           >
             Automatize inspeções de sistemas de combate a incêndio com inteligência artificial.
             Gere laudos técnicos completos, gerencie técnicos e compartilhe relatórios com clientes
-            em segundos — tudo em conformidade com NBR 12615 e NFPA 12.
+            — tudo em conformidade com NBR 12615 e NFPA 12.
           </p>
 
           {/* CTAs */}
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
             <Link
               href="/app/login"
               style={{
@@ -173,19 +139,27 @@ export default function OperisHeroBanner() {
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontWeight: 700,
                 fontSize: "0.9375rem",
-                letterSpacing: "0.06em",
+                letterSpacing: "0.07em",
                 textTransform: "uppercase",
-                padding: "0.75rem 1.75rem",
-                border: "none",
-                cursor: "pointer",
+                padding: "0.8rem 2rem",
                 textDecoration: "none",
-                transition: "background 0.2s",
+                transition: "background 0.2s, box-shadow 0.2s",
+                boxShadow: "0 0 0 rgba(200,16,46,0)",
               }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "#a50d26")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "#C8102E")}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.background = "#a50d26";
+                el.style.boxShadow = "0 4px 24px rgba(200,16,46,0.4)";
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.background = "#C8102E";
+                el.style.boxShadow = "0 0 0 rgba(200,16,46,0)";
+              }}
             >
-              🛡️ Acessar Plataforma
+              ▶ Acessar Plataforma
             </Link>
+
             <a
               href="#operis-features"
               style={{
@@ -193,25 +167,26 @@ export default function OperisHeroBanner() {
                 alignItems: "center",
                 gap: "0.5rem",
                 background: "transparent",
-                color: "#fff",
+                color: "rgba(255,255,255,0.75)",
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontWeight: 700,
                 fontSize: "0.9375rem",
-                letterSpacing: "0.06em",
+                letterSpacing: "0.07em",
                 textTransform: "uppercase",
-                padding: "0.75rem 1.75rem",
-                border: "1px solid rgba(255,255,255,0.25)",
-                cursor: "pointer",
+                padding: "0.8rem 1.75rem",
+                border: "1px solid rgba(255,255,255,0.18)",
                 textDecoration: "none",
                 transition: "border-color 0.2s, color 0.2s",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "#C8102E";
-                (e.currentTarget as HTMLElement).style.color = "#ff6b6b";
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "#C8102E";
+                el.style.color = "#ff6b6b";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.25)";
-                (e.currentTarget as HTMLElement).style.color = "#fff";
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "rgba(255,255,255,0.18)";
+                el.style.color = "rgba(255,255,255,0.75)";
               }}
             >
               Ver Funcionalidades ↓
@@ -219,7 +194,7 @@ export default function OperisHeroBanner() {
           </div>
         </div>
 
-        {/* Right — feature cards */}
+        {/* ── Coluna direita: cards de funcionalidades ── */}
         <div
           id="operis-features"
           style={{
@@ -232,36 +207,58 @@ export default function OperisHeroBanner() {
             <div
               key={f.label}
               style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(200,16,46,0.2)",
-                borderRadius: "2px",
-                padding: "1.25rem",
-                transition: "border-color 0.2s, background 0.2s",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(200,16,46,0.18)",
+                padding: "1.35rem 1.1rem",
+                transition: "border-color 0.2s, background 0.2s, transform 0.2s",
+                cursor: "default",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(200,16,46,0.6)";
-                (e.currentTarget as HTMLElement).style.background = "rgba(200,16,46,0.07)";
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "rgba(200,16,46,0.55)";
+                el.style.background = "rgba(200,16,46,0.06)";
+                el.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(200,16,46,0.2)";
-                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "rgba(200,16,46,0.18)";
+                el.style.background = "rgba(255,255,255,0.03)";
+                el.style.transform = "translateY(0)";
               }}
             >
-              <div style={{ fontSize: "1.75rem", marginBottom: "0.5rem" }}>{f.icon}</div>
+              {/* Ícone geométrico */}
+              <div
+                style={{
+                  fontFamily: "monospace",
+                  fontSize: "1.35rem",
+                  color: "#C8102E",
+                  marginBottom: "0.6rem",
+                  lineHeight: 1,
+                }}
+              >
+                {f.icon}
+              </div>
               <div
                 style={{
                   fontFamily: "'Barlow Condensed', sans-serif",
                   fontWeight: 700,
-                  fontSize: "0.9375rem",
+                  fontSize: "0.875rem",
                   color: "#fff",
                   textTransform: "uppercase",
-                  letterSpacing: "0.04em",
-                  marginBottom: "0.35rem",
+                  letterSpacing: "0.05em",
+                  marginBottom: "0.4rem",
                 }}
               >
                 {f.label}
               </div>
-              <div style={{ color: "#7a7a7a", fontSize: "0.8125rem", lineHeight: 1.5 }}>
+              <div
+                style={{
+                  color: "rgba(255,255,255,0.45)",
+                  fontSize: "0.8rem",
+                  lineHeight: 1.55,
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
                 {f.desc}
               </div>
             </div>
@@ -269,28 +266,28 @@ export default function OperisHeroBanner() {
         </div>
       </div>
 
-      {/* Bottom gradient fade */}
+      {/* Fade inferior para a próxima seção */}
       <div
         style={{
           position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,
-          height: "80px",
-          background: "linear-gradient(to bottom, transparent, #f5f5f5)",
+          height: "90px",
+          background: "linear-gradient(to bottom, transparent, #f4f4f4)",
           pointerEvents: "none",
         }}
       />
 
-      {/* Pulse animation */}
+      {/* Responsivo mobile */}
       <style>{`
-        @keyframes pulse-red {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(1.4); }
-        }
-        @media (max-width: 900px) {
-          .operis-banner-grid { grid-template-columns: 1fr !important; }
-          .operis-banner-cards { display: none !important; }
+        @media (max-width: 860px) {
+          .operis-banner-container {
+            grid-template-columns: 1fr !important;
+          }
+          .operis-banner-cards {
+            display: none !important;
+          }
         }
       `}</style>
     </section>

@@ -276,3 +276,9 @@
 
 - [x] Criar componente OperisHeroBanner.tsx com imagem gerada por IA, texto de destaque e CTA
 - [x] Integrar o banner na Home.tsx em posição de destaque (antes do CTA final)
+
+## Logo OPERIS IA — Tipográfica Futurista
+
+- [x] Criar componente OperisLogo.tsx com logo CSS pura (sem imagens), tipografia Barlow Condensed, subtexto persuasivo
+- [x] Atualizar OperisHeroBanner para usar a nova logo em destaque
+- [x] Integrar OperisLogo no SaasDashboardLayout (sidebar desktop + header mobile)
