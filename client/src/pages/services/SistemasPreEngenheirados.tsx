@@ -1,277 +1,246 @@
 import { Link } from "wouter";
-import SEOHead from "../../components/SEOHead";
+import SEOHead from "@/components/SEOHead";
 
-const applications = [
+// ─── CDN Assets ──────────────────────────────────────────────────────────────
+const CDN = {
+  amerexVehicle: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/amerex-vehicle-cat_6b824102.jpg",
+  amerexIndustrial: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/amerex-industrial-system_f02413fc.jpg",
+  rotarexCnc: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/rotarex-firedtec-cnc_9fed23c5.jpg",
+  rotarexPanel: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/rotarex-firedtec-panel_246fa755.jpg",
+  logoAmerex: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/logo-amerex_9540f89b.png",
+  logoRotarex: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/logo-rotarex-firetec_81a16483.png",
+  logoKidde: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/logo-kidde_f8f9aab2.png",
+};
+
+const manufacturers = [
+  { name: "Amerex Fire Systems", logo: CDN.logoAmerex, url: "https://www.amerex-fire.com", desc: "Líder mundial em sistemas de supressão para veículos industriais e aplicações especiais. Certificação UL Listed e FM Approved." },
+  { name: "Rotarex Firetec", logo: CDN.logoRotarex, url: "https://www.rotarex-firetec.com", desc: "Fabricante do sistema FireDETEC® — tubo de detecção linear com atuação automática. Certificação CE, VdS e UL." },
+  { name: "Kidde Fire Systems", logo: CDN.logoKidde, url: "https://www.kidde-fire.com", desc: "Divisão industrial da Carrier Global. Sistemas de CO₂, agentes limpos e supressão para data centers e ambientes críticos." },
+];
+
+const systems = [
   {
-    id: "veiculos-off-road",
-    icon: "🚜",
-    title: "Veículos Off-Road e Máquinas Pesadas",
-    subtitle: "Escavadeiras, colheitadeiras, mineração",
-    description:
-      "Sistemas Amerex Dry-ICS com agente duplo (pó químico seco + agente líquido ICS) para proteção automática de motores, sistemas hidráulicos e cabines em ambientes de mineração e construção.",
-    norm: "NFPA 122 / NBR 15808",
-    agent: "Pó Químico Seco + ICS Líquido",
+    id: "veiculos",
     href: "/protecao-veiculos-off-road",
-    color: "#b45309",
+    image: CDN.amerexVehicle,
+    tag: "NFPA 122 · ISO 3941",
+    agent: "Dry Chemical ABC · Dual Agent",
+    manufacturer: "Amerex",
+    title: "Veículos Off-Road e Mineração",
+    subtitle: "Escavadeiras, Carregadeiras, Colheitadeiras",
+    description:
+      "Sistemas automáticos instalados no compartimento de motor, transmissão e área de combustível. Detecção linear por tubo pressurizado — sem eletrônica exposta a vibração e poeira.",
+    specs: [
+      { label: "Tempo de resposta", value: "< 5 s" },
+      { label: "Agente", value: "Purple-K (PKP) ou ABC" },
+      { label: "Certificação", value: "UL Listed · FM Approved" },
+      { label: "Norma", value: "NFPA 122 · ISO 3941:2021" },
+    ],
   },
   {
-    id: "compartimento-motor",
-    icon: "🔧",
-    title: "Compartimento de Motor",
-    subtitle: "Water mist, dry chemical e dual agent",
-    description:
-      "Proteção específica para compartimentos de motor com sistemas de resfriamento por névoa d'água e supressão por pó químico, prevenindo re-ignição em áreas confinadas de alta temperatura.",
-    norm: "NFPA 17 / NBR 12693",
-    agent: "Water Mist / Pó Químico / Dual Agent",
-    href: "/protecao-compartimento-motor",
-    color: "#0369a1",
-  },
-  {
-    id: "maquinas-cnc",
-    icon: "⚙️",
-    title: "Máquinas CNC e Maquinário Industrial",
-    subtitle: "Sistema Rotarex FireDETEC",
-    description:
-      "O FireDETEC da Rotarex é instalado diretamente dentro da máquina CNC. O tubo sensor linear detecta calor e aciona a descarga automaticamente, sem necessidade de energia elétrica.",
-    norm: "NFPA 86 / EN 15004",
-    agent: "HFC-227ea / FK-5-1-12 / CO₂",
+    id: "cnc",
     href: "/protecao-maquinas-cnc",
-    color: "#7c3aed",
+    image: CDN.rotarexCnc,
+    tag: "EN 15004-1 · NFPA 2001",
+    agent: "FireDETEC® R107 · CO₂",
+    manufacturer: "Rotarex Firetec",
+    title: "Máquinas CNC e Usinagem",
+    subtitle: "Torneamento, Fresamento, EDM, Retificação",
+    description:
+      "O tubo linear FireDETEC® atua como sensor e condutor do agente. Ao atingir a temperatura de ruptura (110°C), o tubo se rompe no ponto mais quente e descarrega o agente diretamente sobre a origem — sem painel de controle, sem fiação.",
+    specs: [
+      { label: "Temperatura de atuação", value: "110°C ou 182°C" },
+      { label: "Agente", value: "Dry Chemical R107 ou CO₂" },
+      { label: "Volume máximo", value: "Até 3,0 m³ por cilindro" },
+      { label: "Certificação", value: "CE · VdS · UL" },
+    ],
   },
   {
-    id: "paineis-eletricos",
-    icon: "⚡",
-    title: "Painéis Elétricos e Quadros de Controle",
-    subtitle: "Agentes limpos e CO₂",
-    description:
-      "Sistemas FireDETEC para painéis elétricos com agentes limpos (FK-5-1-12 / HFC-227ea) que suprimem o incêndio sem danificar componentes eletrônicos e sem deixar resíduo.",
-    norm: "NFPA 2001 / IEC 62305",
-    agent: "FK-5-1-12 / HFC-227ea / CO₂",
+    id: "paineis",
     href: "/protecao-paineis-eletricos",
-    color: "#dc2626",
+    image: CDN.rotarexPanel,
+    tag: "IEC 62305 · NFPA 70E",
+    agent: "FireDETEC® · FK-5-1-12 · CO₂",
+    manufacturer: "Rotarex Firetec",
+    title: "Painéis Elétricos e CCMs",
+    subtitle: "Quadros de Distribuição, CCM, UPS, Inversores",
+    description:
+      "Sistema FireDETEC® indireto com tubo de detecção dentro do gabinete e cilindro externo com agente limpo — sem resíduos condutivos, sem dano a equipamentos energizados.",
+    specs: [
+      { label: "Agente preferencial", value: "FK-5-1-12 — zero ODP" },
+      { label: "Tempo de descarga", value: "≤ 10 s (NFPA 2001)" },
+      { label: "Segurança elétrica", value: "Dielétrico até 35 kV" },
+      { label: "Norma", value: "IEC 62305 · NFPA 70E · NBR 5410" },
+    ],
+  },
+  {
+    id: "industrial",
+    href: "/protecao-maquinas-industriais",
+    image: CDN.amerexIndustrial,
+    tag: "NFPA 86 · NBR 14276",
+    agent: "CO₂ Total Flooding · Dry Chemical",
+    manufacturer: "Amerex · Kidde",
+    title: "Máquinas Industriais",
+    subtitle: "Injetoras de Plástico, Prensas Hidráulicas, Extrusoras",
+    description:
+      "Injetoras e prensas operam com óleo mineral sob alta pressão — risco de incêndio Classe B de ignição rápida. Supressão local aplica o agente diretamente sobre a zona de risco.",
+    specs: [
+      { label: "Modo de aplicação", value: "Local ou Total flooding" },
+      { label: "Agente", value: "CO₂ · Dry Chemical · AFFF" },
+      { label: "Detecção", value: "Termovelocimétrico · Tubo linear" },
+      { label: "Norma", value: "NFPA 86 · NBR 14276" },
+    ],
+  },
+  {
+    id: "geradores",
+    href: "/protecao-geradores",
+    image: CDN.amerexIndustrial,
+    tag: "NFPA 110 · NBR 13231",
+    agent: "CO₂ · FM-200 · Water Mist",
+    manufacturer: "Kidde · Amerex",
+    title: "Geradores e Grupos Motogeradores",
+    subtitle: "Grupos Geradores Diesel, UPS de Grande Porte",
+    description:
+      "Salas de geradores concentram combustível diesel, óleo lubrificante e alta temperatura. Proteção por zonas distintas: motor, painel de controle e tanque de combustível.",
+    specs: [
+      { label: "Zona Motor", value: "CO₂ ou Water Mist" },
+      { label: "Zona Painel", value: "FK-5-1-12 ou FM-200" },
+      { label: "Zona Tanque", value: "AFFF ou Dry Chemical" },
+      { label: "Norma", value: "NFPA 110 · NBR 13231" },
+    ],
   },
   {
     id: "laboratorios",
-    icon: "🧪",
-    title: "Capelas de Laboratório e Armazenamento Químico",
-    subtitle: "Rotarex FireDETEC Fume Hood",
-    description:
-      "Sistema pré-engenheirado para capelas de exaustão e armários de produtos químicos. Detecção e supressão automática em ambientes com vapores inflamáveis e reagentes voláteis.",
-    norm: "NFPA 45 / NBR 14276",
-    agent: "CO₂ / HFC-227ea",
     href: "/protecao-laboratorios",
-    color: "#059669",
-  },
-  {
-    id: "maquinas-industriais",
-    icon: "🏭",
-    title: "Máquinas Industriais (Injeção, Prensas, CNC)",
-    subtitle: "Aplicação local vs. inundação total",
+    image: CDN.rotarexPanel,
+    tag: "NFPA 45 · RDC 50 ANVISA",
+    agent: "FK-5-1-12 · CO₂",
+    manufacturer: "Kidde · Rotarex",
+    title: "Laboratórios e Farmácias",
+    subtitle: "Capelas Químicas, Armazenamento de Reagentes",
     description:
-      "Sistemas de aplicação local para proteção pontual de pontos de risco em prensas hidráulicas, injetoras de plástico e centros de usinagem, sem necessidade de inundar o ambiente inteiro.",
-    norm: "NFPA 86 / NBR 12615",
-    agent: "CO₂ / Pó Químico / Agente Limpo",
-    href: "/protecao-maquinas-industriais",
-    color: "#0891b2",
-  },
-  {
-    id: "cozinhas-industriais",
-    icon: "🍳",
-    title: "Cozinhas Industriais",
-    subtitle: "Wet chemical e saponificante",
-    description:
-      "Sistemas de supressão por agente saponificante (Wet Chemical) para proteção de coifas, fritadeiras e equipamentos de cocção. Corte automático de gás e saponificação da gordura.",
-    norm: "NBR 16077 / NFPA 17A / UL 300",
-    agent: "Wet Chemical (Agente K)",
-    href: "/sistema-saponificante",
-    color: "#d97706",
-  },
-  {
-    id: "aplicacoes-especiais",
-    icon: "🌐",
-    title: "Aplicações Especiais",
-    subtitle: "Data centers, telecom, hospitais, offshore, turbinas eólicas",
-    description:
-      "Soluções para ambientes críticos com agentes limpos de última geração: Novec 1230, FM-200, Inergen e CO₂. Proteção sem danos a equipamentos sensíveis e aprovada pelo Corpo de Bombeiros.",
-    norm: "NFPA 2001 / NFPA 12 / NBR 16064",
-    agent: "Novec 1230 / FM-200 / Inergen / CO₂",
-    href: "/aplicacoes-especiais",
-    color: "#6b7280",
+      "Laboratórios armazenam solventes inflamáveis em capelas de exaustão. O sistema suprime sem gerar produtos tóxicos e sem danificar equipamentos analíticos de alto valor.",
+    specs: [
+      { label: "Agente preferencial", value: "FK-5-1-12 — zero resíduo" },
+      { label: "Detecção", value: "VESDA (aspiração)" },
+      { label: "Conformidade", value: "RDC 50 ANVISA · NFPA 45" },
+      { label: "Tempo de resposta", value: "< 30 s" },
+    ],
   },
 ];
 
 const schema = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  name: "Sistemas Pré-Engenheirados de Combate a Incêndio | CO₂ Contra Incêndio",
-  description:
-    "Sistemas automáticos pré-engenheirados de supressão de incêndio para veículos, máquinas CNC, painéis elétricos, laboratórios e aplicações industriais em BH e MG.",
-  url: "https://co2contra.com/sistemas-pre-engenheirados",
-  mainEntity: {
-    "@type": "Service",
-    name: "Sistemas Pré-Engenheirados de Combate a Incêndio",
-    provider: {
-      "@type": "LocalBusiness",
-      name: "CO₂ Contra Incêndio",
-      telephone: "+55-31-99738-3115",
-      address: { "@type": "PostalAddress", addressLocality: "Belo Horizonte", addressRegion: "MG" },
-    },
+  "@type": "Service",
+  name: "Sistemas Pré-Engenheirados de Supressão de Incêndio",
+  provider: {
+    "@type": "LocalBusiness",
+    name: "CO2 Contra Incêndio",
+    url: "https://co2contra.com",
+    telephone: "+55-31-99738-3115",
   },
+  description:
+    "Sistemas automáticos de supressão de incêndio para veículos off-road, máquinas CNC, painéis elétricos, geradores e laboratórios. Amerex, Rotarex FireDETEC, Kidde. Normas NFPA e ABNT.",
+  areaServed: "Brasil",
 };
 
 export default function SistemasPreEngenheirados() {
   return (
     <>
       <SEOHead
-        title="Sistemas Pré-Engenheirados de Combate a Incêndio | CO₂ Contra Incêndio"
-        description="Sistemas automáticos pré-engenheirados de supressão de incêndio para veículos off-road, máquinas CNC, painéis elétricos, laboratórios e aplicações industriais. Amerex, Rotarex FireDETEC. BH e MG."
-        keywords="sistema fixo de incêndio, supressão automática incêndio, sistema pré-engenheirado, proteção máquinas industriais, combate incêndio industrial, FireDETEC, Amerex, sistema CO2"
+        title="Sistemas Pré-Engenheirados de Supressão de Incêndio | CO2 Contra Incêndio"
+        description="Sistemas automáticos de supressão para veículos off-road, máquinas CNC, painéis elétricos, geradores e laboratórios. Amerex, Rotarex FireDETEC, Kidde. Normas NFPA e ABNT."
+        keywords="sistemas pré-engenheirados incêndio, Amerex supressão veículos, Rotarex FireDETEC CNC, proteção painéis elétricos incêndio, supressão automática industrial, NFPA 122, NFPA 2001"
         schema={schema}
       />
 
       {/* HERO */}
-      <section
-        style={{
-          background: "linear-gradient(135deg, #0a0f1e 0%, #1a1f3e 50%, #0d1117 100%)",
-          padding: "6rem 0 4rem",
-          borderBottom: "3px solid #dc2626",
-        }}
-      >
-        <div className="container">
-          <div style={{ maxWidth: "800px" }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                background: "rgba(220,38,38,0.15)",
-                border: "1px solid rgba(220,38,38,0.4)",
-                borderRadius: "4px",
-                padding: "0.35rem 0.9rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              <span style={{ color: "#dc2626", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-                Engenharia Industrial de Proteção
-              </span>
-            </div>
-            <h1
-              style={{
-                fontSize: "clamp(2rem, 5vw, 3.2rem)",
-                fontWeight: 800,
-                color: "#fff",
-                lineHeight: 1.15,
-                marginBottom: "1.5rem",
-                fontFamily: "'Barlow', sans-serif",
-              }}
-            >
-              Sistemas Pré-Engenheirados<br />
-              <span style={{ color: "#dc2626" }}>de Combate a Incêndio</span>
-            </h1>
-            <p
-              style={{
-                fontSize: "1.15rem",
-                color: "#94a3b8",
-                lineHeight: 1.7,
-                marginBottom: "2rem",
-                maxWidth: "680px",
-              }}
-            >
-              A CO₂ Contra Incêndio não vende uma solução única. Entregamos{" "}
-              <strong style={{ color: "#e2e8f0" }}>o sistema certo para cada aplicação</strong>. Cada ambiente industrial
-              exige uma tecnologia diferente — gás, agente líquido, pó químico, névoa d'água ou agente limpo.
+      <section className="bg-[#0a1628] text-white">
+        <div className="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <p className="text-red-500 text-xs font-bold tracking-[0.2em] uppercase mb-4">
+              Engenharia de Proteção Contra Incêndio
             </p>
-            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-              <Link href="/contato">
-                <button
-                  style={{
-                    background: "#dc2626",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    padding: "0.85rem 2rem",
-                    fontSize: "1rem",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    fontFamily: "'Barlow', sans-serif",
-                  }}
-                >
-                  Solicitar Projeto Técnico
-                </button>
-              </Link>
-              <a href="tel:+5531997383115">
-                <button
-                  style={{
-                    background: "transparent",
-                    color: "#e2e8f0",
-                    border: "1px solid rgba(226,232,240,0.3)",
-                    borderRadius: "6px",
-                    padding: "0.85rem 2rem",
-                    fontSize: "1rem",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontFamily: "'Barlow', sans-serif",
-                  }}
-                >
-                  (31) 9 9738-3115
-                </button>
-              </a>
+            <h1 className="text-4xl md:text-5xl font-black leading-tight mb-6">
+              Sistemas<br />
+              <span className="text-red-500">Pré-Engenheirados</span><br />
+              de Supressão
+            </h1>
+            <p className="text-gray-300 text-lg leading-relaxed mb-8 max-w-lg">
+              Soluções automáticas de detecção e supressão para ambientes industriais de alta criticidade.
+              Atuação em menos de 5 segundos, sem intervenção humana, sem dano a equipamentos.
+            </p>
+            <div className="flex flex-wrap gap-3 mb-8">
+              {["UL Listed", "FM Approved", "CE Marked", "NFPA Compliant", "NBR 12693"].map((cert) => (
+                <span key={cert} className="border border-white/20 text-gray-300 text-xs font-semibold px-3 py-1.5 rounded">
+                  {cert}
+                </span>
+              ))}
             </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link href="/contato">
+                <a className="bg-red-600 hover:bg-red-700 text-white font-bold px-7 py-3.5 rounded transition-colors text-sm">
+                  Solicitar Projeto Técnico
+                </a>
+              </Link>
+              <Link href="/app/login">
+                <a className="border border-white/30 hover:border-white text-white font-semibold px-7 py-3.5 rounded transition-colors text-sm">
+                  Plataforma OPERIS
+                </a>
+              </Link>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            <img
+              src={CDN.amerexIndustrial}
+              alt="Sistema Amerex de supressão automática instalado em ambiente industrial"
+              className="rounded-lg w-full object-cover h-80"
+              loading="eager"
+            />
           </div>
         </div>
       </section>
 
-      {/* O QUE É UM SISTEMA PRÉ-ENGENHEIRADO */}
-      <section style={{ background: "#f8fafc", padding: "5rem 0" }}>
-        <div className="container">
-          <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-            <h2
-              style={{
-                fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
-                fontWeight: 800,
-                color: "#0f172a",
-                marginBottom: "1.5rem",
-                fontFamily: "'Barlow', sans-serif",
-              }}
-            >
-              O que é um Sistema Pré-Engenheirado?
-            </h2>
-            <p style={{ fontSize: "1.05rem", color: "#475569", lineHeight: 1.8, marginBottom: "1.5rem" }}>
-              Um sistema pré-engenheirado de supressão de incêndio é projetado, testado e aprovado em fábrica para
-              aplicações específicas. Diferente dos sistemas convencionais que exigem projeto hidráulico individual,
-              os sistemas pré-engenheirados chegam ao canteiro prontos para instalação, com detecção automática e
-              descarga integradas em um único conjunto compacto.
-            </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                gap: "1.5rem",
-                marginTop: "2rem",
-              }}
-            >
+      {/* NORMAS BAR */}
+      <div className="bg-[#111f38] border-y border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap gap-x-8 gap-y-2 items-center">
+          <span className="text-gray-500 text-xs font-bold tracking-widest uppercase">Normas aplicáveis</span>
+          {["NFPA 122 — Mineração", "NFPA 2001 — Agentes Limpos", "NFPA 86 — Fornos", "NFPA 110 — Geradores", "NFPA 45 — Laboratórios", "NBR 12693 — Extintores", "ISO 3941 — Veículos"].map((n) => (
+            <span key={n} className="text-gray-400 text-xs font-mono">
+              {n}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* DEFINIÇÃO TÉCNICA */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
+              <h2 className="text-2xl font-black text-[#0a1628] mb-4">O que é um Sistema Pré-Engenheirado?</h2>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Um sistema pré-engenheirado de supressão de incêndio é uma solução de proteção localizada, projetada e testada pelo fabricante para aplicações específicas — sem necessidade de cálculo hidráulico ou elétrico customizado em campo. O instalador segue um manual de instalação aprovado pelo órgão certificador (UL, FM, VdS) e o sistema opera dentro dos parâmetros validados em laboratório.
+              </p>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Diferente dos sistemas projetados sob medida (sprinklers, CO₂ total flooding), os sistemas pré-engenheirados são dimensionados pelo fabricante para volumes e aplicações específicas. Isso garante previsibilidade de desempenho, redução de custo de projeto e instalação mais rápida — sem comprometer a eficácia.
+              </p>
+              <p className="text-gray-600 leading-relaxed">
+                A CO2 Contra Incêndio é distribuidora e instaladora autorizada dos sistemas Amerex, Rotarex Firetec e Kidde Fire Systems em Minas Gerais, com equipe técnica certificada pelos fabricantes.
+              </p>
+            </div>
+            <div className="space-y-4">
               {[
-                { icon: "🏭", label: "Projetado em fábrica", desc: "Design e testes realizados pelo fabricante" },
-                { icon: "✅", label: "Pré-aprovado", desc: "Certificações UL, FM e ABNT já obtidas" },
-                { icon: "⚡", label: "Pronto para instalar", desc: "Instalação rápida sem projeto específico" },
-                { icon: "🤖", label: "100% automático", desc: "Detecção e descarga sem intervenção humana" },
+                { icon: "⚡", title: "Atuação Automática", desc: "Sem intervenção humana. Detecção e supressão em menos de 5 segundos." },
+                { icon: "🔬", title: "Testado em Laboratório", desc: "Cada sistema é certificado UL, FM ou VdS antes de chegar ao campo." },
+                { icon: "🎯", title: "Proteção Localizada", desc: "O agente é aplicado diretamente na origem do incêndio, sem contaminar o ambiente." },
               ].map((item) => (
-                <div
-                  key={item.label}
-                  style={{
-                    background: "#fff",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "10px",
-                    padding: "1.5rem",
-                    textAlign: "center",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                  }}
-                >
-                  <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>{item.icon}</div>
-                  <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: "0.4rem", fontFamily: "'Barlow', sans-serif" }}>
-                    {item.label}
+                <div key={item.title} className="flex gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                  <span className="text-2xl shrink-0">{item.icon}</span>
+                  <div>
+                    <p className="font-bold text-[#0a1628] text-sm mb-1">{item.title}</p>
+                    <p className="text-gray-500 text-xs leading-relaxed">{item.desc}</p>
                   </div>
-                  <div style={{ fontSize: "0.875rem", color: "#64748b" }}>{item.desc}</div>
                 </div>
               ))}
             </div>
@@ -279,210 +248,127 @@ export default function SistemasPreEngenheirados() {
         </div>
       </section>
 
-      {/* MENSAGEM CENTRAL */}
-      <section style={{ background: "#0f172a", padding: "4rem 0" }}>
-        <div className="container" style={{ textAlign: "center" }}>
-          <h2
-            style={{
-              fontSize: "clamp(1.4rem, 3vw, 2rem)",
-              fontWeight: 800,
-              color: "#fff",
-              marginBottom: "1rem",
-              fontFamily: "'Barlow', sans-serif",
-            }}
-          >
-            Cada Ambiente Exige uma Tecnologia Diferente
-          </h2>
-          <p style={{ color: "#94a3b8", fontSize: "1.05rem", maxWidth: "700px", margin: "0 auto 2.5rem", lineHeight: 1.7 }}>
-            Não existe sistema universal. Uma máquina CNC exige detecção interna por tubo linear. Um veículo de mineração
-            exige pó químico com resfriamento líquido. Um data center exige agente limpo sem resíduo. Conhecemos cada
-            tecnologia e aplicamos a correta.
-          </p>
-          <div style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
-            {[
-              { label: "Sistemas a Gás", icon: "💨" },
-              { label: "Agentes Líquidos", icon: "💧" },
-              { label: "Pó Químico Seco", icon: "🌫️" },
-              { label: "Névoa d'Água", icon: "🌊" },
-              { label: "Agentes Limpos", icon: "✨" },
-            ].map((t) => (
-              <div
-                key={t.label}
-                style={{
-                  background: "rgba(255,255,255,0.07)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  borderRadius: "8px",
-                  padding: "0.75rem 1.5rem",
-                  color: "#e2e8f0",
-                  fontWeight: 600,
-                  fontSize: "0.95rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <span>{t.icon}</span>
-                <span>{t.label}</span>
-              </div>
-            ))}
+      {/* SISTEMAS */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="mb-10">
+            <p className="text-red-600 text-xs font-bold tracking-[0.2em] uppercase mb-2">Aplicações</p>
+            <h2 className="text-3xl font-black text-[#0a1628]">Sistemas por Aplicação Industrial</h2>
           </div>
-        </div>
-      </section>
-
-      {/* GRID DE APLICAÇÕES */}
-      <section style={{ padding: "5rem 0", background: "#fff" }}>
-        <div className="container">
-          <h2
-            style={{
-              fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
-              fontWeight: 800,
-              color: "#0f172a",
-              marginBottom: "0.75rem",
-              fontFamily: "'Barlow', sans-serif",
-            }}
-          >
-            Aplicações Industriais
-          </h2>
-          <p style={{ color: "#64748b", fontSize: "1.05rem", marginBottom: "3rem", maxWidth: "600px" }}>
-            Selecione a aplicação para ver o sistema recomendado, normas aplicáveis e cenários reais de instalação.
-          </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-              gap: "1.5rem",
-            }}
-          >
-            {applications.map((app) => (
-              <Link key={app.id} href={app.href}>
-                <div
-                  style={{
-                    background: "#fff",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "12px",
-                    padding: "1.75rem",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                    borderLeft: `4px solid ${app.color}`,
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.75rem",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 8px rgba(0,0,0,0.06)";
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                    <span style={{ fontSize: "2rem" }}>{app.icon}</span>
-                    <div>
-                      <div style={{ fontWeight: 700, color: "#0f172a", fontSize: "1.05rem", fontFamily: "'Barlow', sans-serif" }}>
-                        {app.title}
-                      </div>
-                      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>{app.subtitle}</div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {systems.map((sys) => (
+              <Link key={sys.id} href={sys.href}>
+                <a className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-red-200 hover:shadow-lg transition-all duration-200 flex flex-col">
+                  <div className="relative overflow-hidden h-48">
+                    <img
+                      src={sys.image}
+                      alt={`${sys.title} — sistema de supressão de incêndio`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628]/80 to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+                      <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">{sys.manufacturer}</span>
+                      <span className="bg-black/50 text-gray-300 text-[10px] font-mono px-2 py-0.5 rounded">{sys.agent}</span>
                     </div>
                   </div>
-                  <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: 1.6, margin: 0 }}>
-                    {app.description}
-                  </p>
-                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "auto" }}>
-                    <span
-                      style={{
-                        background: "#f1f5f9",
-                        color: "#475569",
-                        fontSize: "0.75rem",
-                        padding: "0.25rem 0.6rem",
-                        borderRadius: "4px",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {app.norm}
-                    </span>
-                    <span
-                      style={{
-                        background: `${app.color}15`,
-                        color: app.color,
-                        fontSize: "0.75rem",
-                        padding: "0.25rem 0.6rem",
-                        borderRadius: "4px",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {app.agent}
-                    </span>
+                  <div className="p-5 flex flex-col flex-1">
+                    <p className="text-gray-400 text-[10px] font-mono mb-1">{sys.tag}</p>
+                    <h3 className="text-[#0a1628] font-black text-base mb-1 leading-tight">{sys.title}</h3>
+                    <p className="text-gray-500 text-xs mb-3">{sys.subtitle}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">{sys.description}</p>
+                    <div className="border-t border-gray-100 pt-3 space-y-1.5">
+                      {sys.specs.map((spec) => (
+                        <div key={spec.label} className="flex justify-between text-xs">
+                          <span className="text-gray-400 font-medium">{spec.label}</span>
+                          <span className="text-[#0a1628] font-semibold text-right ml-2">{spec.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex items-center gap-1 text-red-600 text-xs font-bold group-hover:gap-2 transition-all">
+                      Ver especificações completas <span>→</span>
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      color: app.color,
-                      fontWeight: 700,
-                      fontSize: "0.875rem",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.3rem",
-                    }}
-                  >
-                    Ver detalhes técnicos →
-                  </div>
-                </div>
+                </a>
               </Link>
             ))}
           </div>
+          <div className="mt-6 text-center">
+            <Link href="/aplicacoes-especiais">
+              <a className="inline-flex items-center gap-2 border border-[#0a1628] text-[#0a1628] hover:bg-[#0a1628] hover:text-white font-bold px-6 py-3 rounded-lg transition-colors text-sm">
+                Ver Aplicações Especiais (Data Centers, Offshore, Hospitais) →
+              </a>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* TABELA COMPARATIVA */}
-      <section style={{ background: "#f8fafc", padding: "5rem 0" }}>
-        <div className="container">
-          <h2
-            style={{
-              fontSize: "clamp(1.4rem, 3vw, 2rem)",
-              fontWeight: 800,
-              color: "#0f172a",
-              marginBottom: "2rem",
-              fontFamily: "'Barlow', sans-serif",
-            }}
-          >
-            Comparativo de Agentes Extintores
-          </h2>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
+      {/* FABRICANTES */}
+      <section className="py-16 bg-white border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="mb-10">
+            <p className="text-red-600 text-xs font-bold tracking-[0.2em] uppercase mb-2">Parceiros Técnicos</p>
+            <h2 className="text-2xl font-black text-[#0a1628]">Fabricantes Certificados</h2>
+            <p className="text-gray-500 text-sm mt-2 max-w-xl">
+              Trabalhamos exclusivamente com fabricantes que possuem certificação UL, FM ou VdS — os três principais organismos de certificação de sistemas de supressão de incêndio no mundo.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {manufacturers.map((mfr) => (
+              <a
+                key={mfr.name}
+                href={mfr.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group border border-gray-100 rounded-xl p-6 hover:border-red-200 hover:shadow-md transition-all"
+              >
+                <div className="h-12 flex items-center mb-4">
+                  <img src={mfr.logo} alt={`Logo ${mfr.name}`} className="max-h-10 max-w-[160px] object-contain grayscale group-hover:grayscale-0 transition-all" />
+                </div>
+                <h3 className="font-bold text-[#0a1628] text-sm mb-2">{mfr.name}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{mfr.desc}</p>
+                <span className="inline-flex items-center gap-1 text-red-600 text-xs font-semibold mt-3 group-hover:gap-2 transition-all">
+                  Site oficial →
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* COMPARATIVO DE AGENTES */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="mb-8">
+            <p className="text-red-600 text-xs font-bold tracking-[0.2em] uppercase mb-2">Referência Técnica</p>
+            <h2 className="text-2xl font-black text-[#0a1628]">Comparativo de Agentes Extintores</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
               <thead>
-                <tr style={{ background: "#0f172a", color: "#fff" }}>
-                  {["Agente", "Aplicação Principal", "Resíduo", "Seguro p/ Eletrônica", "Norma", "Re-ignição"].map((h) => (
-                    <th key={h} style={{ padding: "0.85rem 1rem", textAlign: "left", fontFamily: "'Barlow', sans-serif", fontWeight: 700 }}>
-                      {h}
-                    </th>
-                  ))}
+                <tr className="bg-[#0a1628] text-white">
+                  <th className="text-left px-4 py-3 font-bold text-xs">Agente</th>
+                  <th className="text-left px-4 py-3 font-bold text-xs">Classes</th>
+                  <th className="text-left px-4 py-3 font-bold text-xs">Resíduo</th>
+                  <th className="text-left px-4 py-3 font-bold text-xs">Segurança Elétrica</th>
+                  <th className="text-left px-4 py-3 font-bold text-xs">Aplicação Típica</th>
                 </tr>
               </thead>
               <tbody>
                 {[
-                  ["Pó Químico Seco (ABC)", "Veículos, indústria geral", "Alto", "Não", "NFPA 17 / NBR 12693", "Médio"],
-                  ["ICS Líquido (Amerex)", "Veículos off-road, mineração", "Baixo", "Não", "NFPA 122", "Baixo"],
-                  ["CO₂", "Painéis, salas técnicas", "Nenhum", "Sim", "NFPA 12 / NBR 12615", "Alto"],
-                  ["HFC-227ea (FM-200)", "Eletrônica, data centers", "Nenhum", "Sim", "NFPA 2001 / NBR 16064", "Baixo"],
-                  ["FK-5-1-12 (Novec 1230)", "Eletrônica, museus", "Nenhum", "Sim", "NFPA 2001", "Muito Baixo"],
-                  ["Wet Chemical (Agente K)", "Cozinhas industriais", "Médio (saponificado)", "Não", "NFPA 17A / NBR 16077", "Muito Baixo"],
-                  ["Water Mist", "Motores, turbinas", "Nenhum", "Parcial", "NFPA 750", "Baixo"],
+                  { agent: "Dry Chemical ABC (PKP)", classes: "A · B · C", residue: "Pó branco — limpeza necessária", electric: "Dielétrico (cautela)", app: "Veículos off-road, mineração" },
+                  { agent: "CO₂ (Dióxido de Carbono)", classes: "B · C", residue: "Zero — gás inerte", electric: "Dielétrico total", app: "Salas de máquinas, geradores" },
+                  { agent: "FK-5-1-12 (Novec 1230)", classes: "A · B · C", residue: "Zero — evapora completamente", electric: "Dielétrico até 35 kV", app: "Data centers, painéis, laboratórios" },
+                  { agent: "FM-200 (HFC-227ea)", classes: "A · B · C", residue: "Zero — gás", electric: "Dielétrico", app: "Salas de TI, telecomunicações" },
+                  { agent: "FireDETEC® R107", classes: "B · C", residue: "Pó fino — limpeza simples", electric: "Não recomendado em tensão", app: "CNC, máquinas industriais" },
+                  { agent: "Water Mist (Névoa d'Água)", classes: "A · B · C", residue: "Água — dano mínimo", electric: "Até 1.000 V (certificado)", app: "Turbinas, compartimento de motor" },
                 ].map((row, i) => (
-                  <tr
-                    key={i}
-                    style={{
-                      background: i % 2 === 0 ? "#fff" : "#f8fafc",
-                      borderBottom: "1px solid #e2e8f0",
-                    }}
-                  >
-                    {row.map((cell, j) => (
-                      <td key={j} style={{ padding: "0.85rem 1rem", color: j === 0 ? "#0f172a" : "#475569", fontWeight: j === 0 ? 700 : 400 }}>
-                        {cell}
-                      </td>
-                    ))}
+                  <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                    <td className="px-4 py-3 font-semibold text-[#0a1628]">{row.agent}</td>
+                    <td className="px-4 py-3 text-gray-600 font-mono text-xs">{row.classes}</td>
+                    <td className="px-4 py-3 text-gray-600">{row.residue}</td>
+                    <td className="px-4 py-3 text-gray-600">{row.electric}</td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">{row.app}</td>
                   </tr>
                 ))}
               </tbody>
@@ -491,125 +377,80 @@ export default function SistemasPreEngenheirados() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section style={{ padding: "5rem 0", background: "#fff" }}>
-        <div className="container" style={{ maxWidth: "800px" }}>
-          <h2
-            style={{
-              fontSize: "clamp(1.4rem, 3vw, 2rem)",
-              fontWeight: 800,
-              color: "#0f172a",
-              marginBottom: "2rem",
-              fontFamily: "'Barlow', sans-serif",
-            }}
-          >
-            Perguntas Frequentes
-          </h2>
-          {[
-            {
-              q: "Sistema pré-engenheirado precisa de ART?",
-              a: "Sim. Mesmo sendo um sistema pré-aprovado pelo fabricante, a instalação em território brasileiro exige Anotação de Responsabilidade Técnica (ART) de engenheiro habilitado pelo CREA, conforme a NBR 15808 e as normas do Corpo de Bombeiros Militar de Minas Gerais.",
-            },
-            {
-              q: "Qual a diferença entre aplicação local e inundação total?",
-              a: "Na aplicação local, o agente é direcionado diretamente ao ponto de risco (ex: cabeçote de uma fresadora). Na inundação total, o agente preenche completamente o volume do ambiente protegido (ex: sala de servidores). A escolha depende do tipo de risco, do agente extinguidor e da norma aplicável.",
-            },
-            {
-              q: "O sistema FireDETEC da Rotarex funciona sem energia elétrica?",
-              a: "Sim. O sistema FireDETEC utiliza um tubo sensor pneumático que detecta calor e aciona a descarga por pressão, sem necessidade de energia elétrica. Isso o torna ideal para máquinas CNC e painéis elétricos onde a falha de energia pode ser justamente a causa do incêndio.",
-            },
-            {
-              q: "Qual sistema é recomendado para veículos de mineração?",
-              a: "O sistema Amerex Dry-ICS (Dual Agent) é o padrão da indústria para veículos de mineração. Combina pó químico seco para knockdown rápido do fogo com agente líquido ICS para resfriamento e prevenção de re-ignição em motores e sistemas hidráulicos.",
-            },
-            {
-              q: "Sistemas pré-engenheirados atendem às normas do CBMMG?",
-              a: "Sim, desde que instalados por empresa habilitada com ART. A CO₂ Contra Incêndio realiza a instalação conforme as Instruções Técnicas do CBMMG, a NBR 15808 e as normas NFPA aplicáveis a cada sistema.",
-            },
-          ].map((faq, i) => (
-            <div
-              key={i}
-              style={{
-                borderBottom: "1px solid #e2e8f0",
-                padding: "1.5rem 0",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: 700,
-                  color: "#0f172a",
-                  marginBottom: "0.75rem",
-                  fontFamily: "'Barlow', sans-serif",
-                }}
-              >
-                {faq.q}
-              </h3>
-              <p style={{ color: "#475569", lineHeight: 1.7, margin: 0, fontSize: "0.95rem" }}>{faq.a}</p>
+      {/* OPERIS CTA */}
+      <section className="py-16 bg-[#0a1628]">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <p className="text-red-500 text-xs font-bold tracking-[0.2em] uppercase mb-3">Plataforma OPERIS</p>
+              <h2 className="text-3xl font-black text-white mb-4">Gerencie Todos os Sistemas com Rastreamento por QR Code</h2>
+              <p className="text-gray-300 leading-relaxed mb-6">
+                Cada equipamento instalado recebe um QR Code único. Técnicos registram inspeções, manutenções e recargas diretamente pelo celular. Alertas automáticos notificam o responsável antes do vencimento.
+              </p>
+              <ul className="space-y-2 mb-6">
+                {[
+                  "Histórico completo de manutenções por equipamento",
+                  "Alertas automáticos por WhatsApp e e-mail",
+                  "Relatórios de conformidade para o Corpo de Bombeiros",
+                  "Acesso via celular — sem instalação de app",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-gray-300">
+                    <span className="text-red-500 mt-0.5 shrink-0">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/contato">
+                  <a className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded transition-colors text-sm">
+                    Solicitar Demonstração
+                  </a>
+                </Link>
+                <Link href="/app/login">
+                  <a className="border border-white/30 hover:border-white text-white font-semibold px-6 py-3 rounded transition-colors text-sm">
+                    Acessar Plataforma
+                  </a>
+                </Link>
+              </div>
             </div>
-          ))}
+            <div className="hidden md:block">
+              <img src={CDN.rotarexPanel} alt="Painel de controle de sistema de supressão" className="rounded-lg w-full object-cover h-72" loading="lazy" />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* CTA FINAL */}
-      <section
-        style={{
-          background: "linear-gradient(135deg, #0a0f1e 0%, #1a1f3e 100%)",
-          padding: "5rem 0",
-          borderTop: "3px solid #dc2626",
-        }}
-      >
-        <div className="container" style={{ textAlign: "center" }}>
-          <h2
-            style={{
-              fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
-              fontWeight: 800,
-              color: "#fff",
-              marginBottom: "1rem",
-              fontFamily: "'Barlow', sans-serif",
-            }}
-          >
-            Qual sistema é certo para sua aplicação?
-          </h2>
-          <p style={{ color: "#94a3b8", fontSize: "1.05rem", maxWidth: "600px", margin: "0 auto 2rem", lineHeight: 1.7 }}>
-            Nossa equipe técnica analisa o risco, o ambiente e as normas aplicáveis para recomendar o sistema
-            correto. Sem sobrevenda. Sem solução genérica.
-          </p>
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/contato">
-              <button
-                style={{
-                  background: "#dc2626",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "0.9rem 2.5rem",
-                  fontSize: "1rem",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  fontFamily: "'Barlow', sans-serif",
-                }}
-              >
-                Solicitar Análise Técnica
-              </button>
-            </Link>
-            <Link href="/app">
-              <button
-                style={{
-                  background: "transparent",
-                  color: "#e2e8f0",
-                  border: "1px solid rgba(226,232,240,0.3)",
-                  borderRadius: "6px",
-                  padding: "0.9rem 2.5rem",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  fontFamily: "'Barlow', sans-serif",
-                }}
-              >
-                Acessar Plataforma OPERIS
-              </button>
-            </Link>
+      {/* FAQ */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-2xl font-black text-[#0a1628] mb-8">Perguntas Técnicas Frequentes</h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: "Qual a diferença entre sistema pré-engenheirado e sistema projetado sob medida?",
+                a: "O sistema pré-engenheirado é dimensionado e testado pelo fabricante para volumes e aplicações específicas — o instalador segue um manual aprovado pela UL ou FM. O sistema projetado sob medida (ex: sprinklers, CO₂ total flooding) requer cálculo hidráulico ou de concentração específico para cada ambiente, com ART de engenheiro.",
+              },
+              {
+                q: "O sistema Amerex para veículos funciona em máquinas com cabine pressurizada?",
+                a: "Sim. O sistema Amerex Dry-ICS utiliza tubo de detecção linear e bicos de descarga posicionados no compartimento de motor, transmissão e área de combustível — fora da cabine. A descarga não afeta o operador. O sistema pode ser integrado ao painel da cabine para alarme visual e sonoro.",
+              },
+              {
+                q: "O FireDETEC® precisa de energia elétrica para funcionar?",
+                a: "Não. O sistema FireDETEC® é totalmente mecânico — o tubo pressurizado atua como sensor e condutor do agente. Ao atingir a temperatura de ruptura, o tubo se rompe e a pressão interna empurra o agente para os bicos de descarga. Não há painel de controle, não há fiação, não há dependência de energia.",
+              },
+              {
+                q: "Qual agente usar em painéis elétricos energizados?",
+                a: "Para painéis que não podem ser desligados antes da supressão, o agente recomendado é o FK-5-1-12 (Novec 1230) ou o FM-200 (HFC-227ea) — ambos dielétricos e sem resíduos condutivos. O CO₂ também é dielétrico, mas requer evacuação do ambiente e não é adequado para painéis em áreas ocupadas.",
+              },
+            ].map((faq, i) => (
+              <details key={i} className="group border border-gray-100 rounded-lg">
+                <summary className="flex justify-between items-center p-5 cursor-pointer font-semibold text-[#0a1628] text-sm list-none">
+                  {faq.q}
+                  <span className="text-gray-400 group-open:rotate-180 transition-transform shrink-0 ml-4">▼</span>
+                </summary>
+                <p className="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-50 pt-4">{faq.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>

@@ -10,7 +10,6 @@ const servicesMain = [
   { label: "Alarme de Incêndio", href: "/alarme-incendio" },
   { label: "Detector de Gás GLP/GN", href: "/detector-gas" },
   { label: "Vistoria e Laudo com ART", href: "/vistoria-laudo-art" },
-  { label: "Projeto de Exaustão", href: "/projeto-exaustao" },
 ];
 
 const servicesContratos = [
@@ -18,9 +17,20 @@ const servicesContratos = [
   { label: "Recarga de CO₂", href: "/recarga-co2" },
 ];
 
+const projectsMenu = [
+  { label: "CO₂ e Gases Inertes", href: "/projetos#co2" },
+  { label: "Sistemas Saponificantes", href: "/projetos#saponificante" },
+  { label: "Sprinklers e Dilúvio", href: "/projetos#sprinklers" },
+  { label: "Pré-Engenheirados", href: "/sistemas-pre-engenheirados" },
+  { label: "Agentes Limpos", href: "/projetos#agentes-limpos" },
+  { label: "Hidrantes e Mangotinhos", href: "/projetos#hidrantes" },
+  { label: "SDAI — Detecção e Alarme", href: "/projetos#sdai" },
+];
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [projectsOpen, setProjectsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
 
@@ -30,7 +40,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setOpen(false); setServicesOpen(false); }, [location]);
+  useEffect(() => { setOpen(false); setServicesOpen(false); setProjectsOpen(false); }, [location]);
 
   const isActive = (href: string) => location === href;
 
@@ -162,8 +172,16 @@ export default function Navbar() {
               )}
             </div>
 
+            {/* Projetos — link direto */}
+            <Link
+              href="/projetos"
+              className={`nav-link ${isActive("/projetos") ? "active" : ""}`}
+              style={{ padding: "0 1rem", height: "68px", display: "flex", alignItems: "center" }}
+            >
+              Projetos
+            </Link>
+
             {[
-              { label: "Projetos", href: "/projetos" },
               { label: "Parceiros", href: "/parceiros" },
               { label: "Blog", href: "/blog" },
               { label: "Contato", href: "/contato" },
@@ -201,7 +219,6 @@ export default function Navbar() {
               {[
                 { label: "Home", href: "/" },
                 { label: "Quem Somos", href: "/quem-somos" },
-                { label: "Projetos", href: "/projetos" },
                 { label: "Parceiros", href: "/parceiros" },
                 { label: "Blog", href: "/blog" },
                 { label: "Contato", href: "/contato" },
@@ -214,6 +231,16 @@ export default function Navbar() {
                   {item.label}
                 </Link>
               ))}
+
+              {/* Mobile Projetos — link direto */}
+              <Link
+                href="/projetos"
+                style={{ display: "block", padding: "0.75rem 0.75rem", color: "var(--gray-100)", fontSize: "0.9375rem", fontWeight: 700, borderBottom: "1px solid var(--gray-700)" }}
+              >
+                Projetos
+              </Link>
+
+              {/* Mobile Serviços section */}
               <div style={{ paddingTop: "0.5rem" }}>
                 <div style={{ color: "var(--gray-400)", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "0.75rem 0 0.5rem" }}>
                   Serviços
@@ -240,6 +267,7 @@ export default function Navbar() {
                   </Link>
                 ))}
               </div>
+
               <Link href="/contato" className="btn-primary" style={{ marginTop: "1.25rem", width: "100%", justifyContent: "center" }}>
                 Solicitar Orçamento
               </Link>

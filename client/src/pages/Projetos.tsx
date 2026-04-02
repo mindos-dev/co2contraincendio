@@ -41,6 +41,8 @@ type ProjectCategory = {
   label: string;
   norm: string;
   color: string;
+  image: string;
+  imageAlt: string;
   seoArticle: {
     h2: string;
     paragraphs: string[];
@@ -58,6 +60,8 @@ const categories: ProjectCategory[] = [
     label: "Sistemas de CO₂",
     norm: "NBR 12615 / NFPA 12",
     color: "#C8102E",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/data-center-co2_accd1666.jpg",
+    imageAlt: "Sistema de supressão por CO₂ em sala de servidores",
     seoArticle: {
       h2: "Projetos de Sistemas de Combate a Incêndio por CO₂",
       paragraphs: [
@@ -76,6 +80,8 @@ const categories: ProjectCategory[] = [
     label: "Sistema Saponificante",
     norm: "NBR 14095 / NFPA 17A / UL 300",
     color: "#0891B2",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/kitchen-suppression-install_a58b0779.jpg",
+    imageAlt: "Instalação de sistema saponificante Ansul R-102 em cozinha industrial",
     seoArticle: {
       h2: "Projetos com Sistema Saponificante (Wet Chemical) para Cozinhas Industriais",
       paragraphs: [
@@ -91,9 +97,11 @@ const categories: ProjectCategory[] = [
   {
     id: "sprinklers",
     icon: <Zap size={28} />,
-    label: "Sprinklers (SPK)",
+    label: "Sprinklers e Dilúvio",
     norm: "NBR 10897 / NFPA 13",
     color: "#16A34A",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/sprinkler-warehouse_e70796ec.jpg",
+    imageAlt: "Sistema de sprinklers instalado em galpão industrial",
     seoArticle: {
       h2: "Projetos de Sprinklers (SPK) — Proteção Automática Contra Incêndio",
       paragraphs: [
@@ -110,8 +118,10 @@ const categories: ProjectCategory[] = [
     id: "pre-engenheirados",
     icon: <Shield size={28} />,
     label: "Sistemas Pré-Engenheirados",
-    norm: "NBR 12615 / NFPA 12 / UL Listed",
+    norm: "NBR 15808 / NFPA 17 / UL Listed",
     color: "#7C3AED",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/amerex-vehicle-system_68b84808.jpg",
+    imageAlt: "Sistema pré-engenheirado Amerex instalado em veículo off-road",
     seoArticle: {
       h2: "Projetos com Sistemas Pré-Engenheirados de Supressão",
       paragraphs: [
@@ -130,6 +140,8 @@ const categories: ProjectCategory[] = [
     label: "Agentes Limpos",
     norm: "NFPA 2001 / ISO 14520",
     color: "#D97706",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/clean-agent-cylinders_5333fe12.jpg",
+    imageAlt: "Cilindros de agente limpo FM-200 e Novec 1230 para proteção de data center",
     seoArticle: {
       h2: "Projetos com Agentes Limpos: Novec 1230 e FM-200 para Ambientes Críticos",
       paragraphs: [
@@ -148,6 +160,8 @@ const categories: ProjectCategory[] = [
     label: "Hidrantes",
     norm: "NBR 13714",
     color: "#DC2626",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/hidrante-industrial_738aa004.jpg",
+    imageAlt: "Sistema de hidrantes instalado em galpão industrial",
     seoArticle: {
       h2: "Projetos de Hidrantes — Sistema de Combate a Incêndio por Água",
       paragraphs: [
@@ -166,6 +180,8 @@ const categories: ProjectCategory[] = [
     label: "Detecção e Alarme (SDAI)",
     norm: "NBR 17240",
     color: "#0284C7",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/rotarex-cnc-machine_08ec0905.png",
+    imageAlt: "Sistema de detecção e alarme de incêndio instalado em ambiente industrial",
     seoArticle: {
       h2: "Projetos de Detecção e Alarme de Incêndio (SDAI) — Convencional e Endereçável",
       paragraphs: [
@@ -285,6 +301,20 @@ export default function Projetos() {
           {/* Expanded detail panel */}
           {categories.map(cat => expanded === cat.id && (
             <div key={`detail-${cat.id}`} style={{ background: "#fff", border: `2px solid ${cat.color}`, borderTop: "none", padding: "40px 40px 48px" }}>
+              {/* Project image */}
+              <div style={{ marginBottom: 32, borderRadius: 0, overflow: "hidden", maxHeight: 280, position: "relative" }}>
+                <img
+                  src={cat.image}
+                  alt={cat.imageAlt}
+                  style={{ width: "100%", height: 280, objectFit: "cover", display: "block" }}
+                  loading="lazy"
+                />
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: `linear-gradient(transparent, ${cat.color}CC)`, padding: "24px 20px 14px" }}>
+                  <span style={{ color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "'Barlow Condensed', sans-serif" }}>
+                    {cat.norm}
+                  </span>
+                </div>
+              </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
 
                 {/* Left: SEO Article */}

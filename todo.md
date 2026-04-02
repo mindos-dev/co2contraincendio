@@ -146,3 +146,15 @@
 - [x] Artigos de blog técnicos para cada sistema (6 artigos adicionados ao Blog.tsx)
 - [x] Integrar rotas no App.tsx e links no Navbar/Footer
 - [x] SEO: keywords, H1/H2/H3, FAQ por página (todas as subpáginas têm SEOHead completo)
+
+## Correção UL-Level — Sistemas Pré-Engenheirados + Navegação PROJETOS
+
+- [ ] Coletar imagens reais de equipamentos industriais (Amerex, Rotarex, FireDETEC) via CDN
+- [ ] Coletar logos reais dos fabricantes (Amerex, Rotarex Firetec, FireDETEC, Kidde)
+- [ ] Reescrever SistemasPreEngenheirados.tsx com padrão visual UL Solutions
+- [ ] Substituir paleta genérica pela paleta oficial CO2 Contra Incêndio (#0a1628 + vermelho)
+- [ ] Adicionar seção de logos de fabricantes com imagens reais
+- [ ] Adicionar imagens reais de instalações industriais em cada card de sistema
+- [ ] Substituir texto genérico por linguagem técnica nível documentação de fabricante
+- [ ] Corrigir navegação PROJETOS: dropdown com 6 especialidades (CO2, Saponificante, Detecção, SPK, PMOC, Pré-Engenheirados)
+- [ ] Remover item "Exaustão" incorreto do dropdown de PROJETOS
