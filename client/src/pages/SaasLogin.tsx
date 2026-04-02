@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useSaasAuth } from "@/contexts/SaasAuthContext";
 
 export default function SaasLogin() {
   const [, setLocation] = useLocation();
-  const { login } = useSaasAuth();
+  const { login, isAuthenticated } = useSaasAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  // Se já autenticado, redirecionar direto para o dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
+      setLocation("/app/dashboard");
+    }
+  }, [isAuthenticated, setLocation]);
+
+  if (isAuthenticated) return null;
 
   const loginMutation = trpc.saas.auth.login.useMutation({
     onSuccess: (data) => { login(data.token, data.user); setLocation("/app/dashboard"); },
