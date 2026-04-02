@@ -307,3 +307,9 @@
 - [x] Substituir em SistemaSaponificante, SistemasPreEngenheirados, AplicacoesEspeciais, ManutencaoPreventiva
 - [x] Substituir em Projetos.tsx e AdminOperis.tsx
 - [x] Validação final: 0 termos proibidos, 7 CTAs "Acessar OPERIS" ativos, 0 erros TypeScript
+
+## FAQ OPERIS — Perguntas Frequentes na OperisHome
+
+- [x] Criar seção FAQ com accordion na OperisHome (/operis)
+- [x] 8 perguntas cobrindo: o que é OPERIS, como criar inspeção, como gerar laudo, como compartilhar, normas suportadas, como adicionar técnicos, como acessar laudos anteriores
+- [x] Integrar FAQ após a lista de inspeções recentes na OperisHome

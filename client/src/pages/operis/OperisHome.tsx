@@ -16,6 +16,7 @@ import {
   Shield,
   Activity,
 } from "lucide-react";
+import OperisFA from "@/components/OperisFA";
 
 const RISK_COLORS: Record<string, string> = {
   R1: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
@@ -205,6 +206,8 @@ export default function OperisHome() {
             )}
           </CardContent>
         </Card>
+        {/* FAQ para novos usuários */}
+        <OperisFA />
       </div>
     </SaasDashboardLayout>
   );
