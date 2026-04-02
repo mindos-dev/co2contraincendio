@@ -149,12 +149,26 @@
 
 ## Correção UL-Level — Sistemas Pré-Engenheirados + Navegação PROJETOS
 
-- [ ] Coletar imagens reais de equipamentos industriais (Amerex, Rotarex, FireDETEC) via CDN
-- [ ] Coletar logos reais dos fabricantes (Amerex, Rotarex Firetec, FireDETEC, Kidde)
-- [ ] Reescrever SistemasPreEngenheirados.tsx com padrão visual UL Solutions
-- [ ] Substituir paleta genérica pela paleta oficial CO2 Contra Incêndio (#0a1628 + vermelho)
-- [ ] Adicionar seção de logos de fabricantes com imagens reais
-- [ ] Adicionar imagens reais de instalações industriais em cada card de sistema
-- [ ] Substituir texto genérico por linguagem técnica nível documentação de fabricante
-- [ ] Corrigir navegação PROJETOS: dropdown com 6 especialidades (CO2, Saponificante, Detecção, SPK, PMOC, Pré-Engenheirados)
-- [ ] Remover item "Exaustão" incorreto do dropdown de PROJETOS
+- [x] Coletar imagens reais de equipamentos industriais (Amerex, Rotarex, FireDETEC) via CDN
+- [x] Coletar logos reais dos fabricantes (Amerex, Rotarex Firetec, FireDETEC, Kidde)
+- [x] Reescrever SistemasPreEngenheirados.tsx com padrão visual UL Solutions
+- [x] Substituir paleta genérica pela paleta oficial CO2 Contra Incêndio (#0a1628 + vermelho)
+- [x] Adicionar seção de logos de fabricantes com imagens reais
+- [x] Adicionar imagens reais de instalações industriais em cada card de sistema
+- [x] Substituir texto genérico por linguagem técnica nível documentação de fabricante
+- [x] Corrigir navegação PROJETOS: convertido para link direto /projetos (sem dropdown)
+- [x] Remover item "Exaustão" incorreto do dropdown de PROJETOS
+
+## Sprint UL-Level Concluído — 2 de Abril de 2026
+
+✅ **7 imagens CDN** (logos Amerex, Rotarex, Kidde + fotos industriais)
+✅ **SistemasPreEngenheirados.tsx** reescrito com paleta #0a1628 + vermelho
+✅ **Navbar limpo**: código morto `projectsMenu` removido, PROJETOS é link direto 100%
+✅ **TypeScript 0 erros**
+✅ **Servidor rodando** sem warnings
+
+**Próximos passos sugeridos**:
+- [ ] Criar página /app/usuarios para gestão de usuários (backend já existe)
+- [ ] Adicionar calculadora interativa de agente extintor em Sistemas Pré-Engenheirados
+- [ ] Implementar exportação PDF de relatórios (html2canvas + jsPDF)
+- [ ] Desenvolver apps mobile iOS/Android (React Native + Expo)

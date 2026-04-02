@@ -17,20 +17,10 @@ const servicesContratos = [
   { label: "Recarga de CO₂", href: "/recarga-co2" },
 ];
 
-const projectsMenu = [
-  { label: "CO₂ e Gases Inertes", href: "/projetos#co2" },
-  { label: "Sistemas Saponificantes", href: "/projetos#saponificante" },
-  { label: "Sprinklers e Dilúvio", href: "/projetos#sprinklers" },
-  { label: "Pré-Engenheirados", href: "/sistemas-pre-engenheirados" },
-  { label: "Agentes Limpos", href: "/projetos#agentes-limpos" },
-  { label: "Hidrantes e Mangotinhos", href: "/projetos#hidrantes" },
-  { label: "SDAI — Detecção e Alarme", href: "/projetos#sdai" },
-];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [projectsOpen, setProjectsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
 
@@ -40,7 +30,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setOpen(false); setServicesOpen(false); setProjectsOpen(false); }, [location]);
+  useEffect(() => { setOpen(false); setServicesOpen(false); }, [location]);
 
   const isActive = (href: string) => location === href;
 
