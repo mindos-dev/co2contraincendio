@@ -121,3 +121,12 @@
 ### Intelligent Search UI
 - [x] Criar página /app/busca com busca semântica sobre o knowledge base
 - [x] Adicionar item "🧠 Busca Inteligente" no menu lateral do SaasDashboardLayout
+
+## OPERIS Comercial — Motor de Vendas e SEO
+
+- [ ] Reescrever Projetos.tsx com 7 categorias de portfólio + artigos SEO técnicos
+- [ ] Expandir ManutencaoPreventiva.tsx com conteúdo robusto e SEO
+- [ ] Expandir SistemaSaponificante.tsx com seção de projetos e integração OPERIS
+- [ ] Corrigir navegação: substituir "Projeto de Exaustão" por "PROJETOS" no menu
+- [ ] Adicionar Manutenção e Recarga como destaques no menu de Serviços
+- [ ] Integrar links de "Solicitar Vistoria" nas páginas de projeto para o módulo OPERIS
