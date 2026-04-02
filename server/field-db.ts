@@ -1,7 +1,7 @@
 /**
  * OPERIS Field DB — Helpers para vistorias de campo
  */
-import { eq, desc, and, type SQL } from "drizzle-orm";
+import { eq, desc, and, sql, type SQL } from "drizzle-orm";
 import { getDb } from "./db";
 import {
   fieldInspections,
@@ -124,6 +124,8 @@ export async function getFieldReport(filters: { reportId?: number; inspectionId?
 export async function listFieldReports(filters: {
   companyId?: number;
   type?: "pmoc" | "incendio" | "eletrica" | "outros";
+  startDate?: string;
+  endDate?: string;
   limit?: number;
   offset?: number;
 }) {
@@ -132,6 +134,15 @@ export async function listFieldReports(filters: {
   const conditions: SQL[] = [];
   if (filters.companyId) conditions.push(eq(fieldReports.companyId, filters.companyId));
   if (filters.type) conditions.push(eq(fieldReports.type, filters.type));
+  if (filters.startDate) {
+    const start = new Date(filters.startDate);
+    conditions.push(sql`${fieldReports.createdAt} >= ${start}`);
+  }
+  if (filters.endDate) {
+    const end = new Date(filters.endDate);
+    end.setHours(23, 59, 59, 999);
+    conditions.push(sql`${fieldReports.createdAt} <= ${end}`);
+  }
 
   return db
     .select({

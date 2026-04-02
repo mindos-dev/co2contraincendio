@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
 import DOMPurify from "dompurify";
+import SignaturePad from "@/components/SignaturePad";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,8 @@ import {
   AlertTriangle,
   Building2,
   User,
+  PenLine,
+  CheckCheck,
 } from "lucide-react";
 
 export default function GerarLaudo() {
@@ -27,6 +30,9 @@ export default function GerarLaudo() {
   const [technicianName, setTechnicianName] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const [reportContent, setReportContent] = useState<string | null>(null);
+  const [showSignaturePad, setShowSignaturePad] = useState(false);
+  const [signatureUrl, setSignatureUrl] = useState<string | null>(null);
+  const [reportId, setReportId] = useState<number | null>(null);
 
   const { data: inspection } = trpc.field.getInspection.useQuery(
     { id: inspectionId },
@@ -48,9 +54,11 @@ export default function GerarLaudo() {
     { enabled: inspectionId > 0 }
   );
 
+  const signatureMutation = trpc.field.saveSignature.useMutation();
   const generateMutation = trpc.field.generateReport.useMutation({
     onSuccess: (data) => {
       setReportContent(data.content);
+      setReportId(data.reportId);
       setShowPreview(true);
       toast.success("Laudo gerado com sucesso!");
     },
@@ -288,6 +296,50 @@ export default function GerarLaudo() {
                 PDF
               </Button>
             </div>
+
+            {/* Assinatura Digital */}
+            {signatureUrl ? (
+              <div className="mt-3 p-3 bg-white rounded-xl border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCheck className="w-4 h-4 text-green-600" />
+                  <span className="text-xs font-semibold text-green-700">Assinatura coletada</span>
+                </div>
+                <img src={signatureUrl} alt="Assinatura digital" className="max-h-16 border border-gray-100 rounded" />
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                onClick={() => setShowSignaturePad(true)}
+                className="w-full mt-3 h-10 rounded-xl border-dashed border-[#C8102E] text-[#C8102E]"
+              >
+                <PenLine className="w-4 h-4 mr-2" />
+                Coletar Assinatura Digital
+              </Button>
+            )}
+
+            {/* Modal de Assinatura */}
+            {showSignaturePad && (
+              <div className="fixed inset-0 z-50 bg-black/60 flex items-end">
+                <div className="bg-white w-full rounded-t-3xl p-6 pb-10">
+                  <h3 className="text-base font-bold text-gray-900 mb-4">Assinatura do Responsável</h3>
+                  <SignaturePad
+                    label="Assine abaixo para confirmar o laudo"
+                    onSave={async (base64) => {
+                      if (!reportId) { toast.error("Salve o laudo primeiro."); return; }
+                      try {
+                        const result = await signatureMutation.mutateAsync({ reportId, signatureBase64: base64 });
+                        setSignatureUrl(result.signatureUrl);
+                        setShowSignaturePad(false);
+                        toast.success("Assinatura salva com sucesso!");
+                      } catch {
+                        toast.error("Erro ao salvar assinatura.");
+                      }
+                    }}
+                    onCancel={() => setShowSignaturePad(false)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -21,6 +21,11 @@ const saasAuthProcedure = publicProcedure.use(async ({ ctx, next }) => {
 import { invokeLLM } from "./_core/llm";
 import { storagePut } from "./storage";
 import {
+  savePushSubscription,
+  removePushSubscription,
+  getVapidPublicKey,
+} from "./push-notifications";
+import {
   createFieldInspection,
   getFieldInspectionById,
   listFieldInspections,
@@ -287,6 +292,8 @@ Gere um laudo HTML profissional com: cabeçalho CO2 Contra Incêndio, identifica
     .input(z.object({
       companyId: z.number().optional(),
       type: z.enum(["pmoc", "incendio", "eletrica", "outros"]).optional(),
+      startDate: z.string().optional(), // ISO date string
+      endDate: z.string().optional(),   // ISO date string
       limit: z.number().min(1).max(100).default(20),
       offset: z.number().min(0).default(0),
     }))
@@ -332,5 +339,52 @@ Gere um laudo HTML profissional com: cabeçalho CO2 Contra Incêndio, identifica
         synced.push(id);
       }
       return { synced, count: synced.length };
+    }),
+
+  // ─── Push Notifications ─────────────────────────────────────────────────────
+
+  getVapidKey: publicProcedure.query(() => ({ publicKey: getVapidPublicKey() })),
+
+  subscribePush: saasAuthProcedure
+    .input(z.object({
+      endpoint: z.string().url(),
+      p256dh: z.string(),
+      auth: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await savePushSubscription(
+        ctx.saasUser.userId,
+        ctx.saasUser.companyId,
+        { endpoint: input.endpoint, keys: { p256dh: input.p256dh, auth: input.auth } }
+      );
+      return { ok: true };
+    }),
+
+  unsubscribePush: saasAuthProcedure
+    .input(z.object({ endpoint: z.string() }))
+    .mutation(async ({ input }) => {
+      await removePushSubscription(input.endpoint);
+      return { ok: true };
+    }),
+
+  // ─── Assinatura Digital ──────────────────────────────────────────────────────
+
+  saveSignature: saasAuthProcedure
+    .input(z.object({
+      reportId: z.number(),
+      signatureBase64: z.string().max(500_000), // PNG base64 da assinatura
+    }))
+    .mutation(async ({ input }) => {
+      // Upload da assinatura para S3
+      const buffer = Buffer.from(input.signatureBase64.replace(/^data:image\/\w+;base64,/, ""), "base64");
+      const key = `signatures/report-${input.reportId}-${Date.now()}.png`;
+      const { url } = await storagePut(key, buffer, "image/png");
+
+      // Salvar URL no banco
+      const conn = await (await import("mysql2/promise")).createConnection(process.env.DATABASE_URL!);
+      await conn.execute(`UPDATE field_reports SET signature_url = ? WHERE id = ?`, [url, input.reportId]);
+      await conn.end();
+
+      return { signatureUrl: url };
     }),
 });

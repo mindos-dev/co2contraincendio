@@ -56,6 +56,7 @@ import {
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
 import { sendAlertNotification } from "./notifications";
+import { getSubscriptionsByCompany, sendPushNotification } from "./push-notifications";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "co2-saas-secret-2025";
 
@@ -118,6 +119,12 @@ export async function runDailyAlertJob() {
           const phones: string[] = cfg.whatsappEnabled && cfg.whatsappNumbers ? JSON.parse(cfg.whatsappNumbers) : [];
           for (const email of emails) { const r = await sendAlertNotification({ email, type: "proximo_vencimento", equipment: eq }); if (r.some(x => x.success)) notifSent++; }
           for (const phone of phones) { const r = await sendAlertNotification({ whatsappPhone: phone, type: "proximo_vencimento", equipment: eq }); if (r.some(x => x.success)) notifSent++; }
+          // Push notifications para técnicos mobile
+          const pushSubs = await getSubscriptionsByCompany(eq.companyId);
+          for (const sub of pushSubs) {
+            const ok = await sendPushNotification(sub, { title: "⚠️ Manutenção Próxima", body: `Equipamento ${eq.code} vence em breve (${eq.nextMaintenanceDate})`, icon: "/icon-192.png", data: { equipmentId: eq.id } });
+            if (ok) notifSent++;
+          }
         }
       }
     }
@@ -136,6 +143,12 @@ export async function runDailyAlertJob() {
           const phones: string[] = cfg.whatsappEnabled && cfg.whatsappNumbers ? JSON.parse(cfg.whatsappNumbers) : [];
           for (const email of emails) { const r = await sendAlertNotification({ email, type: "vencido", equipment: eq }); if (r.some(x => x.success)) notifSent++; }
           for (const phone of phones) { const r = await sendAlertNotification({ whatsappPhone: phone, type: "vencido", equipment: eq }); if (r.some(x => x.success)) notifSent++; }
+          // Push notifications para técnicos mobile
+          const pushSubs2 = await getSubscriptionsByCompany(eq.companyId);
+          for (const sub of pushSubs2) {
+            const ok = await sendPushNotification(sub, { title: "🔴 Manutenção VENCIDA", body: `Equipamento ${eq.code} está VENCIDO desde ${eq.nextMaintenanceDate}`, icon: "/icon-192.png", data: { equipmentId: eq.id } });
+            if (ok) notifSent++;
+          }
         }
       }
     }

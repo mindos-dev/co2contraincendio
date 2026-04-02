@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   FileText,
@@ -14,6 +17,11 @@ import {
   Eye,
   ChevronRight,
   Filter,
+  Bell,
+  BellOff,
+  Loader2,
+  Calendar,
+  X,
 } from "lucide-react";
 
 type FilterType = "todos" | "incendio" | "pmoc" | "eletrica" | "outros";
@@ -29,11 +37,33 @@ export default function HistoricoLaudos() {
   const [, navigate] = useLocation();
   const [filter, setFilter] = useState<FilterType>("todos");
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [showDateFilters, setShowDateFilters] = useState(false);
 
-  const { data: reports, isLoading } = trpc.field.listReports.useQuery({
-    type: filter === "todos" ? undefined : filter,
+  const { isSubscribed, isLoading: pushLoading, permission, subscribe, unsubscribe, isSupported } = usePushNotifications();
+
+  const queryInput = useMemo(() => ({
+    type: filter === "todos" ? undefined : (filter as "pmoc" | "incendio" | "eletrica" | "outros"),
+    startDate: startDate || undefined,
+    endDate: endDate || undefined,
     limit: 50,
-  });
+    offset: 0,
+  }), [filter, startDate, endDate]);
+
+  const { data: reports, isLoading } = trpc.field.listReports.useQuery(queryInput);
+
+  const activeDateFilters = [startDate, endDate].filter(Boolean).length;
+
+  const handlePushToggle = async () => {
+    if (isSubscribed) {
+      await unsubscribe();
+      toast.success("Notificações desativadas.");
+    } else {
+      await subscribe();
+      if (permission === "granted") toast.success("Notificações ativadas! Você receberá alertas de manutenção.");
+    }
+  };
 
   const handleDownloadPDF = (content: string, title: string) => {
     const printWindow = window.open("", "_blank");
@@ -107,9 +137,45 @@ export default function HistoricoLaudos() {
             <h1 className="text-base font-bold">Histórico de Laudos</h1>
             <p className="text-xs text-white/60">{reports?.length ?? 0} laudo(s) encontrado(s)</p>
           </div>
-          <Filter className="w-5 h-5 text-white/60" />
+          <div className="flex items-center gap-2">
+            {isSupported && (
+              <button
+                onClick={handlePushToggle}
+                disabled={pushLoading}
+                className={`p-2 rounded-xl transition-colors ${isSubscribed ? "bg-green-500/20 text-green-300" : "bg-white/10 text-white/60"}`}
+                title={isSubscribed ? "Notificações ativas" : "Ativar notificações"}
+              >
+                {pushLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : isSubscribed ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+              </button>
+            )}
+            <button onClick={() => setShowDateFilters(!showDateFilters)} className="relative p-2 rounded-xl bg-white/10 text-white/70">
+              <Filter className="w-5 h-5" />
+              {activeDateFilters > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#C8102E] rounded-full text-white text-xs flex items-center justify-center">{activeDateFilters}</span>}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Filtros de data */}
+      {showDateFilters && (
+        <div className="bg-white border-b border-gray-100 px-4 py-3 space-y-2">
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <label className="text-xs font-semibold text-gray-500 flex items-center gap-1 mb-1"><Calendar className="w-3 h-3" /> Início</label>
+              <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="h-9 rounded-xl border-gray-200 text-sm" />
+            </div>
+            <div className="flex-1">
+              <label className="text-xs font-semibold text-gray-500 flex items-center gap-1 mb-1"><Calendar className="w-3 h-3" /> Fim</label>
+              <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="h-9 rounded-xl border-gray-200 text-sm" />
+            </div>
+          </div>
+          {activeDateFilters > 0 && (
+            <Button variant="outline" size="sm" onClick={() => { setStartDate(""); setEndDate(""); }} className="w-full gap-1.5 text-gray-500 border-dashed">
+              <X className="w-3.5 h-3.5" /> Limpar datas
+            </Button>
+          )}
+        </div>
+      )}
 
       {/* Filter Tabs */}
       <div className="bg-white border-b border-gray-100 px-4 py-3">

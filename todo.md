@@ -189,3 +189,19 @@
 - [x] Modo offline: hook useOfflineSync.ts com IndexedDB + auto-sync quando online
 - [x] Atualizar bottom nav mobile com atalho para Vistoria Mobile (/mobile)
 - [x] MobileDashboard /mobile com stats, atalhos rápidos e badge de pendentes offline
+
+## Sprint Push + Assinatura + Histórico Expandido
+
+- [x] Instalar web-push no backend para gerar chaves VAPID e enviar notificações
+- [x] Criar tabela push_subscriptions no banco de dados
+- [x] Backend: procedure field.subscribePush e field.unsubscribePush
+- [x] Backend: integrar push notifications no job de alertas de manutenção vencida
+- [x] Service worker: handler para push events e notificações clicáveis
+- [x] Frontend: hook usePushNotifications para solicitar permissão e registrar subscription
+- [x] Frontend: toggle de push notifications no HistoricoLaudos (Bell/BellOff)
+- [x] Assinatura digital: componente SignaturePad.tsx com canvas touch/mouse
+- [x] Integrar SignaturePad na tela GerarLaudo.tsx (salvar base64 no banco via S3)
+- [x] Backend: campo signature_url na tabela field_reports + procedure saveSignature
+- [x] Histórico expandido: filtros por data início/fim e tipo de vistoria
+- [x] Backend: atualizar procedure listReports com startDate/endDate
+- [x] Frontend: HistoricoLaudos.tsx com filtros de data, tipo e toggle de push

@@ -105,3 +105,61 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 });
+
+// ─── Push Notifications ───────────────────────────────────────────────────────
+
+// Receber push e exibir notificação
+self.addEventListener("push", (event) => {
+  let data = { title: "OPERIS", body: "Você tem alertas pendentes.", url: "/mobile" };
+
+  if (event.data) {
+    try {
+      data = { ...data, ...event.data.json() };
+    } catch {
+      data.body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: "https://cdn.manus.im/webdev-static-assets/operis-icon-192.png",
+    badge: "https://cdn.manus.im/webdev-static-assets/operis-icon-192.png",
+    vibrate: [200, 100, 200],
+    data: { url: data.url || "/mobile" },
+    actions: [
+      { action: "view", title: "Ver alertas" },
+      { action: "dismiss", title: "Dispensar" },
+    ],
+    requireInteraction: true,
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// Clique na notificação — navegar para a URL relevante
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  if (event.action === "dismiss") return;
+
+  const targetUrl = event.notification.data?.url || "/mobile";
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      // Se já há uma aba aberta, focar nela e navegar
+      for (const client of clientList) {
+        if (client.url.includes(self.location.origin) && "focus" in client) {
+          client.focus();
+          client.navigate(targetUrl);
+          return;
+        }
+      }
+      // Caso contrário, abrir nova aba
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
