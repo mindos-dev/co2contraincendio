@@ -45,6 +45,7 @@ import Notificacoes from "./pages/plataforma/Notificacoes";
 import Clientes from "./pages/plataforma/Clientes";
 import Relatorios from "./pages/plataforma/Relatorios";
 import BuscaInteligente from "./pages/plataforma/BuscaInteligente";
+import Usuarios from "./pages/app/Usuarios";
 function Router() {
   return (
     <Switch>
@@ -92,6 +93,7 @@ function Router() {
       <Route path="/app/clientes" component={Clientes} />
       <Route path="/app/relatorios" component={Relatorios} />
       <Route path="/app/busca" component={BuscaInteligente} />
+      <Route path="/app/usuarios" component={Usuarios} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

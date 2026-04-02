@@ -15,6 +15,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Clientes", path: "/app/clientes", icon: "🏢", adminOnly: true },
   { label: "Relatórios", path: "/app/relatorios", icon: "📊", adminOnly: true },
   { label: "Busca Inteligente", path: "/app/busca", icon: "🧠", adminOnly: true },
+  { label: "Usuários", path: "/app/usuarios", icon: "👤", adminOnly: true },
 ];
 
 export default function SaasDashboardLayout({ children }: { children: React.ReactNode }) {

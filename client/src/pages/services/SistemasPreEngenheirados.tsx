@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import SEOHead from "@/components/SEOHead";
+import CalculadoraAgente from "@/components/CalculadoraAgente";
 
 // ─── CDN Assets ──────────────────────────────────────────────────────────────
 const CDN = {
@@ -417,6 +418,20 @@ export default function SistemasPreEngenheirados() {
               <img src={CDN.rotarexPanel} alt="Painel de controle de sistema de supressão" className="rounded-lg w-full object-cover h-72" loading="lazy" />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* CALCULADORA */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-10">
+            <p className="text-red-600 text-xs font-bold tracking-[0.2em] uppercase mb-3">Ferramenta Técnica</p>
+            <h2 className="text-3xl font-black text-[#0a1628] mb-3">Calculadora de Agente Extintor</h2>
+            <p className="text-gray-500 text-sm max-w-xl mx-auto">
+              Estime a quantidade de agente necessária para o seu sistema pré-engenheirado com base em NFPA 17, NFPA 2001 e NBR 15808.
+            </p>
+          </div>
+          <CalculadoraAgente />
         </div>
       </section>
 

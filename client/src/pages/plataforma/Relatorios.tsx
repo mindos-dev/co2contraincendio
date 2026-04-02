@@ -2,6 +2,7 @@ import { useState } from "react";
 import SaasDashboardLayout from "../../components/SaasDashboardLayout";
 import { useSaasAuth } from "../../contexts/SaasAuthContext";
 import { trpc } from "../../lib/trpc";
+import { useRef } from "react";
 
 function StatCard({ label, value, color }: { label: string; value: number | string; color: string }) {
   return (
@@ -89,6 +90,55 @@ export default function Relatorios() {
   });
 
   const [exporting, setExporting] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  async function handleExportPdf() {
+    if (!reportRef.current) return;
+    setExportingPdf(true);
+    setPdfError(null);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const jsPDF = (await import("jspdf")).jsPDF;
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth - 20;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let yPos = 10;
+      let remainingHeight = imgHeight;
+      let sourceY = 0;
+      while (remainingHeight > 0) {
+        const sliceHeight = Math.min(remainingHeight, pageHeight - 20);
+        const sliceCanvas = document.createElement("canvas");
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = (sliceHeight * canvas.width) / imgWidth;
+        const ctx = sliceCanvas.getContext("2d");
+        if (!ctx) throw new Error("Falha ao criar contexto de canvas.");
+        ctx.drawImage(canvas, 0, sourceY * canvas.width / imgWidth, canvas.width, sliceCanvas.height, 0, 0, sliceCanvas.width, sliceCanvas.height);
+        const sliceData = sliceCanvas.toDataURL("image/png");
+        pdf.addImage(sliceData, "PNG", 10, yPos, imgWidth, sliceHeight);
+        remainingHeight -= sliceHeight;
+        sourceY += sliceHeight;
+        if (remainingHeight > 0) {
+          pdf.addPage();
+          yPos = 10;
+        }
+      }
+      pdf.save(`relatorio-operis-${new Date().toISOString().split("T")[0]}.pdf`);
+    } catch (err) {
+      console.error("Erro ao gerar PDF:", err);
+      setPdfError(err instanceof Error ? err.message : "Erro desconhecido ao gerar PDF.");
+    } finally {
+      setExportingPdf(false);
+    }
+  }
 
   async function handleExportCsv() {
     setExporting(true);
@@ -131,13 +181,23 @@ export default function Relatorios() {
             <h1 className="saas-page-title">Relatórios da Plataforma</h1>
             <p className="saas-page-subtitle">Visão consolidada de todos os dados da plataforma</p>
           </div>
-          <button
-            className="saas-btn saas-btn-primary"
-            onClick={handleExportCsv}
-            disabled={exporting || isLoading}
-          >
-            {exporting ? "Exportando..." : "⬇ Exportar CSV"}
-          </button>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              className="saas-btn saas-btn-primary"
+              onClick={handleExportPdf}
+              disabled={exportingPdf || isLoading}
+              style={{ background: "#0a1628", color: "#fff", border: "none", padding: "10px 18px", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.06em" }}
+            >
+              {exportingPdf ? "Gerando PDF..." : "📄 Exportar PDF"}
+            </button>
+            <button
+              className="saas-btn saas-btn-primary"
+              onClick={handleExportCsv}
+              disabled={exporting || isLoading}
+            >
+              {exporting ? "Exportando..." : "⬇ Exportar CSV"}
+            </button>
+          </div>
         </div>
 
         {isLoading && (
@@ -153,6 +213,13 @@ export default function Relatorios() {
           </div>
         )}
 
+        {pdfError && (
+          <div style={{ background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: 6, padding: "16px 20px", color: "#991b1b", fontFamily: "Inter, sans-serif", fontSize: 14, marginBottom: 16 }}>
+            <strong>Erro ao gerar PDF:</strong> {pdfError}
+          </div>
+        )}
+
+        <div ref={reportRef}>
         {!isLoading && !reportError && !report && (
           <div className="saas-empty-state">
             <p>Nenhum dado disponível para gerar o relatório.</p>
@@ -385,6 +452,7 @@ export default function Relatorios() {
         .pct-bar-fill { height: 100%; border-radius: 3px; }
         .pct-label { font-size: 0.78rem; font-weight: 600; }
       `}</style>
+        </div>{/* end reportRef */}
     </SaasDashboardLayout>
   );
 }

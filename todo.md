@@ -168,7 +168,7 @@
 ✅ **Servidor rodando** sem warnings
 
 **Próximos passos sugeridos**:
-- [ ] Criar página /app/usuarios para gestão de usuários (backend já existe)
-- [ ] Adicionar calculadora interativa de agente extintor em Sistemas Pré-Engenheirados
-- [ ] Implementar exportação PDF de relatórios (html2canvas + jsPDF)
+- [x] Criar página /app/usuarios para gestão de usuários (backend já existe)
+- [x] Adicionar calculadora interativa de agente extintor em sistemas pré-engenheirados
+- [x] Implementar exportação PDF de relatórios (html2canvas + jsPDF)
 - [ ] Desenvolver apps mobile iOS/Android (React Native + Expo)
