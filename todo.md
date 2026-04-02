@@ -205,3 +205,43 @@
 - [x] Histórico expandido: filtros por data início/fim e tipo de vistoria
 - [x] Backend: atualizar procedure listReports com startDate/endDate
 - [x] Frontend: HistoricoLaudos.tsx com filtros de data, tipo e toggle de push
+
+## Integração OPERIS IA — Plataforma Unificada
+
+### Fase 1: Análise e Arquitetura
+- [x] Extrair e analisar código FastAPI do OPERIS IA (backend/) — 6.169 linhas Python
+- [x] Extrair e analisar telas React do OPERIS IA (frontend/src/)
+- [x] Mapear endpoints FastAPI vs procedures tRPC existentes (evitar duplicação)
+- [x] Definir arquitetura de integração: portar lógica IA para tRPC TypeScript (arquitetura unificada)
+- [x] Planejar estrutura de pastas: server/operis/ para lógica portada
+
+### Fase 2: Backend — Portar Lógica IA para tRPC (Arquitetura Unificada)
+- [x] Criar server/operis/ para lógica de IA portada do OPERIS (TypeScript)
+- [x] Portar AIRouter (Claude Vision) para server/operis/ai-service.ts usando invokeLLM
+- [x] Portar motor de risco híbrido para server/operis/risk-engine.ts (regras + IA)
+- [x] Portar geração de laudos para server/operis/report-generator.ts
+- [x] Criar server/operis-router.ts com procedures tRPC (getSystems, getChecklist, createInspection, analyzeItem, generateReport, listInspections, getInspection, getReport, saveReportSignature, getPublicReport)
+- [x] Adicionar tabelas OPERIS no schema Drizzle (operis_inspections, operis_inspection_items, operis_reports)
+
+### Fase 3: Frontend — Telas React Integradas
+- [x] Criar telas React do OPERIS em client/src/pages/operis/
+- [x] Adaptar estilos para paleta UL Solutions (#0a1628 + vermelho)
+- [x] Usar trpc.operis.* para todas as chamadas (sem FastAPI separado)
+- [x] Criar rotas /operis, /operis/nova, /operis/inspecao/:id no App.tsx
+- [x] Adicionar link OPERIS IA no menu lateral do SaasDashboardLayout (adminOnly)
+
+### Fase 4: Autenticação Unificada
+- [x] JWT SaaS compartilhado nativamente (saasAuthProcedure em todas as procedures OPERIS)
+- [x] ctx.saasUser injetado em todas as procedures OPERIS (userId + companyId + role)
+- [x] Fluxo: login SaaS → JWT → acesso OPERIS sem re-autenticação
+
+### Fase 5: Multi-tenant
+- [x] Campo companyId em todas as tabelas OPERIS (operis_inspections, operis_reports)
+- [x] Todas as queries filtram por ctx.saasUser.companyId automaticamente
+- [x] Isolamento garantido: empresa A não vê dados da empresa B
+
+### Fase 6: Testes E2E e Entrega
+- [x] TypeScript 0 erros em todo o projeto
+- [x] Procedure getPublicReport (publicProcedure) para URLs pública de laudos
+- [x] Telas OPERIS responsivas (mobile-first)
+- [x] Checkpoint salvo e entregue

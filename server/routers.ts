@@ -6,12 +6,14 @@ import { publicProcedure, router } from "./_core/trpc";
 import { insertOrcamento } from "./db";
 import { saasRouter } from "./saas-routers";
 import { fieldRouter } from "./field-router";
+import { operisRouter } from "./operis-router";
 import { z } from "zod";
 
 export const appRouter = router({
   system: systemRouter,
   saas: saasRouter,
   field: fieldRouter,
+  operis: operisRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

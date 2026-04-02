@@ -1,4 +1,4 @@
-import { boolean, date, decimal, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, decimal, int, json, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 // ─── Core Auth ───────────────────────────────────────────────────────────────
 
@@ -278,3 +278,59 @@ export const fieldReports = mysqlTable("field_reports", {
 });
 export type FieldReport = typeof fieldReports.$inferSelect;
 export type InsertFieldReport = typeof fieldReports.$inferInsert;
+
+// ─── Módulo OPERIS IA — Inspeções Técnicas com IA ────────────────────────────
+
+export const operisInspections = mysqlTable("operis_inspections", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  userId: int("userId").references(() => saasUsers.id).notNull(),
+  title: varchar("title", { length: 300 }).notNull(),
+  location: varchar("location", { length: 300 }).notNull(),
+  client: varchar("client", { length: 200 }).notNull(),
+  unit: varchar("unit", { length: 200 }),
+  system: varchar("system", { length: 100 }).notNull(), // CO2, Hidrante, SDAI, SPK, etc.
+  status: mysqlEnum("status", ["em_progresso", "concluida", "revisao"]).default("em_progresso").notNull(),
+  globalRisk: mysqlEnum("globalRisk", ["R1", "R2", "R3", "R4", "R5"]).default("R1"),
+  riskBySytem: json("riskBySystem"), // {"CO2": "R3", "SDAI": "R4"}
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type OperisInspection = typeof operisInspections.$inferSelect;
+export type InsertOperisInspection = typeof operisInspections.$inferInsert;
+
+export const operisInspectionItems = mysqlTable("operis_inspection_items", {
+  id: int("id").autoincrement().primaryKey(),
+  inspectionId: int("inspectionId").references(() => operisInspections.id).notNull(),
+  itemId: varchar("itemId", { length: 100 }).notNull(), // ID do item do checklist
+  itemTitle: varchar("itemTitle", { length: 300 }).notNull(),
+  system: varchar("system", { length: 100 }).notNull(),
+  normReference: varchar("normReference", { length: 200 }),
+  status: mysqlEnum("status", ["conforme", "nao_conforme", "necessita_revisao", "pendente"]).default("pendente"),
+  findings: text("findings"), // Achados da análise de IA
+  riskLevel: mysqlEnum("riskLevel", ["R1", "R2", "R3", "R4", "R5"]).default("R1"),
+  recommendations: json("recommendations"), // string[]
+  aiConfidence: varchar("aiConfidence", { length: 10 }), // "0.95"
+  imageUrls: json("imageUrls"), // string[]
+  analyzedAt: timestamp("analyzedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type OperisInspectionItem = typeof operisInspectionItems.$inferSelect;
+export type InsertOperisInspectionItem = typeof operisInspectionItems.$inferInsert;
+
+export const operisReports = mysqlTable("operis_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  inspectionId: int("inspectionId").references(() => operisInspections.id).notNull(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  htmlContent: text("htmlContent"), // Laudo em HTML gerado pela IA
+  pdfUrl: text("pdfUrl"),           // URL pública do PDF (SEO)
+  pdfKey: varchar("pdfKey", { length: 300 }),
+  signatureUrl: text("signatureUrl"), // Assinatura digital do responsável
+  globalRisk: mysqlEnum("globalRisk", ["R1", "R2", "R3", "R4", "R5"]),
+  status: mysqlEnum("status", ["gerando", "pronto", "erro"]).default("gerando").notNull(),
+  publicSlug: varchar("publicSlug", { length: 100 }), // URL amigável para SEO
+  generatedAt: timestamp("generatedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type OperisReport = typeof operisReports.$inferSelect;
+export type InsertOperisReport = typeof operisReports.$inferInsert;

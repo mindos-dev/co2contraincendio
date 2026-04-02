@@ -72,7 +72,7 @@ function verifyToken(token: string) {
   }
 }
 
-const saasAuthProcedure = publicProcedure.use(async ({ ctx, next }) => {
+export const saasAuthProcedure = publicProcedure.use(async ({ ctx, next }) => {
   const raw = ctx as Record<string, unknown>;
   const req = raw.req as { headers?: Record<string, string> } | undefined;
   const authHeader = req?.headers?.["x-saas-token"];

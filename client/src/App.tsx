@@ -53,6 +53,9 @@ import ChecklistVistoria from "./pages/mobile/ChecklistVistoria";
 import UploadImagens from "./pages/mobile/UploadImagens";
 import GerarLaudo from "./pages/mobile/GerarLaudo";
 import HistoricoLaudos from "./pages/mobile/HistoricoLaudos";
+import OperisHome from "./pages/operis/OperisHome";
+import NovaInspecao from "./pages/operis/NovaInspecao";
+import InspecaoDetalhes from "./pages/operis/InspecaoDetalhes";
 function Router() {
   return (
     <Switch>
@@ -108,6 +111,9 @@ function Router() {
       <Route path="/mobile/upload/:id" component={UploadImagens} />
       <Route path="/mobile/laudo/:id" component={GerarLaudo} />
       <Route path="/mobile/historico" component={HistoricoLaudos} />
+      <Route path="/operis" component={OperisHome} />
+      <Route path="/operis/nova" component={NovaInspecao} />
+      <Route path="/operis/inspecao/:id" component={InspecaoDetalhes} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
