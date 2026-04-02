@@ -124,6 +124,62 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/projeto-exaustao"/>
   </url>
+  <url>
+    <loc>https://co2contra.com/sistemas-pre-engenheirados</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/sistemas-pre-engenheirados"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/protecao-veiculos-off-road</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/protecao-veiculos-off-road"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/protecao-maquinas-cnc</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/protecao-maquinas-cnc"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/protecao-paineis-eletricos</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/protecao-paineis-eletricos"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/protecao-laboratorios</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/protecao-laboratorios"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/protecao-compartimento-motor</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/protecao-compartimento-motor"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/protecao-maquinas-industriais</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/protecao-maquinas-industriais"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/protecao-geradores</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/protecao-geradores"/>
+  </url>
 
   <!-- ===== ARTIGOS DO BLOG ===== -->
   <url>
@@ -216,6 +272,48 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/blog/recarga-co2-cilindro-quando-fazer"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/blog/sistemas-pre-engenheirados-incendio-o-que-sao</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/blog/sistemas-pre-engenheirados-incendio-o-que-sao"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/blog/firedetek-tubo-detector-linear-como-funciona</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/blog/firedetek-tubo-detector-linear-como-funciona"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/blog/amerex-dry-ics-protecao-veiculos-off-road</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/blog/amerex-dry-ics-protecao-veiculos-off-road"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/blog/agente-limpo-fk-5-1-12-novec-1230-painel-eletrico</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/blog/agente-limpo-fk-5-1-12-novec-1230-painel-eletrico"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/blog/water-mist-fogmaker-onibus-caminhao-resolucao-contran</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/blog/water-mist-fogmaker-onibus-caminhao-resolucao-contran"/>
+  </url>
+  <url>
+    <loc>https://co2contra.com/blog/protecao-incendio-laboratorio-chapel-exaustao-nfpa-45</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://co2contra.com/blog/protecao-incendio-laboratorio-chapel-exaustao-nfpa-45"/>
   </url>
 
 </urlset>

@@ -130,3 +130,19 @@
 - [x] Corrigir navegação: substituir "Projeto de Exaustão" por "PROJETOS" no menu (já estava correto; reorganizado dropdown)
 - [x] Adicionar Manutenção e Recarga como destaques no menu de Serviços (seção Contratos em vermelho)
 - [x] Integrar links de "Solicitar Vistoria" nas páginas de projeto para o módulo OPERIS (ServicePageTemplate + SistemaSaponificante)
+
+## Sistema de Conteúdo Industrial — Sistemas Pré-Engenheirados
+
+- [ ] Pesquisa técnica: Amerex, Rotarex Firetec, Steel Fire, normas ABNT/NFPA
+- [ ] Página principal: /sistemas-pre-engenheirados (visão geral + 8 categorias)
+- [ ] Subpágina: /protecao-veiculos-off-road (escavadeiras, colheitadeiras, mineração)
+- [ ] Subpágina: /protecao-compartimento-motor (water mist + dry chemical + dual agent)
+- [ ] Subpágina: /protecao-maquinas-cnc (Rotarex FireDETEC)
+- [ ] Subpágina: /protecao-paineis-eletricos (agentes limpos + CO2)
+- [ ] Subpágina: /protecao-laboratorios (capelas, armazenamento químico)
+- [ ] Subpágina: /protecao-maquinas-industriais (injeção, prensas — local vs total flooding)
+- [ ] Subpágina: /protecao-cozinhas-industriais (wet chemical / saponificante)
+- [ ] Subpágina: /aplicacoes-especiais (data centers, telecom, hospitais, offshore, turbinas eólicas)
+- [ ] Artigos de blog técnicos para cada sistema (8 artigos no banco de dados)
+- [ ] Integrar rotas no App.tsx e links no Navbar/Footer
+- [ ] SEO: keywords, H1/H2/H3, FAQ por página

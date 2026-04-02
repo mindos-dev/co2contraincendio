@@ -20,6 +20,14 @@ import DetectorGas from "./pages/services/DetectorGas";
 import VistoriaLaudoART from "./pages/services/VistoriaLaudoART";
 import ManutencaoPreventiva from "./pages/services/ManutencaoPreventiva";
 import ProjetoExaustao from "./pages/services/ProjetoExaustao";
+import SistemasPreEngenheirados from "./pages/services/SistemasPreEngenheirados";
+import ProtecaoVeiculosOffRoad from "./pages/services/ProtecaoVeiculosOffRoad";
+import ProtecaoMaquinasCNC from "./pages/services/ProtecaoMaquinasCNC";
+import ProtecaoPaineisEletricos from "./pages/services/ProtecaoPaineisEletricos";
+import ProtecaoLaboratorios from "./pages/services/ProtecaoLaboratorios";
+import ProtecaoCompartimentoMotor from "./pages/services/ProtecaoCompartimentoMotor";
+import ProtecaoMaquinasIndustriais from "./pages/services/ProtecaoMaquinasIndustriais";
+import ProtecaoGeradores from "./pages/services/ProtecaoGeradores";
 import Projetos from "./pages/Projetos";
 import Parceiros from "./pages/Parceiros";
 
@@ -54,6 +62,14 @@ function Router() {
       <Route path="/vistoria-laudo-art" component={VistoriaLaudoART} />
       <Route path="/manutencao-preventiva" component={ManutencaoPreventiva} />
       <Route path="/projeto-exaustao" component={ProjetoExaustao} />
+      <Route path="/sistemas-pre-engenheirados" component={SistemasPreEngenheirados} />
+      <Route path="/protecao-veiculos-off-road" component={ProtecaoVeiculosOffRoad} />
+      <Route path="/protecao-maquinas-cnc" component={ProtecaoMaquinasCNC} />
+      <Route path="/protecao-paineis-eletricos" component={ProtecaoPaineisEletricos} />
+      <Route path="/protecao-laboratorios" component={ProtecaoLaboratorios} />
+      <Route path="/protecao-compartimento-motor" component={ProtecaoCompartimentoMotor} />
+      <Route path="/protecao-maquinas-industriais" component={ProtecaoMaquinasIndustriais} />
+      <Route path="/protecao-geradores" component={ProtecaoGeradores} />
       <Route path="/projetos" component={Projetos} />
       <Route path="/parceiros" component={Parceiros} />
       <Route path="/blog" component={Blog} />

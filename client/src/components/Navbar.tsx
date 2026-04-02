@@ -5,6 +5,7 @@ import { Menu, X, ChevronDown, Phone } from "lucide-react";
 const servicesMain = [
   { label: "Sistema de Supressão por CO₂", href: "/sistema-supressao-co2" },
   { label: "Sistema Saponificante (Wet Chemical)", href: "/sistema-saponificante" },
+  { label: "Sistemas Pré-Engenheirados", href: "/sistemas-pre-engenheirados" },
   { label: "Hidrantes", href: "/hidrantes" },
   { label: "Alarme de Incêndio", href: "/alarme-incendio" },
   { label: "Detector de Gás GLP/GN", href: "/detector-gas" },
