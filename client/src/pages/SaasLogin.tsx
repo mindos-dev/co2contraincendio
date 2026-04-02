@@ -29,18 +29,18 @@ export default function SaasLogin() {
       <div style={{ width: 400, background: "#111111", display: "flex", flexDirection: "column", justifyContent: "center", padding: "60px 40px", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 40 }}>
           <div style={{ width: 40, height: 40, background: "#C8102E", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 900, fontSize: 14 }}>CO2</span>
+            <span style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 900, fontSize: 14 }}>OP</span>
           </div>
           <div>
-            <div style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 14, letterSpacing: "0.06em" }}>CO2 CONTRA INCÊNDIO</div>
-            <div style={{ color: "#8A8A8A", fontSize: 9, letterSpacing: "0.1em" }}>PLATAFORMA DE GESTÃO</div>
+            <div style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 14, letterSpacing: "0.06em" }}>OPERIS</div>
+            <div style={{ color: "#8A8A8A", fontSize: 9, letterSpacing: "0.1em" }}>INSPEÇÃO E LAUDOS INTELIGENTES</div>
           </div>
         </div>
         <div style={{ borderLeft: "3px solid #C8102E", paddingLeft: 16, marginBottom: 32 }}>
-          <div style={{ color: "#D8D8D8", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 20, letterSpacing: "0.04em" }}>CONTROLE DE EQUIPAMENTOS</div>
-          <div style={{ color: "#D8D8D8", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 20, letterSpacing: "0.04em" }}>CONTRA INCÊNDIO</div>
+          <div style={{ color: "#D8D8D8", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 20, letterSpacing: "0.04em" }}>INSPEÇÃO TÉCNICA</div>
+          <div style={{ color: "#D8D8D8", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 20, letterSpacing: "0.04em" }}>COM INTELIGÊNCIA ARTIFICIAL</div>
         </div>
-        {["Gestão de extintores e sistemas", "Controle de manutenções e vencimentos", "QR Code por equipamento", "Alertas automáticos"].map(f => (
+        {["Inspeções digitais com checklist IA", "Geração automática de laudos técnicos", "Compartilhamento via WhatsApp e e-mail", "Conformidade NBR 12615 · NFPA 12 · UL 300"].map(f => (
           <div key={f} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
             <div style={{ width: 5, height: 5, background: "#C8102E", flexShrink: 0 }} />
             <span style={{ color: "#8A8A8A", fontSize: 12 }}>{f}</span>
@@ -51,7 +51,7 @@ export default function SaasLogin() {
         <div style={{ width: "100%", maxWidth: 380 }}>
           <div style={{ marginBottom: 28 }}>
             <div style={{ width: 28, height: 3, background: "#C8102E", marginBottom: 12 }} />
-            <h1 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: 26, letterSpacing: "0.04em", color: "#111111", margin: 0 }}>ACESSO À PLATAFORMA</h1>
+            <h1 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: 26, letterSpacing: "0.04em", color: "#111111", margin: 0 }}>ACESSO AO OPERIS</h1>
             <p style={{ color: "#8A8A8A", fontSize: 13, marginTop: 4 }}>Entre com suas credenciais</p>
           </div>
           <form onSubmit={e => { e.preventDefault(); setError(""); loginMutation.mutate({ email, password }); }} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
