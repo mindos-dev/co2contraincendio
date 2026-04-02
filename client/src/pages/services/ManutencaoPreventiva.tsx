@@ -57,7 +57,7 @@ export default function ManutencaoPreventiva() {
         {
           icon: <Calendar size={20} />,
           title: "Gestão de Periodicidades",
-          desc: "Controle automatizado de todas as periodicidades de manutenção via plataforma OPERIS: alertas automáticos de vencimento, agendamento de visitas e histórico completo de todas as manutenções realizadas.",
+          desc: "Controle automatizado de todas as periodicidades de manutenção via OPERIS: alertas automáticos de vencimento, agendamento de visitas e histórico completo de todas as manutenções realizadas.",
         },
         {
           icon: <ClipboardList size={20} />,
@@ -107,7 +107,7 @@ export default function ManutencaoPreventiva() {
         { step: "02", title: "Proposta de Contrato", desc: "Apresentamos proposta de contrato com escopo detalhado, periodicidades, entregáveis (relatórios, ARTs) e investimento mensal ou anual." },
         { step: "03", title: "Execução das Visitas", desc: "Realizamos as visitas de manutenção conforme o cronograma contratado, com equipe técnica especializada e equipamentos calibrados." },
         { step: "04", title: "Relatório Técnico", desc: "Após cada visita, entregamos relatório técnico detalhado com checklist, registro fotográfico, não-conformidades e recomendações." },
-        { step: "05", title: "Gestão via OPERIS", desc: "Todos os dados de manutenção são registrados na plataforma OPERIS, com alertas automáticos de vencimento e histórico completo acessível a qualquer momento." },
+        { step: "05", title: "Gestão via OPERIS", desc: "Todos os dados de manutenção são registrados na OPERIS, com alertas automáticos de vencimento e histórico completo acessível a qualquer momento." },
       ]}
       faqs={[
         {

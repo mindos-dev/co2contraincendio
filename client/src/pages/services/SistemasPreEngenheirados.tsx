@@ -186,7 +186,7 @@ export default function SistemasPreEngenheirados() {
               </Link>
               <Link href="/app/login">
                 <a className="border border-white/30 hover:border-white text-white font-semibold px-7 py-3.5 rounded transition-colors text-sm">
-                  Plataforma OPERIS
+                  OPERIS
                 </a>
               </Link>
             </div>
@@ -383,7 +383,7 @@ export default function SistemasPreEngenheirados() {
         <div className="max-w-5xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-10 items-center">
             <div>
-              <p className="text-red-500 text-xs font-bold tracking-[0.2em] uppercase mb-3">Plataforma OPERIS</p>
+              <p className="text-red-500 text-xs font-bold tracking-[0.2em] uppercase mb-3">OPERIS</p>
               <h2 className="text-3xl font-black text-white mb-4">Gerencie Todos os Sistemas com Rastreamento por QR Code</h2>
               <p className="text-gray-300 leading-relaxed mb-6">
                 Cada equipamento instalado recebe um QR Code único. Técnicos registram inspeções, manutenções e recargas diretamente pelo celular. Alertas automáticos notificam o responsável antes do vencimento.
@@ -409,7 +409,7 @@ export default function SistemasPreEngenheirados() {
                 </Link>
                 <Link href="/app/login">
                   <a className="border border-white/30 hover:border-white text-white font-semibold px-6 py-3 rounded transition-colors text-sm">
-                    Acessar Plataforma
+                    Acessar OPERIS
                   </a>
                 </Link>
               </div>

@@ -259,7 +259,7 @@ export default function ServicePageTemplate({
       <section style={{ padding: "3.5rem 0", background: "var(--gray-900)" }}>
         <div className="container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "2.5rem", alignItems: "center" }}>
           <div>
-            <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--red)", marginBottom: "0.75rem" }}>Plataforma OPERIS</div>
+            <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--red)", marginBottom: "0.75rem" }}>OPERIS</div>
             <h2 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: "clamp(1.25rem,2.5vw,1.75rem)", color: "#fff", marginBottom: "0.75rem", lineHeight: 1.2 }}>Gerencie este sistema com tecnologia</h2>
             <p style={{ color: "var(--gray-300)", fontSize: "0.875rem", lineHeight: 1.75 }}>
               QR Code em cada equipamento, alertas automáticos de manutenção, documentação digital e relatórios de conformidade para o Corpo de Bombeiros.
@@ -267,7 +267,7 @@ export default function ServicePageTemplate({
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <Link href="/app/login" className="btn-primary" style={{ justifyContent: "center" }}>
-              Acessar Plataforma OPERIS <ArrowRight size={14} />
+              Acessar OPERIS <ArrowRight size={14} />
             </Link>
             <Link href="/contato" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", color: "var(--gray-300)", fontSize: "0.8125rem", fontWeight: 500, padding: "0.625rem", border: "1px solid var(--gray-700)", transition: "border-color 0.2s" }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--red)"; }}

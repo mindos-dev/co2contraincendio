@@ -393,13 +393,13 @@ export default function Projetos() {
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                 <div style={{ width: 24, height: 3, background: "#C8102E" }} />
-                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: "0.12em", color: "#C8102E", textTransform: "uppercase" }}>Plataforma OPERIS</span>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: "0.12em", color: "#C8102E", textTransform: "uppercase" }}>OPERIS</span>
               </div>
               <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: "clamp(1.4rem, 2.5vw, 2rem)", letterSpacing: "0.04em", color: "#FFFFFF", margin: "0 0 16px" }}>
                 GESTÃO INTELIGENTE DOS<br />SEUS PROJETOS E EQUIPAMENTOS
               </h2>
               <p style={{ color: "#A0A0A0", fontSize: 14, lineHeight: 1.7, marginBottom: 24 }}>
-                Todos os equipamentos instalados nos projetos são rastreados pela plataforma OPERIS: QR Code em cada extintor, histórico de manutenções, alertas automáticos de vencimento e relatórios técnicos com ART. Seus clientes acessam o painel de controle em tempo real.
+                Todos os equipamentos instalados nos projetos são rastreados pelo OPERIS: QR Code em cada extintor, histórico de manutenções, alertas automáticos de vencimento e relatórios técnicos com ART. Seus clientes acessam o painel de controle em tempo real.
               </p>
               <Link href="/app" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "11px 20px", background: "#C8102E", color: "#fff", fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.08em", textDecoration: "none" }}>
                 ACESSAR PLATAFORMA <ArrowRight size={13} />

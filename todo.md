@@ -282,3 +282,28 @@
 - [x] Criar componente OperisLogo.tsx com logo CSS pura (sem imagens), tipografia Barlow Condensed, subtexto persuasivo
 - [x] Atualizar OperisHeroBanner para usar a nova logo em destaque
 - [x] Integrar OperisLogo no SaasDashboardLayout (sidebar desktop + header mobile)
+
+## Logo OPERIS — Redesign Criativo + Distribuição Estratégica
+
+- [ ] Redesenhar OperisLogo.tsx: criativa, institucional, padrão UL, sem futurismo
+- [ ] Inserir logo OPERIS no rodapé (Footer.tsx) — seção dedicada
+- [ ] Inserir logo OPERIS no Navbar público — link para plataforma
+- [ ] Inserir logo OPERIS na página de Serviços (se existir)
+- [ ] Confirmar logo no banner (OperisHeroBanner) e no SaasDashboardLayout
+
+## Integração Anthropic claude-3-haiku no OPERIS
+
+- [ ] Configurar ANTHROPIC_API_KEY via secrets
+- [ ] Instalar @anthropic-ai/sdk
+- [ ] Criar server/operis/anthropic-client.ts com cliente Anthropic
+- [ ] Atualizar ai-service.ts para usar claude-3-haiku diretamente
+- [ ] Testar fluxo analyzeItem e generateReport com Anthropic
+
+## Padronização de Branding OPERIS (Enforcement Global)
+
+- [x] Substituir "Plataforma" por "OPERIS" em Navbar (desktop + mobile)
+- [x] Substituir "Plataforma OPERIS" por "OPERIS" em ServicePageTemplate
+- [x] Substituir "Acessar Plataforma" por "Acessar OPERIS" em OperisHeroBanner
+- [x] Substituir em SistemaSaponificante, SistemasPreEngenheirados, AplicacoesEspeciais, ManutencaoPreventiva
+- [x] Substituir em Projetos.tsx e AdminOperis.tsx
+- [x] Validação final: 0 termos proibidos, 7 CTAs "Acessar OPERIS" ativos, 0 erros TypeScript

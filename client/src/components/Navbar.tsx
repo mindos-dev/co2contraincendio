@@ -191,7 +191,7 @@ export default function Navbar() {
               className={`nav-link ${location.startsWith("/app") || location.startsWith("/operis") ? "active" : ""}`}
               style={{ padding: "0 0.75rem", height: "68px", display: "flex", alignItems: "center", color: "var(--red)", fontWeight: 700, fontSize: "0.8125rem", letterSpacing: "0.03em" }}
             >
-              🛡️ Plataforma
+              Acessar OPERIS
             </Link>
             <Link href="/contato" className="btn-primary" style={{ marginLeft: "0.5rem", height: "40px", padding: "0 1.5rem" }}>
               Solicitar Orçamento
@@ -269,7 +269,7 @@ export default function Navbar() {
                 href="/app/login"
                 style={{ display: "block", padding: "0.75rem 0", color: "var(--red)", fontSize: "0.9375rem", fontWeight: 700, borderBottom: "1px solid var(--gray-700)" }}
               >
-                🛡️ Plataforma OPERIS
+                Acessar OPERIS
               </Link>
               <Link href="/contato" className="btn-primary" style={{ marginTop: "1.25rem", width: "100%", justifyContent: "center" }}>
                 Solicitar Orçamento

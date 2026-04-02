@@ -213,7 +213,7 @@ export default function AplicacoesEspeciais() {
       <section className="py-16 bg-[#0a1628]">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
-            Gerencie Todos os Sistemas com a Plataforma OPERIS
+            OPERIS — Gestão Integrada de Sistemas
           </h2>
           <p className="text-gray-300 mb-8 text-lg">
             Controle de equipamentos, manutenções, alertas e documentação técnica em um único sistema,
@@ -227,7 +227,7 @@ export default function AplicacoesEspeciais() {
             </Link>
             <Link href="/app/login">
               <a className="border border-white/30 hover:border-white text-white font-semibold px-8 py-4 rounded-lg transition-colors">
-                Acessar Plataforma OPERIS
+                Acessar OPERIS
               </a>
             </Link>
           </div>

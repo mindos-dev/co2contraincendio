@@ -93,7 +93,7 @@ function Router() {
       {/* Página pública de equipamento via QR Code */}
       <Route path="/extintor/:code" component={ExtintorPublico} />
 
-      {/* Plataforma SaaS */}
+      {/* OPERIS */}
       <Route path="/app/login" component={SaasLogin} />
       <Route path="/app/dashboard" component={Dashboard} />
       <Route path="/app/equipamentos" component={Equipamentos} />

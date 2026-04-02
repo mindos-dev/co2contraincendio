@@ -170,7 +170,7 @@ export default function OperisHeroBanner() {
                 el.style.boxShadow = "0 0 0 rgba(200,16,46,0)";
               }}
             >
-              ▶ Acessar Plataforma
+              ▶ Acessar OPERIS
             </Link>
 
             <a
