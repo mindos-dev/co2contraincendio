@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import Layout from "../components/Layout";
 import SEOHead from "../components/SEOHead";
+import OperisHeroBanner from "../components/OperisHeroBanner";
 import {
   ArrowRight, Play, Shield, Wrench, FileCheck, Flame,
   Droplets, Bell, Wind, ChevronLeft, ChevronRight, CheckCircle
@@ -341,6 +342,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* OPERIS IA Banner */}
+      <OperisHeroBanner />
 
       {/* CTA */}
       <section style={{ background:"var(--red)", padding:"5rem 0" }}>

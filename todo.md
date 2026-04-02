@@ -271,3 +271,8 @@
 - [x] Frontend: botão Compartilhar na tela /operis/laudo/:slug
 - [x] Frontend: botão Compartilhar na tela /operis/inspecao/:id após gerar laudo
 - [x] Registrar rota /operis/admin no App.tsx e no menu lateral (adminOnly)
+
+## Banner OPERIS IA na Home
+
+- [x] Criar componente OperisHeroBanner.tsx com imagem gerada por IA, texto de destaque e CTA
+- [x] Integrar o banner na Home.tsx em posição de destaque (antes do CTA final)
