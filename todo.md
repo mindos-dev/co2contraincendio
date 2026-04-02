@@ -245,3 +245,7 @@
 - [x] Procedure getPublicReport (publicProcedure) para URLs pública de laudos
 - [x] Telas OPERIS responsivas (mobile-first)
 - [x] Checkpoint salvo e entregue
+
+## Bug: OPERIS não aparece no site
+- [x] Diagnosticar por que o módulo OPERIS não estava visível no site (adminOnly: true bloqueava usuários não-admin)
+- [x] Corrigir visibilidade do OPERIS: removido adminOnly, agora visível para todos os usuários autenticados
