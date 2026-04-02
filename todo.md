@@ -171,4 +171,8 @@
 - [x] Criar página /app/usuarios para gestão de usuários (backend já existe)
 - [x] Adicionar calculadora interativa de agente extintor em sistemas pré-engenheirados
 - [x] Implementar exportação PDF de relatórios (html2canvas + jsPDF)
-- [ ] Desenvolver apps mobile iOS/Android (React Native + Expo)
+- [x] Desenvolver apps mobile iOS/Android (React Native + Expo) → substituído por PWA mobile-first
+- [x] Criar manifest.json com ícones e configuração PWA
+- [x] Adicionar service worker para suporte offline básico
+- [x] Ajustar layout responsivo mobile-first no dashboard OPERIS
+- [x] Adicionar meta tags Apple/Android para instalação na tela inicial

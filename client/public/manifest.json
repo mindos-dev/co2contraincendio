@@ -1,0 +1,53 @@
+{
+  "name": "CO2 Contra Incêndio — OPERIS",
+  "short_name": "OPERIS",
+  "description": "Plataforma de gestão de sistemas de supressão e combate a incêndios",
+  "start_url": "/app/dashboard",
+  "display": "standalone",
+  "background_color": "#0a1628",
+  "theme_color": "#C8102E",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "pt-BR",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/pwa-icon-192_6174b9a3.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/pwa-icon-512_7ddfd616.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Acesse o painel principal",
+      "url": "/app/dashboard",
+      "icons": [
+        {
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/pwa-icon-192_6174b9a3.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Equipamentos",
+      "short_name": "Equipamentos",
+      "description": "Gerencie os equipamentos",
+      "url": "/app/equipamentos",
+      "icons": [
+        {
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/pwa-icon-192_6174b9a3.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
