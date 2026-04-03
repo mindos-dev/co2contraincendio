@@ -10,6 +10,7 @@ import { router, publicProcedure } from "./_core/trpc";
 import { saasAuthProcedure } from "./saas-routers";
 import { getDb } from "./db";
 import { storagePut } from "./storage";
+import { sendEmail } from "./notifications";
 import {
   operisInspections,
   operisInspectionItems,
@@ -540,6 +541,45 @@ export const operisRouter = router({
         .limit(input.limit)
         .offset(offset);
       return rows;
+    }),
+
+  // Envio de laudo por e-mail via servidor SMTP
+  sendLaudoEmail: saasAuthProcedure
+    .input(z.object({
+      to: z.string().email(),
+      slug: z.string(),
+      laudoTitle: z.string().optional(),
+      origin: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const laudoUrl = `${input.origin ?? "https://co2contra.com"}/operis/laudo/${input.slug}`;
+      const title = input.laudoTitle ?? "Laudo Técnico OPERIS";
+      const subject = `${title} — CO2 Contra Incêndio`;
+      const html = `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+          <div style="background:#C8102E;padding:20px 24px;">
+            <h1 style="color:#fff;font-size:22px;margin:0;font-weight:700;letter-spacing:1px;">OPERIS IA</h1>
+            <p style="color:#fca5a5;font-size:12px;margin:4px 0 0;">Inspeção e Laudos Inteligentes</p>
+          </div>
+          <div style="padding:28px 24px;background:#f9fafb;">
+            <h2 style="font-size:18px;color:#111827;margin:0 0 12px;">${title}</h2>
+            <p style="color:#4B5563;font-size:14px;line-height:1.6;">Segue o laudo técnico gerado pelo sistema OPERIS IA da CO2 Contra Incêndio.</p>
+            <div style="margin:24px 0;">
+              <a href="${laudoUrl}" style="background:#C8102E;color:#fff;padding:12px 24px;text-decoration:none;font-weight:700;font-size:14px;display:inline-block;">Acessar Laudo Técnico</a>
+            </div>
+            <p style="color:#9CA3AF;font-size:12px;">Ou copie o link: <a href="${laudoUrl}" style="color:#C8102E;">${laudoUrl}</a></p>
+          </div>
+          <div style="padding:16px 24px;background:#1f2937;">
+            <p style="color:#9CA3AF;font-size:11px;margin:0;">CO2 Contra Incêndio — Eng. Judson Aleixo Sampaio | CREA 142203671-5</p>
+            <p style="color:#6B7280;font-size:11px;margin:4px 0 0;">NBR 12615 · NFPA 12 · UL 300</p>
+          </div>
+        </div>
+      `;
+      const result = await sendEmail(input.to, subject, `Acesse o laudo em: ${laudoUrl}`, html);
+      if (!result.success) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: result.error ?? "Falha ao enviar e-mail" });
+      }
+      return { success: true };
     }),
 
   // Laudo público por slug (SEO) — sem autenticação

@@ -33,6 +33,9 @@ export default function Usuarios() {
   const { data: users, isLoading, refetch } = trpc.saas.users.list.useQuery();
   const { data: companies } = trpc.saas.companies.list.useQuery();
 
+  const updateRole = trpc.saas.users.updateRole.useMutation({ onSuccess: () => refetch() });
+  const toggleActive = trpc.saas.users.toggleActive.useMutation({ onSuccess: () => refetch() });
+
   const createUser = trpc.saas.users.create.useMutation({
     onSuccess: () => {
       setFormSuccess("Usuário criado com sucesso!");
@@ -192,6 +195,27 @@ export default function Usuarios() {
                         </td>
                         <td style={{ padding: "14px 16px", fontSize: 12, color: "#9CA3AF" }}>
                           {new Date(user.createdAt).toLocaleDateString("pt-BR")}
+                        </td>
+                        <td style={{ padding: "14px 16px" }}>
+                          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                            <select
+                              value={user.role}
+                              onChange={e => updateRole.mutate({ id: user.id, role: e.target.value as "superadmin" | "admin" | "tecnico" | "cliente" })}
+                              style={{ fontSize: 11, padding: "3px 6px", border: "1px solid #E5E7EB", borderRadius: 2, background: "#F9FAFB", color: "#374151", cursor: "pointer" }}
+                            >
+                              <option value="tecnico">Técnico</option>
+                              <option value="admin">Admin</option>
+                              <option value="cliente">Cliente</option>
+                              <option value="superadmin">Super Admin</option>
+                            </select>
+                            <button
+                              onClick={() => toggleActive.mutate({ id: user.id, active: !user.active })}
+                              style={{ fontSize: 11, padding: "3px 8px", border: "1px solid", borderRadius: 2, cursor: "pointer", background: user.active ? "#FEF2F2" : "#F0FDF4", color: user.active ? "#DC2626" : "#059669", borderColor: user.active ? "#FCA5A5" : "#86EFAC" }}
+                              title={user.active ? "Desativar" : "Ativar"}
+                            >
+                              {user.active ? "Desativar" : "Ativar"}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );

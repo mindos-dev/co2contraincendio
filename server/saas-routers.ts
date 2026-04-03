@@ -52,6 +52,8 @@ import {
   getUsageReport,
   getCompanyReport,
   importCompaniesFromCsv,
+  updateSaasUserRole,
+  toggleSaasUserActive,
 } from "./saas-db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
@@ -225,6 +227,15 @@ export const saasRouter = router({
         const { password: _p, ...rest } = input;
         return createSaasUser({ ...rest, passwordHash });
       }),
+    updateRole: saasAdminProcedure
+      .input(z.object({
+        id: z.number(),
+        role: z.enum(["superadmin", "admin", "tecnico", "cliente"]),
+      }))
+      .mutation(({ input }) => updateSaasUserRole(input.id, input.role)),
+    toggleActive: saasAdminProcedure
+      .input(z.object({ id: z.number(), active: z.boolean() }))
+      .mutation(({ input }) => toggleSaasUserActive(input.id, input.active)),
   }),
 
   equipment: router({

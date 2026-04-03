@@ -511,3 +511,18 @@ export async function importCompaniesFromCsv(rows: Array<{
 
   return results;
 }
+
+// ─── User Management Helpers ─────────────────────────────────────────────────
+export async function updateSaasUserRole(id: number, role: "superadmin" | "admin" | "tecnico" | "cliente") {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.update(saasUsers).set({ role }).where(eq(saasUsers.id, id));
+  return { success: true };
+}
+
+export async function toggleSaasUserActive(id: number, active: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.update(saasUsers).set({ active }).where(eq(saasUsers.id, id));
+  return { success: true };
+}

@@ -313,3 +313,11 @@
 - [x] Criar seção FAQ com accordion na OperisHome (/operis)
 - [x] 8 perguntas cobrindo: o que é OPERIS, como criar inspeção, como gerar laudo, como compartilhar, normas suportadas, como adicionar técnicos, como acessar laudos anteriores
 - [x] Integrar FAQ após a lista de inspeções recentes na OperisHome
+
+## Sprint: Sugestões de Próximos Passos (02/04/2026)
+
+- [ ] Página /app/usuarios — listar, cadastrar e editar usuários com role (admin/tecnico/user)
+- [ ] Backend: procedures saas.listUsers, saas.createUser, saas.updateUserRole
+- [ ] Envio de e-mail SMTP pelo servidor para compartilhamento de laudos
+- [ ] Backend: procedure operis.sendLaudoEmail (nodemailer + SMTP)
+- [ ] Frontend: botão "Enviar por E-mail" no ShareButton chama procedure em vez de mailto
