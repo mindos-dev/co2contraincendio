@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Phone, Mail, MapPin, Instagram, Youtube, Linkedin } from "lucide-react";
+import OperisLogo from "./OperisLogo";
 
 const services = [
   { label: "Projetos e Laudos Técnicos", href: "/projetos" },
@@ -172,6 +173,34 @@ export default function Footer() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* OPERIS IA Section */}
+      <div style={{ borderTop: "1px solid var(--gray-800)", background: "rgba(200,16,46,0.04)", padding: "2rem 0" }}>
+        <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+            <OperisLogo size="sm" dark={true} />
+            <p style={{ color: "var(--gray-500)", fontSize: "0.8125rem", maxWidth: "400px", lineHeight: 1.6, margin: 0 }}>
+              Plataforma de inspeção técnica com inteligência artificial. Gere laudos, gerencie equipamentos e garanta conformidade ABNT NBR 12615 em tempo real.
+            </p>
+          </div>
+          <Link
+            href="/app/login"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "0.5rem",
+              background: "var(--red)", color: "#fff",
+              fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
+              fontSize: "0.875rem", letterSpacing: "0.06em", textTransform: "uppercase",
+              padding: "0.75rem 1.75rem", textDecoration: "none",
+              border: "none", cursor: "pointer",
+              transition: "opacity 0.2s", flexShrink: 0,
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+          >
+            Acessar OPERIS IA
+          </Link>
         </div>
       </div>
 

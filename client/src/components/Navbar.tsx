@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X, ChevronDown, Phone } from "lucide-react";
+import OperisLogo from "./OperisLogo";
 
 const servicesMain = [
   { label: "Sistema de Supressão por CO₂", href: "/sistema-supressao-co2" },
@@ -188,10 +189,16 @@ export default function Navbar() {
 
             <Link
               href="/app/login"
-              className={`nav-link ${location.startsWith("/app") || location.startsWith("/operis") ? "active" : ""}`}
-              style={{ padding: "0 0.75rem", height: "68px", display: "flex", alignItems: "center", color: "var(--red)", fontWeight: 700, fontSize: "0.8125rem", letterSpacing: "0.03em" }}
+              style={{
+                padding: "0 0.75rem", height: "68px",
+                display: "flex", alignItems: "center",
+                textDecoration: "none",
+                borderLeft: "1px solid var(--gray-700)",
+                marginLeft: "0.25rem",
+              }}
+              title="Acessar OPERIS IA"
             >
-              Acessar OPERIS
+              <OperisLogo size="xs" dark={false} />
             </Link>
             <Link href="/contato" className="btn-primary" style={{ marginLeft: "0.5rem", height: "40px", padding: "0 1.5rem" }}>
               Solicitar Orçamento
@@ -267,9 +274,9 @@ export default function Navbar() {
 
               <Link
                 href="/app/login"
-                style={{ display: "block", padding: "0.75rem 0", color: "var(--red)", fontSize: "0.9375rem", fontWeight: 700, borderBottom: "1px solid var(--gray-700)" }}
+                style={{ display: "flex", alignItems: "center", padding: "0.75rem 0", borderBottom: "1px solid var(--gray-700)", textDecoration: "none" }}
               >
-                Acessar OPERIS
+                <OperisLogo size="xs" dark={true} />
               </Link>
               <Link href="/contato" className="btn-primary" style={{ marginTop: "1.25rem", width: "100%", justifyContent: "center" }}>
                 Solicitar Orçamento

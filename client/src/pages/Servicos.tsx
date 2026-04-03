@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import Layout from "../components/Layout";
 import SEOHead from "../components/SEOHead";
 import { ArrowRight, Flame, Droplets, Shield, Bell, Wind, FileCheck, Wrench, AlertTriangle, RefreshCw } from "lucide-react";
+import OperisLogo from "../components/OperisLogo";
 
 const services = [
   {
@@ -147,6 +148,60 @@ export default function Servicos() {
                 <p style={{ color: "var(--gray-600)", fontSize: "0.875rem", lineHeight: 1.65 }}>{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* OPERIS IA */}
+      <section style={{ background: "var(--gray-900)", padding: "5rem 0" }}>
+        <div className="container">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "4rem", alignItems: "center" }}>
+            <div>
+              <OperisLogo size="md" dark={true} />
+              <p style={{ color: "var(--gray-400)", fontSize: "1rem", lineHeight: 1.75, margin: "1.5rem 0 2rem", maxWidth: "480px" }}>
+                Plataforma de inspeção técnica com inteligência artificial. Gere laudos com ART, gerencie equipamentos via QR Code e garanta conformidade ABNT NBR 12615 em tempo real.
+              </p>
+              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                <Link
+                  href="/app/login"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "0.5rem",
+                    background: "var(--red)", color: "#fff",
+                    fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
+                    fontSize: "0.875rem", letterSpacing: "0.06em", textTransform: "uppercase",
+                    padding: "0.75rem 1.75rem", textDecoration: "none",
+                  }}
+                >
+                  Acessar Plataforma
+                </Link>
+                <Link
+                  href="/app/cadastro"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "0.5rem",
+                    border: "1px solid var(--gray-600)", color: "var(--gray-300)",
+                    fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
+                    fontSize: "0.875rem", letterSpacing: "0.06em", textTransform: "uppercase",
+                    padding: "0.75rem 1.75rem", textDecoration: "none",
+                  }}
+                >
+                  Criar Conta
+                </Link>
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              {[
+                { icon: "🔍", title: "Inspeção Inteligente", desc: "Análise automática com IA para laudos técnicos precisos" },
+                { icon: "📱", title: "QR Code", desc: "Rastreie cada equipamento com código único e histórico completo" },
+                { icon: "📄", title: "Laudos com ART", desc: "Geração automática conforme ABNT NBR 12615" },
+                { icon: "🔔", title: "Alertas Preventivos", desc: "Notificações automáticas de manutenção vencida" },
+              ].map((f) => (
+                <div key={f.title} style={{ background: "var(--gray-800)", padding: "1.25rem", borderTop: "2px solid var(--red)" }}>
+                  <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>{f.icon}</div>
+                  <div style={{ color: "#fff", fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: "0.9375rem", marginBottom: "0.375rem" }}>{f.title}</div>
+                  <p style={{ color: "var(--gray-400)", fontSize: "0.8125rem", lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

@@ -285,19 +285,19 @@
 
 ## Logo OPERIS — Redesign Criativo + Distribuição Estratégica
 
-- [ ] Redesenhar OperisLogo.tsx: criativa, institucional, padrão UL, sem futurismo
-- [ ] Inserir logo OPERIS no rodapé (Footer.tsx) — seção dedicada
-- [ ] Inserir logo OPERIS no Navbar público — link para plataforma
-- [ ] Inserir logo OPERIS na página de Serviços (se existir)
-- [ ] Confirmar logo no banner (OperisHeroBanner) e no SaasDashboardLayout
+- [x] Redesenhar OperisLogo.tsx: criativa, institucional, padrão UL, sem futurismo
+- [x] Inserir logo OPERIS no rodapé (Footer.tsx) — seção dedicada
+- [x] Inserir logo OPERIS no Navbar público — link para plataforma
+- [x] Inserir logo OPERIS na página de Serviços (se existir)
+- [x] Confirmar logo no banner (OperisHeroBanner) e no SaasDashboardLayout
 
 ## Integração Anthropic claude-3-haiku no OPERIS
 
-- [ ] Configurar ANTHROPIC_API_KEY via secrets
-- [ ] Instalar @anthropic-ai/sdk
-- [ ] Criar server/operis/anthropic-client.ts com cliente Anthropic
-- [ ] Atualizar ai-service.ts para usar claude-3-haiku diretamente
-- [ ] Testar fluxo analyzeItem e generateReport com Anthropic
+- [x] Configurar ANTHROPIC_API_KEY via secrets
+- [x] Instalar @anthropic-ai/sdk
+- [x] Criar server/operis/anthropic-client.ts com cliente Anthropic
+- [x] Atualizar ai-service.ts para usar claude-3-haiku diretamente
+- [x] Testar fluxo analyzeItem e generateReport com Anthropic
 
 ## Padronização de Branding OPERIS (Enforcement Global)
 
@@ -316,19 +316,19 @@
 
 ## Sprint: Sugestões de Próximos Passos (02/04/2026)
 
-- [ ] Página /app/usuarios — listar, cadastrar e editar usuários com role (admin/tecnico/user)
-- [ ] Backend: procedures saas.listUsers, saas.createUser, saas.updateUserRole
-- [ ] Envio de e-mail SMTP pelo servidor para compartilhamento de laudos
-- [ ] Backend: procedure operis.sendLaudoEmail (nodemailer + SMTP)
-- [ ] Frontend: botão "Enviar por E-mail" no ShareButton chama procedure em vez de mailto
+- [x] Página /app/usuarios — listar, cadastrar e editar usuários com role (admin/tecnico/user)
+- [x] Backend: procedures saas.listUsers, saas.createUser, saas.updateUserRole
+- [x] Envio de e-mail SMTP pelo servidor para compartilhamento de laudos
+- [x] Backend: procedure operis.sendLaudoEmail (nodemailer + SMTP)
+- [x] Frontend: botão "Enviar por E-mail" no ShareButton chama procedure em vez de mailto
 
 ## Página de Detalhes do Equipamento com QR Code
 
-- [ ] Procedure saas.equipment.getWithHistory (equipamento + manutenções + documentos)
-- [ ] Página /app/equipamentos/:id com QR Code, dados técnicos e timeline de manutenções
-- [ ] Página pública /equipamento/:code acessível via QR Code (sem login)
-- [ ] Link "Ver Detalhes" na tabela de equipamentos
-- [ ] Botão "Imprimir QR Code" na página de detalhes
+- [x] Procedure saas.equipment.getWithHistory (equipamento + manutenções + documentos)
+- [x] Página /app/equipamentos/:id com QR Code, dados técnicos e timeline de manutenções
+- [x] Página pública /equipamento/:code acessível via QR Code (sem login)
+- [x] Link "Ver Detalhes" na tabela de equipamentos
+- [x] Botão "Imprimir QR Code" na página de detalhes
 
 ## Sprint: Cadastro, Login e Recuperação de Senha OPERIS
 
