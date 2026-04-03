@@ -321,3 +321,11 @@
 - [ ] Envio de e-mail SMTP pelo servidor para compartilhamento de laudos
 - [ ] Backend: procedure operis.sendLaudoEmail (nodemailer + SMTP)
 - [ ] Frontend: botão "Enviar por E-mail" no ShareButton chama procedure em vez de mailto
+
+## Página de Detalhes do Equipamento com QR Code
+
+- [ ] Procedure saas.equipment.getWithHistory (equipamento + manutenções + documentos)
+- [ ] Página /app/equipamentos/:id com QR Code, dados técnicos e timeline de manutenções
+- [ ] Página pública /equipamento/:code acessível via QR Code (sem login)
+- [ ] Link "Ver Detalhes" na tabela de equipamentos
+- [ ] Botão "Imprimir QR Code" na página de detalhes

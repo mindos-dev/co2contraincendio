@@ -114,8 +114,9 @@ export default function Equipamentos() {
                       {STATUS_LABELS[eq.status ?? "ok"] ?? eq.status}
                     </span>
                   </td>
-                  <td style={{ padding: "10px 14px" }}>
-                    <a href={`/extintor/${eq.code}`} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: "#C8102E", textDecoration: "none", fontWeight: 600 }}>QR ▦</a>
+                  <td style={{ padding: "10px 14px", display: "flex", gap: 10, alignItems: "center" }}>
+                    <a href={`/app/equipamentos/${eq.id}`} style={{ fontSize: 11, color: "#0a1628", textDecoration: "none", fontWeight: 700, padding: "3px 10px", border: "1px solid #0a1628", letterSpacing: "0.04em" }}>DETALHES</a>
+                    <a href={`/equipamento/${eq.code}`} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: "#C8102E", textDecoration: "none", fontWeight: 600 }}>QR ▦</a>
                   </td>
                 </tr>
               ))}

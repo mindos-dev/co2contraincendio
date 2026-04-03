@@ -36,6 +36,8 @@ import Parceiros from "./pages/Parceiros";
 // Plataforma SaaS
 import SaasLogin from "./pages/SaasLogin";
 import ExtintorPublico from "./pages/ExtintorPublico";
+import EquipamentoPublico from "./pages/EquipamentoPublico";
+import EquipamentoDetalhes from "./pages/plataforma/EquipamentoDetalhes";
 import Dashboard from "./pages/plataforma/Dashboard";
 import Equipamentos from "./pages/plataforma/Equipamentos";
 import Manutencoes from "./pages/plataforma/Manutencoes";
@@ -103,13 +105,15 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
 
-      {/* Página pública de equipamento via QR Code */}
+      {/* Páginas públicas de equipamento via QR Code */}
       <Route path="/extintor/:code" component={ExtintorPublico} />
+      <Route path="/equipamento/:code" component={EquipamentoPublico} />
 
       {/* OPERIS */}
       <Route path="/app/login" component={SaasLogin} />
       <Route path="/app/dashboard" component={Dashboard} />
       <Route path="/app/equipamentos" component={Equipamentos} />
+      <Route path="/app/equipamentos/:id" component={EquipamentoDetalhes} />
       <Route path="/app/manutencoes" component={Manutencoes} />
       <Route path="/app/qrcodes" component={QRCodes} />
       <Route path="/app/alertas" component={Alertas} />
