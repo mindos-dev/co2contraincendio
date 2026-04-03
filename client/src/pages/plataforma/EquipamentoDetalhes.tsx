@@ -1,12 +1,13 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import { QRCodeSVG } from "qrcode.react";
 import { trpc } from "@/lib/trpc";
 import SaasDashboardLayout from "@/components/SaasDashboardLayout";
+import { exportEquipamentoPDF } from "@/lib/exportEquipamentoPDF";
 import {
   ArrowLeft, Printer, MapPin, Calendar, Wrench, FileText,
   CheckCircle, AlertTriangle, XCircle, Clock, Package,
-  Flame, Droplets, Wind, Bell, Zap, Shield
+  Flame, Droplets, Wind, Bell, Zap, Shield, Download
 } from "lucide-react";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -77,6 +78,24 @@ export default function EquipamentoDetalhes() {
   const publicUrl = equipment?.code
     ? `${window.location.origin}/equipamento/${equipment.code}`
     : "";
+
+  const [exportingPDF, setExportingPDF] = useState(false);
+
+  const handleExportPDF = async () => {
+    if (!equipment) return;
+    setExportingPDF(true);
+    try {
+      await exportEquipamentoPDF({
+        equipment,
+        maintenance: maintenance ?? [],
+      });
+    } catch (err) {
+      console.error("Erro ao gerar PDF:", err);
+      alert("Erro ao gerar o PDF. Tente novamente.");
+    } finally {
+      setExportingPDF(false);
+    }
+  };
 
   const handlePrintQR = () => {
     if (!printRef.current) return;
@@ -161,12 +180,21 @@ export default function EquipamentoDetalhes() {
               {equipment.manufacturer ? ` · ${equipment.manufacturer}` : ""}
             </p>
           </div>
-          <button
-            onClick={handlePrintQR}
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", background: "#0a1628", color: "#fff", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700, letterSpacing: "0.06em" }}
-          >
-            <Printer size={14} /> IMPRIMIR QR CODE
-          </button>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              onClick={handleExportPDF}
+              disabled={exportingPDF}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", background: "#C8102E", color: "#fff", border: "none", cursor: exportingPDF ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", opacity: exportingPDF ? 0.7 : 1 }}
+            >
+              <Download size={14} /> {exportingPDF ? "GERANDO PDF..." : "EXPORTAR PDF"}
+            </button>
+            <button
+              onClick={handlePrintQR}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", background: "#0a1628", color: "#fff", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700, letterSpacing: "0.06em" }}
+            >
+              <Printer size={14} /> IMPRIMIR QR CODE
+            </button>
+          </div>
         </div>
 
         {/* ── Grid principal ── */}
