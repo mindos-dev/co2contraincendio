@@ -24,6 +24,8 @@ import {
   checklistItems,
   checklistExecutions,
   type InsertWorkOrder,
+  cookieConsents,
+  lgpdRequests,
 } from "../drizzle/schema";
 
 // ─── Companies ───────────────────────────────────────────────────────────────
@@ -636,3 +638,69 @@ export async function getChecklistExecutions(companyId: number) {
     .where(eq(checklistExecutions.companyId, companyId))
     .orderBy(desc(checklistExecutions.createdAt));
 }
+
+// ─── LGPD: Cookie Consent ─────────────────────────────────────────────────────
+
+export async function saveCookieConsent(data: {
+  userId?: number;
+  sessionId?: string;
+  consentType: "all" | "custom" | "essential_only";
+  essential: boolean;
+  performance: boolean;
+  analytics: boolean;
+  ipAddress?: string;
+  userAgent?: string;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  return db.insert(cookieConsents).values(data);
+}
+
+// ─── LGPD: Data Requests ──────────────────────────────────────────────────────
+
+export async function createLgpdRequest(data: {
+  userId: number;
+  type: "export" | "delete" | "correction" | "access" | "portability";
+  notes?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  return db.insert(lgpdRequests).values({ ...data, status: "pending" });
+}
+
+export async function getLgpdRequestsByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(lgpdRequests)
+    .where(eq(lgpdRequests.userId, userId))
+    .orderBy(desc(lgpdRequests.createdAt));
+}
+
+export async function exportUserData(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const rows = await db.select().from(saasUsers).where(eq(saasUsers.id, userId));
+  const user = rows[0];
+  if (!user) return null;
+  const userEquipment = user.companyId
+    ? await db.select().from(equipment).where(eq(equipment.companyId, user.companyId))
+    : [];
+  const userMaintenance = user.companyId
+    ? await db.select({ mr: maintenanceRecords }).from(maintenanceRecords)
+        .innerJoin(equipment, eq(maintenanceRecords.equipmentId, equipment.id))
+        .where(eq(equipment.companyId, user.companyId))
+    : [];
+  return {
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+    },
+    equipment: userEquipment.map(e => ({ id: e.id, code: e.code, category: e.category, installationLocation: e.installationLocation })),
+    maintenanceCount: userMaintenance.length,
+    exportedAt: new Date().toISOString(),
+  };
+}
+

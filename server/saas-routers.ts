@@ -68,6 +68,10 @@ import {
   createChecklistExecution,
   updateChecklistExecution,
   getChecklistExecutions,
+  saveCookieConsent,
+  createLgpdRequest,
+  getLgpdRequestsByUser,
+  exportUserData,
 } from "./saas-db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
@@ -876,5 +880,67 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
           suggestedActions: input.suggestedActions,
         })
       ),
+  }),
+
+  // ─── LGPD ────────────────────────────────────────────────────────────────────
+  lgpd: router({
+    /** Registra consentimento de cookies (público) */
+    saveConsent: publicProcedure
+      .input(z.object({
+        sessionId: z.string().optional(),
+        consentType: z.enum(["all", "custom", "essential_only"]),
+        essential: z.boolean().default(true),
+        performance: z.boolean().default(false),
+        analytics: z.boolean().default(false),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const raw = ctx as Record<string, unknown>;
+        const req = raw.req as { headers?: Record<string, string>; ip?: string } | undefined;
+        const ip = req?.headers?.["x-forwarded-for"] ?? req?.ip ?? undefined;
+        const ua = req?.headers?.["user-agent"] ?? undefined;
+        await saveCookieConsent({
+          sessionId: input.sessionId,
+          consentType: input.consentType,
+          essential: input.essential,
+          performance: input.performance,
+          analytics: input.analytics,
+          ipAddress: ip,
+          userAgent: ua,
+        });
+        return { success: true };
+      }),
+
+    /** Solicita exportação de dados pessoais */
+    requestExport: saasAuthProcedure
+      .mutation(async ({ ctx }) => {
+        const { saasUser } = ctx as { saasUser: { userId: number } };
+        await createLgpdRequest({ userId: saasUser.userId, type: "export" });
+        return { success: true, message: "Solicitação registrada. Você receberá seus dados em até 15 dias úteis." };
+      }),
+
+    /** Solicita exclusão de dados pessoais */
+    requestDeletion: saasAuthProcedure
+      .input(z.object({ notes: z.string().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        const { saasUser } = ctx as { saasUser: { userId: number } };
+        await createLgpdRequest({ userId: saasUser.userId, type: "delete", notes: input.notes });
+        return { success: true, message: "Solicitação de exclusão registrada. Processaremos em até 15 dias úteis." };
+      }),
+
+    /** Exporta dados do usuário autenticado */
+    exportMyData: saasAuthProcedure
+      .query(async ({ ctx }) => {
+        const { saasUser } = ctx as { saasUser: { userId: number } };
+        const data = await exportUserData(saasUser.userId);
+        if (!data) throw new TRPCError({ code: "NOT_FOUND", message: "Usuário não encontrado" });
+        return data;
+      }),
+
+    /** Lista solicitações LGPD do usuário */
+    myRequests: saasAuthProcedure
+      .query(async ({ ctx }) => {
+        const { saasUser } = ctx as { saasUser: { userId: number } };
+        return getLgpdRequestsByUser(saasUser.userId);
+      }),
   }),
 });

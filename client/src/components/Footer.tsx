@@ -212,8 +212,11 @@ export default function Footer() {
           </span>
           <div style={{ display: "flex", gap: "1.5rem" }}>
             {[
-              { label: "Política de Privacidade", href: "#" },
-              { label: "Sitemap", href: "/sitemap.xml" },
+              { label: "Privacidade", href: "/legal/privacy" },
+              { label: "Termos", href: "/legal/terms" },
+              { label: "Cookies", href: "/legal/cookies" },
+              { label: "Segurança", href: "/legal/security" },
+              { label: "Compliance", href: "/legal/compliance" },
             ].map((l) => (
               <Link key={l.href} href={l.href} style={{ color: "var(--gray-600)", fontSize: "0.75rem", transition: "color 0.18s" }}
                 onMouseEnter={(e) => { (e.target as HTMLElement).style.color = "#fff"; }}

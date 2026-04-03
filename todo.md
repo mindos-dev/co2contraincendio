@@ -345,20 +345,48 @@
 
 ## Sprint: OPERIS Enterprise Transformation
 
-- [ ] Design system industrial dark: CSS vars (#0B0F19, #111827, #2563EB) no index.css
-- [ ] Componentes base: OperisCard, StatusBadge, KPIWidget, ChartContainer, DataTable, EmptyState
-- [ ] Refatorar SaasDashboardLayout: sidebar Procore-style com grupos (Operations, Engineering, Financial, Intelligence, Settings)
-- [ ] Dashboard enterprise: KPIs (OS, Riscos, Receita), gráficos Recharts (bar, line, pie), heatmap de risco, timeline de atividades
-- [ ] Página OS (/app/os): timeline de estados Open→InProgress→Waiting→Completed→Billed
-- [ ] Checklist mobile-first (/app/checklist): botões C/NC/NA, barra de progresso, footer sticky
-- [ ] Atualizar App.tsx com novas rotas /app/os e /app/checklist
+- [x] Design system industrial dark: CSS vars (#0B0F19, #111827, #2563EB) no index.css
+- [x] Componentes base: OperisCard, StatusBadge, KPIWidget, ChartContainer, DataTable, EmptyState
+- [x] Refatorar SaasDashboardLayout: sidebar Procore-style com grupos (Operations, Engineering, Financial, Intelligence, Settings)
+- [x] Dashboard enterprise: KPIs (OS, Riscos, Receita), gráficos Recharts (bar, line, pie), heatmap de risco, timeline de atividades
+- [x] Página OS (/app/os): timeline de estados Open→InProgress→Waiting→Completed→Billed
+- [x] Checklist mobile-first (/app/checklist): botões C/NC/NA, barra de progresso, footer sticky
+- [x] Atualizar App.tsx com novas rotas /app/os e /app/checklist
 
 ## Sprint: OPERIS Enterprise Transformation
 
-- [ ] Design system industrial dark: CSS vars (#0B0F19, #111827, #2563EB) no index.css
-- [ ] Componentes base: OperisCard, StatusBadge, KPIWidget, ChartContainer, DataTable, EmptyState
-- [ ] Refatorar SaasDashboardLayout: sidebar Procore-style com grupos (Operations, Engineering, Financial, Intelligence, Settings)
-- [ ] Dashboard enterprise: KPIs (OS, Riscos, Receita), graficos Recharts (bar, line, pie), heatmap de risco, timeline de atividades
-- [ ] Pagina OS (/app/os): timeline de estados Open->InProgress->Waiting->Completed->Billed
-- [ ] Checklist mobile-first (/app/checklist): botoes C/NC/NA, barra de progresso, footer sticky
-- [ ] Atualizar App.tsx com novas rotas /app/os e /app/checklist
+- [x] Design system industrial dark: CSS vars (#0B0F19, #111827, #2563EB) no index.css
+- [x] Componentes base: OperisCard, StatusBadge, KPIWidget, ChartContainer, DataTable, EmptyState
+- [x] Refatorar SaasDashboardLayout: sidebar Procore-style com grupos (Operations, Engineering, Financial, Intelligence, Settings)
+- [x] Dashboard enterprise: KPIs (OS, Riscos, Receita), graficos Recharts (bar, line, pie), heatmap de risco, timeline de atividades
+- [x] Pagina OS (/app/os): timeline de estados Open->InProgress->Waiting->Completed->Billed
+- [x] Checklist mobile-first (/app/checklist): botoes C/NC/NA, barra de progresso, footer sticky
+- [x] Atualizar App.tsx com novas rotas /app/os e /app/checklist
+
+## Sprint: Camada Legal LGPD + Compliance (Big Tech Level)
+
+- [ ] Página /legal/privacy — Política de Privacidade LGPD completa
+- [ ] Página /legal/terms — Termos de Uso do OPERIS
+- [ ] Página /legal/cookies — Política de Cookies (essenciais, desempenho, analytics)
+- [ ] Página /legal/security — Segurança & Dados (infraestrutura, boas práticas)
+- [ ] Página /legal/compliance — Compliance / Governança (normas, auditoria, logs)
+- [ ] CookieBanner — banner fixo inferior com aceitar/configurar, localStorage, responsivo
+- [ ] Backend: procedure lgpd.exportData (exportar dados do usuário)
+- [ ] Backend: procedure lgpd.deleteRequest (solicitar exclusão de dados)
+- [ ] Backend: procedure lgpd.saveConsent (registrar aceite de cookies com timestamp)
+- [ ] Footer: adicionar links legais (Privacidade, Termos, Cookies, Segurança, Compliance)
+- [ ] App.tsx: registrar rotas /legal/* e integrar CookieBanner
+
+## Sprint: Camada Legal LGPD + Compliance (Big Tech Level)
+
+- [ ] Pagina /legal/privacy - Politica de Privacidade LGPD completa
+- [ ] Pagina /legal/terms - Termos de Uso do OPERIS
+- [ ] Pagina /legal/cookies - Politica de Cookies
+- [ ] Pagina /legal/security - Seguranca e Dados
+- [ ] Pagina /legal/compliance - Compliance / Governanca
+- [ ] CookieBanner - banner fixo inferior com aceitar/configurar, localStorage, responsivo
+- [ ] Backend: procedure lgpd.exportData
+- [ ] Backend: procedure lgpd.deleteRequest
+- [ ] Backend: procedure lgpd.saveConsent
+- [ ] Footer: adicionar links legais
+- [ ] App.tsx: registrar rotas /legal/* e integrar CookieBanner

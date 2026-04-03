@@ -400,3 +400,30 @@ export const checklistExecutions = mysqlTable("checklist_executions", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 export type ChecklistExecution = typeof checklistExecutions.$inferSelect;
+
+// ─── LGPD: Consentimento de Cookies ──────────────────────────────────────────
+export const cookieConsents = mysqlTable("cookie_consents", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => saasUsers.id),
+  sessionId: varchar("sessionId", { length: 100 }),
+  consentType: mysqlEnum("consentType", ["all", "custom", "essential_only"]).notNull(),
+  essential: boolean("essential").default(true).notNull(),
+  performance: boolean("performance").default(false).notNull(),
+  analytics: boolean("analytics").default(false).notNull(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: varchar("userAgent", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CookieConsent = typeof cookieConsents.$inferSelect;
+
+// ─── LGPD: Solicitações de Direitos ──────────────────────────────────────────
+export const lgpdRequests = mysqlTable("lgpd_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => saasUsers.id).notNull(),
+  type: mysqlEnum("type", ["export", "delete", "correction", "access", "portability"]).notNull(),
+  status: mysqlEnum("status", ["pending", "processing", "completed", "rejected"]).default("pending").notNull(),
+  notes: text("notes"),
+  processedAt: timestamp("processedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type LgpdRequest = typeof lgpdRequests.$inferSelect;

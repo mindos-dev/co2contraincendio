@@ -66,6 +66,13 @@ import NovaInspecao from "./pages/operis/NovaInspecao";
 import InspecaoDetalhes from "./pages/operis/InspecaoDetalhes";
 import LaudoPublico from "./pages/operis/LaudoPublico";
 import AdminOperis from "./pages/operis/AdminOperis";
+// Legal pages
+import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
+import TermsOfService from "./pages/legal/TermsOfService";
+import CookiePolicy from "./pages/legal/CookiePolicy";
+import Security from "./pages/legal/Security";
+import Compliance from "./pages/legal/Compliance";
+import CookieBanner from "./components/legal/CookieBanner";
 function TitleManager() {
   const [location] = useLocation();
   useEffect(() => {
@@ -145,6 +152,12 @@ function Router() {
       <Route path="/operis/inspecao/:id" component={InspecaoDetalhes} />
       <Route path="/operis/laudo/:slug" component={LaudoPublico} />
       <Route path="/operis/admin" component={AdminOperis} />
+      {/* Legal pages */}
+      <Route path="/legal/privacy" component={PrivacyPolicy} />
+      <Route path="/legal/terms" component={TermsOfService} />
+      <Route path="/legal/cookies" component={CookiePolicy} />
+      <Route path="/legal/security" component={Security} />
+      <Route path="/legal/compliance" component={Compliance} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -159,6 +172,7 @@ function App() {
           <Toaster />
           <TitleManager />
           <Router />
+          <CookieBanner />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
