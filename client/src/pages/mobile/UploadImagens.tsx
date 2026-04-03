@@ -233,7 +233,7 @@ export default function UploadImagens() {
               <div className="relative">
                 <img
                   src={img.preview}
-                  alt=""
+                  alt={img.caption || "Pré-visualização da imagem"}
                   className="w-full h-48 object-cover"
                 />
                 {/* Status overlay */}

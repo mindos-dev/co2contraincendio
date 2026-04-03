@@ -54,6 +54,11 @@ import BuscaInteligente from "./pages/plataforma/BuscaInteligente";
 import Usuarios from "./pages/app/Usuarios";
 import OrdemServico from "./pages/plataforma/OrdemServico";
 import Checklist from "./pages/plataforma/Checklist";
+import Propostas from "./pages/plataforma/Propostas";
+import Financeiro from "./pages/plataforma/Financeiro";
+import NFSe from "./pages/plataforma/NFSe";
+import Onboarding from "./pages/plataforma/Onboarding";
+import Configuracoes from "./pages/plataforma/Configuracoes";
 // Mobile Field Inspection
 import MobileDashboard from "./pages/mobile/MobileDashboard";
 import NovaVistoria from "./pages/mobile/NovaVistoria";
@@ -140,6 +145,11 @@ function Router() {
       <Route path="/app/usuarios" component={Usuarios} />
       <Route path="/app/os" component={OrdemServico} />
       <Route path="/app/checklist" component={Checklist} />
+      <Route path="/app/propostas" component={Propostas} />
+      <Route path="/app/financeiro" component={Financeiro} />
+      <Route path="/app/nfse" component={NFSe} />
+      <Route path="/app/onboarding" component={Onboarding} />
+      <Route path="/app/configuracoes" component={Configuracoes} />
       {/* Mobile Field Inspection */}
       <Route path="/mobile" component={MobileDashboard} />
       <Route path="/mobile/nova-vistoria" component={NovaVistoria} />

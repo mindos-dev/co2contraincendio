@@ -365,28 +365,28 @@
 
 ## Sprint: Camada Legal LGPD + Compliance (Big Tech Level)
 
-- [ ] Página /legal/privacy — Política de Privacidade LGPD completa
-- [ ] Página /legal/terms — Termos de Uso do OPERIS
-- [ ] Página /legal/cookies — Política de Cookies (essenciais, desempenho, analytics)
-- [ ] Página /legal/security — Segurança & Dados (infraestrutura, boas práticas)
-- [ ] Página /legal/compliance — Compliance / Governança (normas, auditoria, logs)
-- [ ] CookieBanner — banner fixo inferior com aceitar/configurar, localStorage, responsivo
-- [ ] Backend: procedure lgpd.exportData (exportar dados do usuário)
-- [ ] Backend: procedure lgpd.deleteRequest (solicitar exclusão de dados)
-- [ ] Backend: procedure lgpd.saveConsent (registrar aceite de cookies com timestamp)
-- [ ] Footer: adicionar links legais (Privacidade, Termos, Cookies, Segurança, Compliance)
-- [ ] App.tsx: registrar rotas /legal/* e integrar CookieBanner
+- [x] Página /legal/privacy — Política de Privacidade LGPD completa
+- [x] Página /legal/terms — Termos de Uso do OPERIS
+- [x] Página /legal/cookies — Política de Cookies (essenciais, desempenho, analytics)
+- [x] Página /legal/security — Segurança & Dados (infraestrutura, boas práticas)
+- [x] Página /legal/compliance — Compliance / Governança (normas, auditoria, logs)
+- [x] CookieBanner — banner fixo inferior com aceitar/configurar, localStorage, responsivo
+- [x] Backend: procedure lgpd.exportData (exportar dados do usuário)
+- [x] Backend: procedure lgpd.deleteRequest (solicitar exclusão de dados)
+- [x] Backend: procedure lgpd.saveConsent (registrar aceite de cookies com timestamp)
+- [x] Footer: adicionar links legais (Privacidade, Termos, Cookies, Segurança, Compliance)
+- [x] App.tsx: registrar rotas /legal/* e integrar CookieBanner
 
 ## Sprint: Camada Legal LGPD + Compliance (Big Tech Level)
 
-- [ ] Pagina /legal/privacy - Politica de Privacidade LGPD completa
-- [ ] Pagina /legal/terms - Termos de Uso do OPERIS
-- [ ] Pagina /legal/cookies - Politica de Cookies
-- [ ] Pagina /legal/security - Seguranca e Dados
-- [ ] Pagina /legal/compliance - Compliance / Governanca
-- [ ] CookieBanner - banner fixo inferior com aceitar/configurar, localStorage, responsivo
-- [ ] Backend: procedure lgpd.exportData
-- [ ] Backend: procedure lgpd.deleteRequest
-- [ ] Backend: procedure lgpd.saveConsent
-- [ ] Footer: adicionar links legais
-- [ ] App.tsx: registrar rotas /legal/* e integrar CookieBanner
+- [x] Pagina /legal/privacy - Politica de Privacidade LGPD completa
+- [x] Pagina /legal/terms - Termos de Uso do OPERIS
+- [x] Pagina /legal/cookies - Politica de Cookies
+- [x] Pagina /legal/security - Seguranca e Dados
+- [x] Pagina /legal/compliance - Compliance / Governanca
+- [x] CookieBanner - banner fixo inferior com aceitar/configurar, localStorage, responsivo
+- [x] Backend: procedure lgpd.exportData
+- [x] Backend: procedure lgpd.deleteRequest
+- [x] Backend: procedure lgpd.saveConsent
+- [x] Footer: adicionar links legais
+- [x] App.tsx: registrar rotas /legal/* e integrar CookieBanner
