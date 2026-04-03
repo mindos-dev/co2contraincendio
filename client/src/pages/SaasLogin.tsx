@@ -71,7 +71,11 @@ export default function SaasLogin() {
               {loginMutation.isPending ? "ENTRANDO..." : "ENTRAR"}
             </button>
           </form>
-          <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #D8D8D8", textAlign: "center" }}>
+          <div style={{ marginTop: 12, textAlign: "right" }}>
+            <a href="/app/esqueci-senha" style={{ color: "#C8102E", fontSize: 12, textDecoration: "none", fontWeight: 600 }}>Esqueci minha senha</a>
+          </div>
+          <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #D8D8D8", textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
+            <span style={{ color: "#8A8A8A", fontSize: 12 }}>Não tem conta?{" "}<a href="/app/cadastro" style={{ color: "#C8102E", fontWeight: 600, textDecoration: "none" }}>Criar conta grátis</a></span>
             <a href="/" style={{ color: "#8A8A8A", fontSize: 11, letterSpacing: "0.05em", textDecoration: "none" }}>← Voltar ao site</a>
           </div>
         </div>

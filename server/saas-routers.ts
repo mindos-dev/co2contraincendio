@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "crypto";
 import jwt from "jsonwebtoken";
 import QRCode from "qrcode";
 import { z } from "zod";
@@ -54,10 +55,13 @@ import {
   importCompaniesFromCsv,
   updateSaasUserRole,
   toggleSaasUserActive,
+  getSaasUserByResetToken,
+  setResetToken,
+  clearResetToken,
 } from "./saas-db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
-import { sendAlertNotification } from "./notifications";
+import { sendAlertNotification, sendEmail } from "./notifications";
 import { getSubscriptionsByCompany, sendPushNotification } from "./push-notifications";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "co2-saas-secret-2025";
@@ -183,6 +187,73 @@ export const saasRouter = router({
       if (!user) throw new TRPCError({ code: "NOT_FOUND" });
       return { id: user.id, name: user.name, email: user.email, role: user.role, companyId: user.companyId };
     }),
+
+    register: publicProcedure
+      .input(z.object({
+        name: z.string().min(2, "Nome deve ter ao menos 2 caracteres"),
+        email: z.string().email("E-mail inválido"),
+        password: z.string().min(8, "Senha deve ter ao menos 8 caracteres"),
+      }))
+      .mutation(async ({ input }) => {
+        const existing = await getSaasUserByEmail(input.email);
+        if (existing) throw new TRPCError({ code: "CONFLICT", message: "E-mail já cadastrado" });
+        const passwordHash = await bcrypt.hash(input.password, 10);
+        await createSaasUser({ name: input.name, email: input.email, passwordHash, role: "cliente", active: true });
+        const user = await getSaasUserByEmail(input.email);
+        if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao criar usuário" });
+        const token = signToken({ userId: user.id, role: user.role, companyId: user.companyId });
+        return { token, user: { id: user.id, name: user.name, email: user.email, role: user.role, companyId: user.companyId } };
+      }),
+
+    forgotPassword: publicProcedure
+      .input(z.object({ email: z.string().email("E-mail inválido") }))
+      .mutation(async ({ input }) => {
+        const user = await getSaasUserByEmail(input.email);
+        // Sempre retorna sucesso para não vazar quais e-mails existem
+        if (!user) return { success: true };
+        const token = randomBytes(32).toString("hex");
+        const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+        await setResetToken(user.id, token, expiry);
+        const resetUrl = `https://co2contra.com/app/redefinir-senha?token=${token}`;
+        const html = `
+          <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">
+            <div style="background:#111;padding:24px;text-align:center;">
+              <span style="background:#C8102E;color:#fff;font-weight:900;font-size:14px;padding:6px 12px;letter-spacing:2px;">OPERIS</span>
+            </div>
+            <div style="padding:32px 24px;background:#f8f8f8;">
+              <h2 style="color:#111;font-size:20px;margin-bottom:8px;">Redefinição de Senha</h2>
+              <p style="color:#555;font-size:14px;">Olá, <strong>${user.name}</strong>.</p>
+              <p style="color:#555;font-size:14px;">Recebemos uma solicitação para redefinir a senha da sua conta OPERIS.</p>
+              <p style="color:#555;font-size:14px;">Clique no botão abaixo para criar uma nova senha. Este link expira em <strong>1 hora</strong>.</p>
+              <div style="text-align:center;margin:32px 0;">
+                <a href="${resetUrl}" style="background:#C8102E;color:#fff;padding:12px 28px;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:1px;">REDEFINIR SENHA</a>
+              </div>
+              <p style="color:#999;font-size:12px;">Se você não solicitou isso, ignore este e-mail. Sua senha permanece a mesma.</p>
+              <p style="color:#999;font-size:12px;">Link: <a href="${resetUrl}" style="color:#C8102E;">${resetUrl}</a></p>
+            </div>
+            <div style="background:#111;padding:16px;text-align:center;">
+              <span style="color:#555;font-size:11px;">OPERIS IA · CO2 Contra Incêndio · co2contra.com</span>
+            </div>
+          </div>`;
+        await sendEmail(input.email, "Redefinição de Senha — OPERIS", `Acesse: ${resetUrl}`, html);
+        return { success: true };
+      }),
+
+    resetPassword: publicProcedure
+      .input(z.object({
+        token: z.string().min(1, "Token inválido"),
+        password: z.string().min(8, "Senha deve ter ao menos 8 caracteres"),
+      }))
+      .mutation(async ({ input }) => {
+        const user = await getSaasUserByResetToken(input.token);
+        if (!user) throw new TRPCError({ code: "BAD_REQUEST", message: "Link inválido ou expirado" });
+        if (!user.resetTokenExpiry || new Date() > user.resetTokenExpiry) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Link expirado. Solicite um novo." });
+        }
+        const passwordHash = await bcrypt.hash(input.password, 10);
+        await clearResetToken(user.id, passwordHash);
+        return { success: true };
+      }),
   }),
 
   companies: router({

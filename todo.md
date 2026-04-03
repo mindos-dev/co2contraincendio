@@ -329,3 +329,16 @@
 - [ ] Página pública /equipamento/:code acessível via QR Code (sem login)
 - [ ] Link "Ver Detalhes" na tabela de equipamentos
 - [ ] Botão "Imprimir QR Code" na página de detalhes
+
+## Sprint: Cadastro, Login e Recuperação de Senha OPERIS
+
+- [x] Adicionar coluna `resetToken` e `resetTokenExpiry` na tabela `saas_users` (schema + migration)
+- [x] Backend: procedure `saas.auth.register` (cadastro público com nome, e-mail, senha)
+- [x] Backend: procedure `saas.auth.forgotPassword` (gera token e envia e-mail)
+- [x] Backend: procedure `saas.auth.resetPassword` (valida token e redefine senha)
+- [x] Frontend: página `/app/cadastro` (SaasCadastro.tsx)
+- [x] Frontend: página `/app/esqueci-senha` (SaasEsqueciSenha.tsx)
+- [x] Frontend: página `/app/redefinir-senha` (SaasRedefinirSenha.tsx)
+- [x] Atualizar SaasLogin.tsx com links para cadastro e esqueci senha
+- [x] Registrar novas rotas no App.tsx
+- [x] Testes vitest para register, forgotPassword e resetPassword

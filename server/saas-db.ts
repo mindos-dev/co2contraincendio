@@ -526,3 +526,25 @@ export async function toggleSaasUserActive(id: number, active: boolean) {
   await db.update(saasUsers).set({ active }).where(eq(saasUsers.id, id));
   return { success: true };
 }
+
+// ─── Password Reset Helpers ───────────────────────────────────────────────────
+export async function getSaasUserByResetToken(token: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(saasUsers).where(eq(saasUsers.resetToken, token));
+  return rows[0] ?? null;
+}
+
+export async function setResetToken(userId: number, token: string, expiry: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.update(saasUsers).set({ resetToken: token, resetTokenExpiry: expiry }).where(eq(saasUsers.id, userId));
+  return { success: true };
+}
+
+export async function clearResetToken(userId: number, newPasswordHash: string) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.update(saasUsers).set({ resetToken: null, resetTokenExpiry: null, passwordHash: newPasswordHash }).where(eq(saasUsers.id, userId));
+  return { success: true };
+}

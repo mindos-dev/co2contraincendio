@@ -35,6 +35,9 @@ import Parceiros from "./pages/Parceiros";
 
 // Plataforma SaaS
 import SaasLogin from "./pages/SaasLogin";
+import SaasCadastro from "./pages/SaasCadastro";
+import SaasEsqueciSenha from "./pages/SaasEsqueciSenha";
+import SaasRedefinirSenha from "./pages/SaasRedefinirSenha";
 import ExtintorPublico from "./pages/ExtintorPublico";
 import EquipamentoPublico from "./pages/EquipamentoPublico";
 import EquipamentoDetalhes from "./pages/plataforma/EquipamentoDetalhes";
@@ -111,6 +114,9 @@ function Router() {
 
       {/* OPERIS */}
       <Route path="/app/login" component={SaasLogin} />
+      <Route path="/app/cadastro" component={SaasCadastro} />
+      <Route path="/app/esqueci-senha" component={SaasEsqueciSenha} />
+      <Route path="/app/redefinir-senha" component={SaasRedefinirSenha} />
       <Route path="/app/dashboard" component={Dashboard} />
       <Route path="/app/equipamentos" component={Equipamentos} />
       <Route path="/app/equipamentos/:id" component={EquipamentoDetalhes} />
