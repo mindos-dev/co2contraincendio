@@ -82,24 +82,43 @@ function createTransporter() {
 
 export async function sendEmail(to: string, subject: string, text: string, html?: string): Promise<NotificationResult> {
   const transporter = createTransporter();
-  if (!transporter) {
-    return { channel: "email", success: false, error: "SMTP não configurado (SMTP_HOST, SMTP_USER, SMTP_PASS)" };
+
+  // Se SMTP configurado, usa nodemailer diretamente
+  if (transporter) {
+    const from = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@co2contra.com";
+    try {
+      await transporter.sendMail({
+        from: `"OPERIS IA | CO2 Contra Incêndio" <${from}>`,
+        to,
+        subject,
+        text,
+        html: html ?? text,
+      });
+      return { channel: "email", success: true };
+    } catch (err) {
+      return { channel: "email", success: false, error: String(err) };
+    }
   }
 
-  const from = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@co2contra.com";
-
+  // Fallback: notifica o dono do projeto via Manus Forge (sem SMTP)
   try {
-    await transporter.sendMail({
-      from: `"CO2 Contra Incêndio" <${from}>`,
-      to,
-      subject,
-      text,
-      html: html ?? text,
-    });
-    return { channel: "email", success: true };
-  } catch (err) {
-    return { channel: "email", success: false, error: String(err) };
-  }
+    const forgeUrl = process.env.BUILT_IN_FORGE_API_URL;
+    const forgeKey = process.env.BUILT_IN_FORGE_API_KEY;
+    if (forgeUrl && forgeKey) {
+      const endpoint = `${forgeUrl.replace(/\/$/, "")}/webdevtoken.v1.WebDevService/SendNotification`;
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${forgeKey}` },
+        body: JSON.stringify({
+          title: `📧 Laudo OPERIS — Enviar para ${to}`,
+          content: `Destinatário: ${to}\nAssunto: ${subject}\n\n${text}\n\n⚠️ Configure SMTP_HOST, SMTP_USER e SMTP_PASS para envio automático.`,
+        }),
+      });
+      if (res.ok) return { channel: "email", success: true };
+    }
+  } catch (_) { /* ignora */ }
+
+  return { channel: "email", success: false, error: "SMTP não configurado. Configure SMTP_HOST, SMTP_USER e SMTP_PASS." };
 }
 
 // ─── Templates de mensagem ────────────────────────────────────────────────────

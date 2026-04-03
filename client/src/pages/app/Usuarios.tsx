@@ -86,7 +86,7 @@ export default function Usuarios() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28, flexWrap: "wrap", gap: 16 }}>
           <div>
             <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: 28, color: "#0a1628", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
-              <Users size={26} color="#C8102E" /> Usuários da Plataforma
+              <Users size={26} color="#C8102E" /> Usuários do OPERIS
             </h1>
             <p style={{ color: "#6B7280", fontSize: 14, margin: "6px 0 0" }}>
               Gerencie os usuários com acesso ao OPERIS
