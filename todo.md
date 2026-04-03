@@ -390,3 +390,7 @@
 - [x] Backend: procedure lgpd.saveConsent
 - [x] Footer: adicionar links legais
 - [x] App.tsx: registrar rotas /legal/* e integrar CookieBanner
+
+## Sprint: Redesign Login + Cadastro (Posicionamento Institucional OPERIS)
+- [x] Redesenhar SaasLogin.tsx com painel institucional expandido (texto técnico, credenciais normativas, selo)
+- [x] Redesenhar SaasCadastro.tsx com mesmo padrão visual do login
