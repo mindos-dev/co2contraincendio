@@ -19,6 +19,11 @@ import {
   type InsertSaasCompany,
   type InsertSaasUser,
   type InsertSubscription,
+  workOrders,
+  checklistTemplates,
+  checklistItems,
+  checklistExecutions,
+  type InsertWorkOrder,
 } from "../drizzle/schema";
 
 // ─── Companies ───────────────────────────────────────────────────────────────
@@ -547,4 +552,87 @@ export async function clearResetToken(userId: number, newPasswordHash: string) {
   if (!db) throw new Error("DB unavailable");
   await db.update(saasUsers).set({ resetToken: null, resetTokenExpiry: null, passwordHash: newPasswordHash }).where(eq(saasUsers.id, userId));
   return { success: true };
+}
+
+// ─── Work Orders (OS) ─────────────────────────────────────────────────────────
+
+export async function getWorkOrders(companyId?: number, status?: string) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = [];
+  if (companyId) conditions.push(eq(workOrders.companyId, companyId));
+  if (status) conditions.push(eq(workOrders.status, status as "aberta" | "em_andamento" | "aguardando_peca" | "concluida" | "cancelada"));
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
+  return db.select().from(workOrders).where(where).orderBy(desc(workOrders.createdAt));
+}
+
+export async function getWorkOrderById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(workOrders).where(eq(workOrders.id, id));
+  return rows[0] ?? null;
+}
+
+export async function createWorkOrder(data: InsertWorkOrder) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const result = await db.insert(workOrders).values(data);
+  return result;
+}
+
+export async function updateWorkOrder(id: number, data: Partial<InsertWorkOrder>) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  return db.update(workOrders).set(data).where(eq(workOrders.id, id));
+}
+
+export async function deleteWorkOrder(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  return db.delete(workOrders).where(eq(workOrders.id, id));
+}
+
+// ─── Checklist ────────────────────────────────────────────────────────────────
+
+export async function getChecklistTemplates(companyId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(checklistTemplates)
+    .where(and(eq(checklistTemplates.companyId, companyId), eq(checklistTemplates.isActive, true)))
+    .orderBy(checklistTemplates.name);
+}
+
+export async function getChecklistItems(templateId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(checklistItems)
+    .where(eq(checklistItems.templateId, templateId))
+    .orderBy(checklistItems.order);
+}
+
+export async function createChecklistExecution(data: {
+  workOrderId?: number;
+  templateId: number;
+  companyId: number;
+  equipmentId?: number;
+  executedById?: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const result = await db.insert(checklistExecutions).values({ ...data, status: "em_andamento" });
+  return result;
+}
+
+export async function updateChecklistExecution(id: number, data: { responses?: unknown; score?: number; status?: "em_andamento" | "concluido" | "cancelado"; completedAt?: Date }) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  return db.update(checklistExecutions).set(data as Record<string, unknown>).where(eq(checklistExecutions.id, id));
+}
+
+export async function getChecklistExecutions(companyId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(checklistExecutions)
+    .where(eq(checklistExecutions.companyId, companyId))
+    .orderBy(desc(checklistExecutions.createdAt));
 }

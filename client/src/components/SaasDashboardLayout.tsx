@@ -1,198 +1,751 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useSaasAuth } from "@/contexts/SaasAuthContext";
-import OperisLogo from "./OperisLogo";
+import { OPERIS_COLORS } from "@/lib/operis-tokens";
+import {
+  LayoutDashboard, ClipboardList, CheckSquare, Package, FileText,
+  Users, DollarSign, Receipt, Brain, Settings, BookOpen,
+  ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
+  Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield
+} from "lucide-react";
 
-interface NavItem { label: string; path: string; icon: string; adminOnly?: boolean; mobileHide?: boolean; }
+// ─── Navigation Structure (Procore-style grouped) ─────────────────────────────
+interface NavItem {
+  label: string;
+  path: string;
+  icon: React.ReactNode;
+  adminOnly?: boolean;
+}
 
-const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard",       path: "/app/dashboard",    icon: "⬛" },
-  { label: "Equipamentos",    path: "/app/equipamentos",  icon: "🧯" },
-  { label: "Manutenções",     path: "/app/manutencoes",   icon: "🔧" },
-  { label: "QR Codes",        path: "/app/qrcodes",       icon: "▦" },
-  { label: "Alertas",         path: "/app/alertas",       icon: "⚠" },
-  { label: "Documentos",      path: "/app/documentos",    icon: "📄", mobileHide: true },
-  { label: "Notificações",    path: "/app/notificacoes",  icon: "🔔", mobileHide: true },
-  { label: "Clientes",        path: "/app/clientes",      icon: "🏢", adminOnly: true, mobileHide: true },
-  { label: "Relatórios",      path: "/app/relatorios",    icon: "📊", adminOnly: true, mobileHide: true },
-  { label: "Busca Inteligente", path: "/app/busca",       icon: "🧠", adminOnly: true, mobileHide: true },
-  { label: "Usuários",        path: "/app/usuarios",      icon: "👤", adminOnly: true, mobileHide: true },
-  { label: "Vistoria Mobile", path: "/mobile",            icon: "📱" },
-  { label: "OPERIS IA",       path: "/operis",            icon: "🛡️" },
-  { label: "Admin OPERIS",    path: "/operis/admin",      icon: "📋", adminOnly: true, mobileHide: true },
+interface NavGroup {
+  group: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    group: "",
+    items: [
+      { label: "Dashboard", path: "/app/dashboard", icon: <LayoutDashboard size={16} /> },
+    ],
+  },
+  {
+    group: "Operations",
+    items: [
+      { label: "Work Orders (OS)", path: "/app/os", icon: <ClipboardList size={16} /> },
+      { label: "Checklist", path: "/app/checklist", icon: <CheckSquare size={16} /> },
+      { label: "Equipamentos", path: "/app/equipamentos", icon: <Package size={16} /> },
+      { label: "Manutenções", path: "/app/manutencoes", icon: <Wrench size={16} /> },
+      { label: "QR Codes", path: "/app/qrcodes", icon: <QrCode size={16} /> },
+      { label: "Alertas", path: "/app/alertas", icon: <AlertTriangle size={16} /> },
+    ],
+  },
+  {
+    group: "Engineering",
+    items: [
+      { label: "Laudos (Reports)", path: "/app/relatorios", icon: <FileText size={16} />, adminOnly: true },
+      { label: "Propostas", path: "/app/propostas", icon: <FolderOpen size={16} />, adminOnly: true },
+      { label: "Clientes", path: "/app/clientes", icon: <Building2 size={16} />, adminOnly: true },
+      { label: "Documentos", path: "/app/documentos", icon: <FolderOpen size={16} /> },
+    ],
+  },
+  {
+    group: "Financial",
+    items: [
+      { label: "Financeiro", path: "/app/financeiro", icon: <DollarSign size={16} />, adminOnly: true },
+      { label: "NFS-e", path: "/app/nfse", icon: <Receipt size={16} />, adminOnly: true },
+    ],
+  },
+  {
+    group: "Intelligence",
+    items: [
+      { label: "AI Assistant", path: "/operis", icon: <Brain size={16} /> },
+      { label: "Busca Inteligente", path: "/app/busca", icon: <Search size={16} />, adminOnly: true },
+      { label: "Notificações", path: "/app/notificacoes", icon: <Bell size={16} /> },
+    ],
+  },
+  {
+    group: "Settings",
+    items: [
+      { label: "Usuários", path: "/app/usuarios", icon: <Users size={16} />, adminOnly: true },
+      { label: "Onboarding", path: "/app/onboarding", icon: <BookOpen size={16} />, adminOnly: true },
+      { label: "Configurações", path: "/app/configuracoes", icon: <Settings size={16} /> },
+    ],
+  },
 ];
 
-// Bottom nav mobile: apenas os 5 itens principais
+// Mobile bottom nav — 5 most important items
 const MOBILE_NAV = [
-  { label: "Dashboard",    path: "/app/dashboard",   icon: "⬛" },
-  { label: "Equipamentos", path: "/app/equipamentos", icon: "🧯" },
-  { label: "Manutenções",  path: "/app/manutencoes",  icon: "🔧" },
-  { label: "QR Codes",     path: "/app/qrcodes",      icon: "▦" },
-  { label: "Alertas",      path: "/app/alertas",      icon: "⚠" },
-  { label: "Vistoria",     path: "/mobile",           icon: "📱" },
+  { label: "Dashboard", path: "/app/dashboard", icon: <LayoutDashboard size={20} /> },
+  { label: "OS", path: "/app/os", icon: <ClipboardList size={20} /> },
+  { label: "Checklist", path: "/app/checklist", icon: <CheckSquare size={20} /> },
+  { label: "Equip.", path: "/app/equipamentos", icon: <Package size={20} /> },
+  { label: "IA", path: "/operis", icon: <Brain size={20} /> },
 ];
+
+const SIDEBAR_W = 240;
+const SIDEBAR_W_COLLAPSED = 56;
 
 export default function SaasDashboardLayout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const { user, logout, isAdmin, isAuthenticated } = useSaasAuth();
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const visible = NAV_ITEMS.filter(i => !i.adminOnly || isAdmin);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    "": true,
+    "Operations": true,
+    "Engineering": false,
+    "Financial": false,
+    "Intelligence": false,
+    "Settings": false,
+  });
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setLocation("/app/login");
-    }
+    if (!isAuthenticated) setLocation("/app/login");
   }, [isAuthenticated, setLocation]);
 
-  // Fechar menu mobile ao navegar
   useEffect(() => {
-    setMobileMenuOpen(false);
+    setMobileOpen(false);
+  }, [location]);
+
+  // Auto-expand group containing current route
+  useEffect(() => {
+    for (const g of NAV_GROUPS) {
+      if (g.items.some(i => location.startsWith(i.path))) {
+        setExpandedGroups(prev => ({ ...prev, [g.group]: true }));
+      }
+    }
   }, [location]);
 
   if (!isAuthenticated) return null;
 
-  return (
-    <>
-      {/* ─── DESKTOP LAYOUT ─────────────────────────────────────────────── */}
-      <div className="hidden md:flex min-h-screen" style={{ background: "#F2F2F2" }}>
-        {/* Sidebar */}
-        <aside style={{ width: collapsed ? 56 : 220, background: "#111111", display: "flex", flexDirection: "column", transition: "width 0.2s", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
-          {/* Brand */}
-          <div style={{ padding: "16px 12px", borderBottom: "1px solid #2C2C2C", display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 32, height: 32, background: "#C8102E", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span style={{ color: "#fff", fontWeight: 900, fontSize: 11, fontFamily: "'Barlow Condensed',sans-serif", letterSpacing: "0.03em" }}>CO2</span>
+  const visibleGroups = NAV_GROUPS.map(g => ({
+    ...g,
+    items: g.items.filter(i => !i.adminOnly || isAdmin),
+  })).filter(g => g.items.length > 0);
+
+  const toggleGroup = (group: string) => {
+    if (collapsed) return;
+    setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }));
+  };
+
+  const isActive = (path: string) => location === path || location.startsWith(path + "/");
+
+  const currentLabel = visibleGroups.flatMap(g => g.items).find(i => isActive(i.path))?.label ?? "Dashboard";
+
+  // ─── Sidebar ──────────────────────────────────────────────────────────────
+  const Sidebar = () => (
+    <div
+      style={{
+        width: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W,
+        minHeight: "100vh",
+        background: OPERIS_COLORS.bgCard,
+        borderRight: `1px solid ${OPERIS_COLORS.border}`,
+        display: "flex",
+        flexDirection: "column",
+        transition: "width 0.2s ease",
+        overflow: "hidden",
+        flexShrink: 0,
+      }}
+    >
+      {/* Logo */}
+      <div
+        style={{
+          height: 56,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: collapsed ? "center" : "space-between",
+          padding: collapsed ? "0 0.75rem" : "0 0.875rem 0 1rem",
+          borderBottom: `1px solid ${OPERIS_COLORS.border}`,
+          flexShrink: 0,
+        }}
+      >
+        {!collapsed && (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                background: OPERIS_COLORS.primary,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <Shield size={15} color="#fff" />
             </div>
-            {!collapsed && <div>
-              <div style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.06em" }}>CO2 CONTRA INCÊNDIO</div>
-              <OperisLogo size="sm" dark animate={false} style={{ marginTop: 4 }} />
-            </div>}
-          </div>
-
-          {/* Nav */}
-          <nav style={{ flex: 1, paddingTop: 8, overflowY: "auto" }}>
-            {visible.map(item => {
-              const active = location === item.path || location.startsWith(item.path + "/");
-              return (
-                <Link key={item.path} href={item.path}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, padding: collapsed ? "11px 12px" : "11px 14px", cursor: "pointer", background: active ? "#C8102E" : "transparent", borderLeft: `3px solid ${active ? "#FF3355" : "transparent"}`, transition: "background 0.15s" }}>
-                    <span style={{ fontSize: 15, flexShrink: 0, opacity: active ? 1 : 0.65 }}>{item.icon}</span>
-                    {!collapsed && <span style={{ color: active ? "#fff" : "#D8D8D8", fontSize: 13, fontWeight: active ? 600 : 400, letterSpacing: "0.02em", whiteSpace: "nowrap" }}>{item.label}</span>}
-                  </div>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* User */}
-          <div style={{ padding: "12px", borderTop: "1px solid #2C2C2C" }}>
-            {!collapsed && user && <div style={{ marginBottom: 8 }}>
-              <div style={{ color: "#D8D8D8", fontSize: 12, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.name}</div>
-              <div style={{ color: "#8A8A8A", fontSize: 10, letterSpacing: "0.06em" }}>{user.role.toUpperCase()}</div>
-            </div>}
-            <button onClick={logout} style={{ width: "100%", padding: "7px", background: "transparent", border: "1px solid #4A4A4A", color: "#8A8A8A", fontSize: 11, cursor: "pointer", letterSpacing: "0.06em" }}>
-              {collapsed ? "↩" : "SAIR"}
-            </button>
-          </div>
-        </aside>
-
-        {/* Main */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-          <header style={{ background: "#111111", borderBottom: "3px solid #C8102E", padding: "0 20px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
-            <button onClick={() => setCollapsed(!collapsed)} style={{ background: "none", border: "none", color: "#D8D8D8", cursor: "pointer", fontSize: 18, padding: "4px 6px" }}>☰</button>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <Link href="/"><span style={{ color: "#8A8A8A", fontSize: 11, cursor: "pointer", letterSpacing: "0.06em" }}>← SITE</span></Link>
-              {user && <span style={{ color: "#D8D8D8", fontSize: 12 }}>{user.name}</span>}
+            <div>
+              <div
+                style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontWeight: 800,
+                  fontSize: "1.0625rem",
+                  letterSpacing: "0.1em",
+                  color: OPERIS_COLORS.textPrimary,
+                  lineHeight: 1,
+                }}
+              >
+                OPERIS
+              </div>
+              <div
+                style={{
+                  fontSize: "0.5625rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.1em",
+                  color: OPERIS_COLORS.textMuted,
+                  textTransform: "uppercase",
+                  lineHeight: 1,
+                  marginTop: 2,
+                }}
+              >
+                Engineering Intelligence
+              </div>
             </div>
-          </header>
-          <main style={{ flex: 1, padding: "24px", overflowY: "auto" }}>{children}</main>
-        </div>
+          </div>
+        )}
+        {collapsed && (
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              background: OPERIS_COLORS.primary,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Shield size={15} color="#fff" />
+          </div>
+        )}
+        <button
+          onClick={() => setCollapsed(c => !c)}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: OPERIS_COLORS.textMuted,
+            cursor: "pointer",
+            padding: "0.25rem",
+            display: "flex",
+            alignItems: "center",
+            flexShrink: 0,
+          }}
+        >
+          {collapsed ? <ChevronRight size={14} /> : <Menu size={14} />}
+        </button>
       </div>
 
-      {/* ─── MOBILE LAYOUT ──────────────────────────────────────────────── */}
-      <div className="flex flex-col md:hidden min-h-screen" style={{ background: "#F2F2F2" }}>
-        {/* Mobile Top Bar */}
-        <header style={{ background: "#111111", borderBottom: "3px solid #C8102E", padding: "0 16px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 28, height: 28, background: "#C8102E", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "#fff", fontWeight: 900, fontSize: 9, fontFamily: "'Barlow Condensed',sans-serif" }}>CO2</span>
-            </div>
-            <OperisLogo size="sm" dark animate style={{ marginLeft: 2 }} />
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <Link href="/"><span style={{ color: "#8A8A8A", fontSize: 11, cursor: "pointer" }}>← Site</span></Link>
-            {/* Botão "Mais" para abrir menu completo */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              style={{ background: "none", border: "none", color: "#D8D8D8", cursor: "pointer", fontSize: 20, padding: "4px" }}
-            >
-              {mobileMenuOpen ? "✕" : "☰"}
-            </button>
-          </div>
-        </header>
+      {/* Nav */}
+      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "0.375rem 0" }}>
+        {visibleGroups.map((g) => (
+          <div key={g.group || "root"}>
+            {g.group && !collapsed && (
+              <button
+                onClick={() => toggleGroup(g.group)}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "0.5rem 1rem 0.25rem",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  marginTop: "0.375rem",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "0.625rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: OPERIS_COLORS.textDisabled,
+                  }}
+                >
+                  {g.group}
+                </span>
+                <span style={{ color: OPERIS_COLORS.textDisabled }}>
+                  {expandedGroups[g.group] ? <ChevronDown size={10} /> : <ChevronRight size={10} />}
+                </span>
+              </button>
+            )}
 
-        {/* Mobile Drawer (menu completo) */}
-        {mobileMenuOpen && (
-          <div style={{ position: "fixed", inset: 0, zIndex: 40 }} onClick={() => setMobileMenuOpen(false)}>
-            <div
-              style={{ position: "absolute", top: 52, right: 0, width: 260, bottom: 0, background: "#111111", overflowY: "auto", borderLeft: "1px solid #2C2C2C" }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <nav style={{ paddingTop: 8 }}>
-                {visible.map(item => {
-                  const active = location === item.path;
+            {(collapsed || !g.group || expandedGroups[g.group]) && (
+              <div>
+                {g.items.map((item) => {
+                  const active = isActive(item.path);
                   return (
                     <Link key={item.path} href={item.path}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", cursor: "pointer", background: active ? "#C8102E" : "transparent", borderLeft: `3px solid ${active ? "#FF3355" : "transparent"}` }}>
-                        <span style={{ fontSize: 18 }}>{item.icon}</span>
-                        <span style={{ color: active ? "#fff" : "#D8D8D8", fontSize: 14, fontWeight: active ? 600 : 400 }}>{item.label}</span>
+                      <div
+                        title={collapsed ? item.label : undefined}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.625rem",
+                          padding: collapsed ? "0.625rem 0" : "0.5rem 1rem",
+                          justifyContent: collapsed ? "center" : "flex-start",
+                          background: active ? OPERIS_COLORS.primaryMuted : "transparent",
+                          borderLeft: active ? `2px solid ${OPERIS_COLORS.primary}` : "2px solid transparent",
+                          color: active ? OPERIS_COLORS.primary : OPERIS_COLORS.textSecondary,
+                          cursor: "pointer",
+                          transition: "all 0.15s",
+                          textDecoration: "none",
+                          fontSize: "0.8125rem",
+                          fontWeight: active ? 600 : 400,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!active) {
+                            (e.currentTarget as HTMLDivElement).style.background = OPERIS_COLORS.bgHover;
+                            (e.currentTarget as HTMLDivElement).style.color = OPERIS_COLORS.textPrimary;
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!active) {
+                            (e.currentTarget as HTMLDivElement).style.background = "transparent";
+                            (e.currentTarget as HTMLDivElement).style.color = OPERIS_COLORS.textSecondary;
+                          }
+                        }}
+                      >
+                        <span style={{ flexShrink: 0 }}>{item.icon}</span>
+                        {!collapsed && <span>{item.label}</span>}
                       </div>
                     </Link>
                   );
                 })}
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
+
+      {/* User Footer */}
+      <div
+        style={{
+          borderTop: `1px solid ${OPERIS_COLORS.border}`,
+          padding: collapsed ? "0.75rem 0" : "0.75rem 1rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.625rem",
+          justifyContent: collapsed ? "center" : "flex-start",
+          flexShrink: 0,
+        }}
+      >
+        <div
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: "50%",
+            background: OPERIS_COLORS.primaryMuted,
+            border: `1px solid ${OPERIS_COLORS.primaryBorder}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "0.75rem",
+            fontWeight: 700,
+            color: OPERIS_COLORS.primary,
+            flexShrink: 0,
+          }}
+        >
+          {(user?.name ?? "U").charAt(0).toUpperCase()}
+        </div>
+        {!collapsed && (
+          <>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div
+                style={{
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  color: OPERIS_COLORS.textPrimary,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {user?.name ?? "Usuário"}
+              </div>
+              <div
+                style={{
+                  fontSize: "0.625rem",
+                  color: OPERIS_COLORS.textMuted,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                {user?.role ?? "user"}
+              </div>
+            </div>
+            <button
+              onClick={logout}
+              title="Sair"
+              style={{
+                background: "transparent",
+                border: "none",
+                color: OPERIS_COLORS.textMuted,
+                cursor: "pointer",
+                padding: "0.25rem",
+                display: "flex",
+                alignItems: "center",
+                flexShrink: 0,
+                transition: "color 0.15s",
+              }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.danger)}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.textMuted)}
+            >
+              <LogOut size={15} />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* ─── DESKTOP ──────────────────────────────────────────────────────── */}
+      <div className="hidden md:flex" style={{ minHeight: "100vh", background: OPERIS_COLORS.bg }}>
+        <Sidebar />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+          {/* Top Bar */}
+          <div
+            style={{
+              height: 56,
+              background: OPERIS_COLORS.bgCard,
+              borderBottom: `1px solid ${OPERIS_COLORS.border}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0 1.5rem",
+              flexShrink: 0,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ fontSize: "0.75rem", color: OPERIS_COLORS.textMuted }}>OPERIS</span>
+              <ChevronRight size={12} color={OPERIS_COLORS.textMuted} />
+              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: OPERIS_COLORS.textSecondary }}>
+                {currentLabel}
+              </span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <Link href="/app/alertas">
+                <button
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: OPERIS_COLORS.textMuted,
+                    cursor: "pointer",
+                    padding: "0.375rem",
+                    display: "flex",
+                    alignItems: "center",
+                    transition: "color 0.15s",
+                  }}
+                  onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.textPrimary)}
+                  onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.textMuted)}
+                >
+                  <Bell size={16} />
+                </button>
+              </Link>
+              <div style={{ width: 1, height: 20, background: OPERIS_COLORS.border }} />
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: "50%",
+                    background: OPERIS_COLORS.primaryMuted,
+                    border: `1px solid ${OPERIS_COLORS.primaryBorder}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.75rem",
+                    fontWeight: 700,
+                    color: OPERIS_COLORS.primary,
+                  }}
+                >
+                  {(user?.name ?? "U").charAt(0).toUpperCase()}
+                </div>
+                <span style={{ fontSize: "0.8125rem", color: OPERIS_COLORS.textSecondary }}>
+                  {user?.name?.split(" ")[0] ?? "Usuário"}
+                </span>
+              </div>
+            </div>
+          </div>
+          <main style={{ flex: 1, padding: "1.5rem", overflowY: "auto", color: OPERIS_COLORS.textPrimary }}>
+            {children}
+          </main>
+        </div>
+      </div>
+
+      {/* ─── MOBILE ───────────────────────────────────────────────────────── */}
+      <div className="flex md:hidden" style={{ flexDirection: "column", minHeight: "100vh", background: OPERIS_COLORS.bg }}>
+        {/* Mobile Top Bar */}
+        <div
+          style={{
+            height: 52,
+            background: OPERIS_COLORS.bgCard,
+            borderBottom: `1px solid ${OPERIS_COLORS.border}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0 1rem",
+            flexShrink: 0,
+            position: "sticky",
+            top: 0,
+            zIndex: 50,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div
+              style={{
+                width: 24,
+                height: 24,
+                background: OPERIS_COLORS.primary,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Shield size={13} color="#fff" />
+            </div>
+            <span
+              style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontWeight: 800,
+                fontSize: "1rem",
+                letterSpacing: "0.1em",
+                color: OPERIS_COLORS.textPrimary,
+              }}
+            >
+              OPERIS
+            </span>
+          </div>
+          <button
+            onClick={() => setMobileOpen(o => !o)}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: OPERIS_COLORS.textSecondary,
+              cursor: "pointer",
+              padding: "0.375rem",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+
+        {/* Mobile Drawer */}
+        {mobileOpen && (
+          <div style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex" }}>
+            <div
+              style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)" }}
+              onClick={() => setMobileOpen(false)}
+            />
+            <div
+              style={{
+                position: "relative",
+                width: 260,
+                background: OPERIS_COLORS.bgCard,
+                borderRight: `1px solid ${OPERIS_COLORS.border}`,
+                display: "flex",
+                flexDirection: "column",
+                overflowY: "auto",
+                zIndex: 101,
+              }}
+            >
+              <div
+                style={{
+                  padding: "1rem",
+                  borderBottom: `1px solid ${OPERIS_COLORS.border}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <div
+                    style={{
+                      width: 28,
+                      height: 28,
+                      background: OPERIS_COLORS.primary,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Shield size={15} color="#fff" />
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        fontWeight: 800,
+                        fontSize: "1rem",
+                        letterSpacing: "0.1em",
+                        color: OPERIS_COLORS.textPrimary,
+                        lineHeight: 1,
+                      }}
+                    >
+                      OPERIS
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.5625rem",
+                        color: OPERIS_COLORS.textMuted,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Engineering Intelligence
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  style={{ background: "transparent", border: "none", color: OPERIS_COLORS.textMuted, cursor: "pointer" }}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <nav style={{ flex: 1, padding: "0.5rem 0" }}>
+                {visibleGroups.map((g) => (
+                  <div key={g.group || "root"}>
+                    {g.group && (
+                      <div
+                        style={{
+                          fontSize: "0.625rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                          color: OPERIS_COLORS.textDisabled,
+                          padding: "0.75rem 1rem 0.25rem",
+                          marginTop: "0.25rem",
+                        }}
+                      >
+                        {g.group}
+                      </div>
+                    )}
+                    {g.items.map((item) => {
+                      const active = isActive(item.path);
+                      return (
+                        <Link key={item.path} href={item.path}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.75rem",
+                              padding: "0.625rem 1rem",
+                              background: active ? OPERIS_COLORS.primaryMuted : "transparent",
+                              borderLeft: active ? `2px solid ${OPERIS_COLORS.primary}` : "2px solid transparent",
+                              color: active ? OPERIS_COLORS.primary : OPERIS_COLORS.textSecondary,
+                              fontSize: "0.875rem",
+                              fontWeight: active ? 600 : 400,
+                            }}
+                          >
+                            {item.icon}
+                            <span>{item.label}</span>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ))}
               </nav>
-              {/* User info + logout no drawer */}
-              <div style={{ padding: "16px 18px", borderTop: "1px solid #2C2C2C", marginTop: 8 }}>
-                {user && <div style={{ marginBottom: 12 }}>
-                  <div style={{ color: "#D8D8D8", fontSize: 13, fontWeight: 600 }}>{user.name}</div>
-                  <div style={{ color: "#8A8A8A", fontSize: 11, letterSpacing: "0.06em" }}>{user.role.toUpperCase()}</div>
-                </div>}
-                <button onClick={logout} style={{ width: "100%", padding: "10px", background: "transparent", border: "1px solid #4A4A4A", color: "#8A8A8A", fontSize: 12, cursor: "pointer", letterSpacing: "0.06em" }}>
-                  SAIR DA CONTA
+              <div
+                style={{
+                  borderTop: `1px solid ${OPERIS_COLORS.border}`,
+                  padding: "0.75rem 1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.75rem",
+                }}
+              >
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    background: OPERIS_COLORS.primaryMuted,
+                    border: `1px solid ${OPERIS_COLORS.primaryBorder}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.875rem",
+                    fontWeight: 700,
+                    color: OPERIS_COLORS.primary,
+                  }}
+                >
+                  {(user?.name ?? "U").charAt(0).toUpperCase()}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: OPERIS_COLORS.textPrimary }}>{user?.name ?? "Usuário"}</div>
+                  <div style={{ fontSize: "0.6875rem", color: OPERIS_COLORS.textMuted, textTransform: "uppercase", letterSpacing: "0.06em" }}>{user?.role ?? "user"}</div>
+                </div>
+                <button
+                  onClick={logout}
+                  style={{ background: "transparent", border: "none", color: OPERIS_COLORS.textMuted, cursor: "pointer", padding: "0.25rem" }}
+                >
+                  <LogOut size={16} />
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Mobile Content */}
-        <main style={{ flex: 1, padding: "16px", paddingBottom: 80, overflowY: "auto" }}>
+        <main style={{ flex: 1, padding: "1rem", paddingBottom: "5rem", color: OPERIS_COLORS.textPrimary, overflowY: "auto" }}>
           {children}
         </main>
 
-        {/* Mobile Bottom Navigation Bar */}
-        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#111111", borderTop: "2px solid #C8102E", display: "flex", zIndex: 50, paddingBottom: "env(safe-area-inset-bottom)" }}>
-          {MOBILE_NAV.map(item => {
-            const active = location === item.path || location.startsWith(item.path + "/");
+        {/* Mobile Bottom Nav */}
+        <div
+          style={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 60,
+            background: OPERIS_COLORS.bgCard,
+            borderTop: `1px solid ${OPERIS_COLORS.border}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-around",
+            zIndex: 50,
+          }}
+        >
+          {MOBILE_NAV.map((item) => {
+            const active = isActive(item.path);
             return (
-              <Link key={item.path} href={item.path} style={{ flex: 1 }}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "8px 4px", cursor: "pointer", background: active ? "#C8102E18" : "transparent", borderTop: `2px solid ${active ? "#C8102E" : "transparent"}`, marginTop: -2 }}>
-                  <span style={{ fontSize: 20, lineHeight: 1 }}>{item.icon}</span>
-                  <span style={{ fontSize: 9, color: active ? "#C8102E" : "#8A8A8A", marginTop: 3, fontWeight: active ? 700 : 400, letterSpacing: "0.04em" }}>{item.label}</span>
+              <Link key={item.path} href={item.path}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "0.2rem",
+                    padding: "0.375rem 0.75rem",
+                    color: active ? OPERIS_COLORS.primary : OPERIS_COLORS.textMuted,
+                    cursor: "pointer",
+                  }}
+                >
+                  {item.icon}
+                  <span
+                    style={{
+                      fontSize: "0.5625rem",
+                      fontWeight: active ? 700 : 500,
+                      letterSpacing: "0.04em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {item.label}
+                  </span>
                 </div>
               </Link>
             );
           })}
-          {/* Botão "Mais" na bottom nav */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "8px 4px", background: "transparent", border: "none", cursor: "pointer", borderTop: `2px solid ${mobileMenuOpen ? "#C8102E" : "transparent"}`, marginTop: -2 }}
-          >
-            <span style={{ fontSize: 20, lineHeight: 1 }}>⋯</span>
-            <span style={{ fontSize: 9, color: mobileMenuOpen ? "#C8102E" : "#8A8A8A", marginTop: 3, fontWeight: mobileMenuOpen ? 700 : 400, letterSpacing: "0.04em" }}>Mais</span>
-          </button>
-        </nav>
+        </div>
       </div>
     </>
   );

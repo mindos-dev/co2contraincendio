@@ -52,6 +52,8 @@ import Clientes from "./pages/plataforma/Clientes";
 import Relatorios from "./pages/plataforma/Relatorios";
 import BuscaInteligente from "./pages/plataforma/BuscaInteligente";
 import Usuarios from "./pages/app/Usuarios";
+import OrdemServico from "./pages/plataforma/OrdemServico";
+import Checklist from "./pages/plataforma/Checklist";
 // Mobile Field Inspection
 import MobileDashboard from "./pages/mobile/MobileDashboard";
 import NovaVistoria from "./pages/mobile/NovaVistoria";
@@ -129,6 +131,8 @@ function Router() {
       <Route path="/app/relatorios" component={Relatorios} />
       <Route path="/app/busca" component={BuscaInteligente} />
       <Route path="/app/usuarios" component={Usuarios} />
+      <Route path="/app/os" component={OrdemServico} />
+      <Route path="/app/checklist" component={Checklist} />
       {/* Mobile Field Inspection */}
       <Route path="/mobile" component={MobileDashboard} />
       <Route path="/mobile/nova-vistoria" component={NovaVistoria} />

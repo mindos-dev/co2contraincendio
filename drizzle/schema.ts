@@ -336,3 +336,67 @@ export const operisReports = mysqlTable("operis_reports", {
 });
 export type OperisReport = typeof operisReports.$inferSelect;
 export type InsertOperisReport = typeof operisReports.$inferInsert;
+
+// ─── Work Orders (OS) ─────────────────────────────────────────────────────────
+export const workOrders = mysqlTable("work_orders", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  equipmentId: int("equipmentId").references(() => equipment.id),
+  number: varchar("number", { length: 30 }).notNull(),
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", ["preventiva", "corretiva", "inspecao", "instalacao", "desativacao"]).notNull().default("preventiva"),
+  priority: mysqlEnum("priority", ["baixa", "media", "alta", "critica"]).notNull().default("media"),
+  status: mysqlEnum("status", ["aberta", "em_andamento", "aguardando_peca", "concluida", "cancelada"]).notNull().default("aberta"),
+  assignedToId: int("assignedToId").references(() => saasUsers.id),
+  scheduledDate: date("scheduledDate"),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  estimatedHours: int("estimatedHours"),
+  actualHours: int("actualHours"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type WorkOrder = typeof workOrders.$inferSelect;
+export type InsertWorkOrder = typeof workOrders.$inferInsert;
+
+// ─── Checklist Templates ──────────────────────────────────────────────────────
+export const checklistTemplates = mysqlTable("checklist_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  name: varchar("name", { length: 200 }).notNull(),
+  category: varchar("category", { length: 100 }),
+  normReference: varchar("normReference", { length: 100 }),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ChecklistTemplate = typeof checklistTemplates.$inferSelect;
+
+export const checklistItems = mysqlTable("checklist_items", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").references(() => checklistTemplates.id).notNull(),
+  order: int("order").notNull().default(0),
+  section: varchar("section", { length: 100 }),
+  description: varchar("description", { length: 500 }).notNull(),
+  normClause: varchar("normClause", { length: 50 }),
+  required: boolean("required").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ChecklistItem = typeof checklistItems.$inferSelect;
+
+export const checklistExecutions = mysqlTable("checklist_executions", {
+  id: int("id").autoincrement().primaryKey(),
+  workOrderId: int("workOrderId").references(() => workOrders.id),
+  templateId: int("templateId").references(() => checklistTemplates.id).notNull(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  equipmentId: int("equipmentId").references(() => equipment.id),
+  executedById: int("executedById").references(() => saasUsers.id),
+  status: mysqlEnum("status", ["em_andamento", "concluido", "cancelado"]).default("em_andamento").notNull(),
+  responses: json("responses"),
+  score: int("score"),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ChecklistExecution = typeof checklistExecutions.$inferSelect;

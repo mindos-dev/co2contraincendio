@@ -58,6 +58,16 @@ import {
   getSaasUserByResetToken,
   setResetToken,
   clearResetToken,
+  getWorkOrders,
+  getWorkOrderById,
+  createWorkOrder,
+  updateWorkOrder,
+  deleteWorkOrder,
+  getChecklistTemplates,
+  getChecklistItems,
+  createChecklistExecution,
+  updateChecklistExecution,
+  getChecklistExecutions,
 } from "./saas-db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
@@ -711,6 +721,103 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
         })).min(1).max(500),
       }))
       .mutation(({ input }) => importCompaniesFromCsv(input.rows)),
+  }),
+
+  // ── WORK ORDERS (OS) ──────────────────────────────────────────────────────
+  workOrders: router({
+    list: saasAuthProcedure
+      .input(z.object({ companyId: z.number().optional(), status: z.string().optional() }))
+      .query(({ input }) => getWorkOrders(input.companyId, input.status)),
+
+    get: saasAuthProcedure
+      .input(z.object({ id: z.number() }))
+      .query(({ input }) => getWorkOrderById(input.id)),
+
+    create: saasAuthProcedure
+      .input(z.object({
+        companyId: z.number(),
+        equipmentId: z.number().optional(),
+        number: z.string().min(1),
+        title: z.string().min(3),
+        description: z.string().optional(),
+        type: z.enum(["preventiva", "corretiva", "inspecao", "instalacao", "desativacao"]).default("preventiva"),
+        priority: z.enum(["baixa", "media", "alta", "critica"]).default("media"),
+        assignedToId: z.number().optional(),
+        scheduledDate: z.string().optional(),
+        estimatedHours: z.number().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const data: Record<string, unknown> = { ...input };
+        if (input.scheduledDate) data.scheduledDate = new Date(input.scheduledDate);
+        return createWorkOrder(data as Parameters<typeof createWorkOrder>[0]);
+      }),
+
+    update: saasAuthProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["aberta", "em_andamento", "aguardando_peca", "concluida", "cancelada"]).optional(),
+        priority: z.enum(["baixa", "media", "alta", "critica"]).optional(),
+        assignedToId: z.number().optional(),
+        notes: z.string().optional(),
+        actualHours: z.number().optional(),
+        completedAt: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        const upd: Record<string, unknown> = { ...data };
+        if (input.completedAt) upd.completedAt = new Date(input.completedAt);
+        if (input.status === "em_andamento") upd.startedAt = new Date();
+        if (input.status === "concluida") upd.completedAt = new Date();
+        return updateWorkOrder(id, upd as Parameters<typeof updateWorkOrder>[1]);
+      }),
+
+    delete: saasAdminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(({ input }) => deleteWorkOrder(input.id)),
+  }),
+
+  // ── CHECKLIST ─────────────────────────────────────────────────────────────
+  checklist: router({
+    templates: saasAuthProcedure
+      .input(z.object({ companyId: z.number() }))
+      .query(({ input }) => getChecklistTemplates(input.companyId)),
+
+    items: saasAuthProcedure
+      .input(z.object({ templateId: z.number() }))
+      .query(({ input }) => getChecklistItems(input.templateId)),
+
+    startExecution: saasAuthProcedure
+      .input(z.object({
+        templateId: z.number(),
+        companyId: z.number(),
+        workOrderId: z.number().optional(),
+        equipmentId: z.number().optional(),
+        executedById: z.number().optional(),
+      }))
+      .mutation(({ input }) => createChecklistExecution(input)),
+
+    saveResponses: saasAuthProcedure
+      .input(z.object({
+        id: z.number(),
+        responses: z.array(z.object({
+          itemId: z.number(),
+          result: z.enum(["C", "NC", "NA"]),
+          obs: z.string().optional(),
+        })),
+        score: z.number().optional(),
+        status: z.enum(["em_andamento", "concluido", "cancelado"]).optional(),
+      }))
+      .mutation(({ input }) => updateChecklistExecution(input.id, {
+        responses: input.responses,
+        score: input.score,
+        status: input.status,
+        completedAt: input.status === "concluido" ? new Date() : undefined,
+      })),
+
+    executions: saasAuthProcedure
+      .input(z.object({ companyId: z.number() }))
+      .query(({ input }) => getChecklistExecutions(input.companyId)),
   }),
 
   // ── OPERIS KNOWLEDGE LAYER ─────────────────────────────────────────────────

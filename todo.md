@@ -342,3 +342,23 @@
 - [x] Atualizar SaasLogin.tsx com links para cadastro e esqueci senha
 - [x] Registrar novas rotas no App.tsx
 - [x] Testes vitest para register, forgotPassword e resetPassword
+
+## Sprint: OPERIS Enterprise Transformation
+
+- [ ] Design system industrial dark: CSS vars (#0B0F19, #111827, #2563EB) no index.css
+- [ ] Componentes base: OperisCard, StatusBadge, KPIWidget, ChartContainer, DataTable, EmptyState
+- [ ] Refatorar SaasDashboardLayout: sidebar Procore-style com grupos (Operations, Engineering, Financial, Intelligence, Settings)
+- [ ] Dashboard enterprise: KPIs (OS, Riscos, Receita), gráficos Recharts (bar, line, pie), heatmap de risco, timeline de atividades
+- [ ] Página OS (/app/os): timeline de estados Open→InProgress→Waiting→Completed→Billed
+- [ ] Checklist mobile-first (/app/checklist): botões C/NC/NA, barra de progresso, footer sticky
+- [ ] Atualizar App.tsx com novas rotas /app/os e /app/checklist
+
+## Sprint: OPERIS Enterprise Transformation
+
+- [ ] Design system industrial dark: CSS vars (#0B0F19, #111827, #2563EB) no index.css
+- [ ] Componentes base: OperisCard, StatusBadge, KPIWidget, ChartContainer, DataTable, EmptyState
+- [ ] Refatorar SaasDashboardLayout: sidebar Procore-style com grupos (Operations, Engineering, Financial, Intelligence, Settings)
+- [ ] Dashboard enterprise: KPIs (OS, Riscos, Receita), graficos Recharts (bar, line, pie), heatmap de risco, timeline de atividades
+- [ ] Pagina OS (/app/os): timeline de estados Open->InProgress->Waiting->Completed->Billed
+- [ ] Checklist mobile-first (/app/checklist): botoes C/NC/NA, barra de progresso, footer sticky
+- [ ] Atualizar App.tsx com novas rotas /app/os e /app/checklist
