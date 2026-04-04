@@ -409,7 +409,7 @@
 - [x] Upload de foto de perfil via S3
 - [x] Link "Meu Perfil" no footer do SaasDashboardLayout (botão UserCircle)
 - [x] Rota /app/perfil registrada no App.tsx
-- [ ] Testes vitest para e-mail de OS e perfil
+- [x] Testes vitest para e-mail de OS e perfil (perfil-vistoria.test.ts — 4 testes buildOsEmail)
 
 ## REGRA INEGOCIÁVEL — OPERIS visível em todas as páginas do site
 

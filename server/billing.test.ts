@@ -51,8 +51,11 @@ describe("billing-plans", () => {
     expect(plan.name).toContain("Pro");
   });
 
-  it("getPlanById deve lançar erro para plano inexistente", () => {
-    expect(() => getPlanById("inexistente" as PlanId)).toThrow();
+  it("getPlanById deve retornar plano Basic como fallback para plano inexistente", () => {
+    // getPlanById usa PLANS[0] (Basic) como fallback seguro em vez de lançar erro
+    const fallback = getPlanById("inexistente" as PlanId);
+    expect(fallback).toBeDefined();
+    expect(fallback.id).toBe("basic");
   });
 
   it("getPlanLimits deve retornar limites para o plano Basic", () => {

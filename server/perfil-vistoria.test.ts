@@ -219,3 +219,64 @@ describe("vistoria signature", () => {
     expect(isValidSignerType("admin")).toBe(false);
   });
 });
+
+// ─── Testes de E-mail de OS ───────────────────────────────────────────────────
+import { buildOsEmail } from "./notifications";
+
+describe("buildOsEmail — templates de e-mail de OS", () => {
+  it("deve gerar e-mail de criação de OS com campos obrigatórios", () => {
+    const result = buildOsEmail({
+      name: "João Silva",
+      osNumber: "OS-2026-001",
+      title: "Manutenção preventiva extintor CO2",
+      type: "preventiva",
+      priority: "alta",
+      status: "criada",
+    });
+    expect(result.subject).toContain("OS-2026-001");
+    expect(result.text).toContain("João Silva");
+    expect(result.html).toContain("OS-2026-001");
+  });
+
+  it("deve gerar e-mail de conclusão de OS com status concluida", () => {
+    const result = buildOsEmail({
+      name: "Maria Técnica",
+      osNumber: "OS-2026-042",
+      title: "Recarga extintor pó químico",
+      type: "corretiva",
+      priority: "critica",
+      status: "concluida",
+    });
+    expect(result.subject).toContain("OS-2026-042");
+    expect(result.text).toContain("Maria Técnica");
+    expect(result.html).toBeTruthy();
+  });
+
+  it("deve incluir data agendada quando fornecida", () => {
+    const result = buildOsEmail({
+      name: "Carlos Eng",
+      osNumber: "OS-2026-099",
+      title: "Inspeção anual sistema CO2",
+      type: "preventiva",
+      priority: "media",
+      status: "criada",
+      scheduledDate: "2026-05-15",
+    });
+    expect(result.html).toBeTruthy();
+    expect(result.subject).toBeTruthy();
+  });
+
+  it("deve gerar HTML válido com estrutura de e-mail", () => {
+    const result = buildOsEmail({
+      name: "Técnico Teste",
+      osNumber: "OS-TEST-001",
+      title: "Teste de geração de e-mail",
+      type: "preventiva",
+      priority: "baixa",
+      status: "criada",
+    });
+    expect(result.html).toContain("<html");
+    expect(result.html).toContain("</html>");
+    expect(result.text.length).toBeGreaterThan(10);
+  });
+});
