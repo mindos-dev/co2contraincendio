@@ -358,6 +358,7 @@ export const saasRouter = router({
         manufacturer: z.string().optional(),
         model: z.string().optional(),
         serialNumber: z.string().optional(),
+        fabricationYear: z.string().optional(),
         installationLocation: z.string().optional(),
         floor: z.string().optional(),
         sector: z.string().optional(),
@@ -367,6 +368,22 @@ export const saasRouter = router({
         riskClass: z.string().optional(),
         installationDate: z.string().optional(),
         nextMaintenanceDate: z.string().optional(),
+        // Campos ABNT NBR / NFPA 25
+        patrimonyTag: z.string().optional(),
+        normReference: z.string().optional(),
+        certificationUL: z.string().optional(),
+        weightKg: z.string().optional(),
+        workingPressureBar: z.string().optional(),
+        testPressureBar: z.string().optional(),
+        description: z.string().optional(),
+        flowRate: z.string().optional(),
+        activationTemp: z.string().optional(),
+        coverageArea: z.string().optional(),
+        detectorType: z.string().optional(),
+        sensitivity: z.string().optional(),
+        signageType: z.string().optional(),
+        signageDimensions: z.string().optional(),
+        signageColor: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         const data: Record<string, unknown> = { ...input };
@@ -384,18 +401,38 @@ export const saasRouter = router({
         manufacturer: z.string().optional(),
         model: z.string().optional(),
         serialNumber: z.string().optional(),
+        fabricationYear: z.string().optional(),
         installationLocation: z.string().optional(),
         floor: z.string().optional(),
         sector: z.string().optional(),
         agentType: z.string().optional(),
         capacity: z.string().optional(),
         pressure: z.string().optional(),
+        riskClass: z.string().optional(),
         status: z.enum(["ok", "proximo_vencimento", "vencido", "inativo"]).optional(),
+        installationDate: z.string().optional(),
         nextMaintenanceDate: z.string().optional(),
+        // Campos ABNT NBR / NFPA 25
+        patrimonyTag: z.string().optional(),
+        normReference: z.string().optional(),
+        certificationUL: z.string().optional(),
+        weightKg: z.string().optional(),
+        workingPressureBar: z.string().optional(),
+        testPressureBar: z.string().optional(),
+        description: z.string().optional(),
+        flowRate: z.string().optional(),
+        activationTemp: z.string().optional(),
+        coverageArea: z.string().optional(),
+        detectorType: z.string().optional(),
+        sensitivity: z.string().optional(),
+        signageType: z.string().optional(),
+        signageDimensions: z.string().optional(),
+        signageColor: z.string().optional(),
       }))
       .mutation(async ({ input: { id, ...data } }) => {
         const upd: Record<string, unknown> = { ...data };
         if (data.nextMaintenanceDate) upd.nextMaintenanceDate = new Date(data.nextMaintenanceDate);
+        if (data.installationDate) upd.installationDate = new Date(data.installationDate);
         return updateEquipment(id, upd as Parameters<typeof updateEquipment>[1]);
       }),
 

@@ -418,3 +418,19 @@
 - [x] Melhorar link OPERIS no desktop nav com fundo vermelho sutil
 - [x] Melhorar link OPERIS no menu mobile com card destacado
 - [x] OperisFloatingCTA visível em TODAS as rotas públicas via Layout.tsx
+
+## FASE ESTRATÉGICA — Monetização + Receita Recorrente (MRR)
+
+- [x] Configurar Stripe no projeto (webdev_add_feature stripe)
+- [x] Criar produtos e preços: Basic R$29/mês, Pro R$59/mês, Industrial R$99/mês (billing-plans.ts)
+- [x] Schema: tabela subscriptions e subscription_invoices no Drizzle
+- [x] Migração SQL aplicada no banco
+- [x] Backend: billing-router.ts com procedures listPlans, getSubscription, createCheckout, cancelSubscription, getInvoices, getFinancialDashboard, startTrial
+- [x] Backend: webhook /api/stripe/webhook (billing-webhook.ts) com checkout.session.completed, invoice.paid, customer.subscription.updated, customer.subscription.deleted
+- [x] Backend: billingRouter registrado no routers.ts principal
+- [x] Frontend: página pública /planos com cards dos 3 planos, CTA checkout + trial 7 dias
+- [x] Frontend: página /app/assinatura com status, upgrade, histórico de faturas
+- [x] Frontend: dashboard financeiro /app/financeiro-mrr com MRR, clientes ativos, inadimplentes, ticket médio
+- [x] Link "Planos & Preços" no top bar do Navbar público
+- [x] Links "Assinatura" e "MRR Dashboard" no grupo Financial do sidebar OPERIS
+- [ ] Testes vitest para webhook e lógica de paywall

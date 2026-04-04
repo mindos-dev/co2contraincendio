@@ -103,6 +103,15 @@ export const equipment = mysqlTable("equipment", {
   sensitivity: varchar("sensitivity", { length: 30 }),
   signageType: varchar("signageType", { length: 80 }),
   signageDimensions: varchar("signageDimensions", { length: 50 }),
+  signageColor: varchar("signageColor", { length: 50 }),
+  // Identificação patrimonial e normativa (ABNT NBR / NFPA 25)
+  patrimonyTag: varchar("patrimonyTag", { length: 80 }),
+  normReference: varchar("normReference", { length: 120 }),
+  certificationUL: varchar("certificationUL", { length: 80 }),
+  weightKg: varchar("weightKg", { length: 30 }),
+  workingPressureBar: varchar("workingPressureBar", { length: 30 }),
+  testPressureBar: varchar("testPressureBar", { length: 30 }),
+  description: text("description"),
   // Status e datas
   status: mysqlEnum("status", ["ok", "proximo_vencimento", "vencido", "inativo"]).default("ok").notNull(),
   installationDate: date("installationDate"),
@@ -433,3 +442,44 @@ export const lgpdRequests = mysqlTable("lgpd_requests", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 export type LgpdRequest = typeof lgpdRequests.$inferSelect;
+
+// ─── Monetização — Assinaturas Recorrentes ────────────────────────────────────
+
+export const billingSubscriptions = mysqlTable("billing_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  // Plano contratado
+  plan: mysqlEnum("plan", ["basic", "pro", "industrial", "trial"]).notNull().default("trial"),
+  // Status da assinatura (sincronizado via webhook Stripe)
+  status: mysqlEnum("status", ["trialing", "active", "past_due", "canceled", "unpaid", "paused"]).notNull().default("trialing"),
+  // IDs Stripe (fonte da verdade)
+  stripeCustomerId: varchar("stripeCustomerId", { length: 100 }),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 100 }),
+  stripePriceId: varchar("stripePriceId", { length: 100 }),
+  // Datas de controle
+  trialEndsAt: timestamp("trialEndsAt"),
+  currentPeriodStart: timestamp("currentPeriodStart"),
+  currentPeriodEnd: timestamp("currentPeriodEnd"),
+  canceledAt: timestamp("canceledAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type BillingSubscription = typeof billingSubscriptions.$inferSelect;
+export type InsertBillingSubscription = typeof billingSubscriptions.$inferInsert;
+
+export const billingInvoices = mysqlTable("billing_invoices", {
+  id: int("id").autoincrement().primaryKey(),
+  subscriptionId: int("subscriptionId").references(() => billingSubscriptions.id).notNull(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  stripeInvoiceId: varchar("stripeInvoiceId", { length: 100 }),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 100 }),
+  amountCents: int("amountCents").notNull(), // valor em centavos
+  currency: varchar("currency", { length: 3 }).default("brl").notNull(),
+  status: mysqlEnum("status", ["draft", "open", "paid", "void", "uncollectible"]).notNull().default("open"),
+  paidAt: timestamp("paidAt"),
+  dueDate: timestamp("dueDate"),
+  hostedInvoiceUrl: text("hostedInvoiceUrl"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type BillingInvoice = typeof billingInvoices.$inferSelect;
+export type InsertBillingInvoice = typeof billingInvoices.$inferInsert;

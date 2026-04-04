@@ -60,6 +60,9 @@ import NFSe from "./pages/plataforma/NFSe";
 import Onboarding from "./pages/plataforma/Onboarding";
 import Configuracoes from "./pages/plataforma/Configuracoes";
 import Perfil from "./pages/plataforma/Perfil";
+import Planos from "./pages/Planos";
+import Assinatura from "./pages/plataforma/Assinatura";
+import DashboardFinanceiro from "./pages/plataforma/DashboardFinanceiro";
 // Mobile Field Inspection
 import MobileDashboard from "./pages/mobile/MobileDashboard";
 import NovaVistoria from "./pages/mobile/NovaVistoria";
@@ -152,6 +155,9 @@ function Router() {
       <Route path="/app/onboarding" component={Onboarding} />
       <Route path="/app/configuracoes" component={Configuracoes} />
       <Route path="/app/perfil" component={Perfil} />
+      <Route path="/app/assinatura" component={Assinatura} />
+      <Route path="/app/financeiro-mrr" component={DashboardFinanceiro} />
+      <Route path="/planos" component={Planos} />
       {/* Mobile Field Inspection */}
       <Route path="/mobile" component={MobileDashboard} />
       <Route path="/mobile/nova-vistoria" component={NovaVistoria} />

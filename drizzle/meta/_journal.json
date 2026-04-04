@@ -71,6 +71,13 @@
       "when": 1775269031908,
       "tag": "0009_sudden_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1775275843073,
+      "tag": "0010_late_stepford_cuckoos",
+      "breakpoints": true
     }
   ]
 }

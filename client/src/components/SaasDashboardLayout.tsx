@@ -6,7 +6,8 @@ import {
   LayoutDashboard, ClipboardList, CheckSquare, Package, FileText,
   Users, DollarSign, Receipt, Brain, Settings, BookOpen,
   ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
-  Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle
+  Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle,
+  CreditCard, TrendingUp
 } from "lucide-react";
 
 // ─── Navigation Structure (Procore-style grouped) ─────────────────────────────
@@ -54,6 +55,8 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Financeiro", path: "/app/financeiro", icon: <DollarSign size={16} />, adminOnly: true },
       { label: "NFS-e", path: "/app/nfse", icon: <Receipt size={16} />, adminOnly: true },
+      { label: "Assinatura", path: "/app/assinatura", icon: <CreditCard size={16} /> },
+      { label: "MRR Dashboard", path: "/app/financeiro-mrr", icon: <TrendingUp size={16} />, adminOnly: true },
     ],
   },
   {

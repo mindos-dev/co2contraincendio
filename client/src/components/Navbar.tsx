@@ -65,6 +65,16 @@ export default function Navbar() {
               </svg>
               OPERIS IA &mdash; Acessar Plataforma
             </Link>
+            <Link
+              href="/planos"
+              style={{
+                color: "rgba(255,255,255,0.75)", fontSize: "0.6875rem", fontWeight: 600,
+                letterSpacing: "0.06em", textTransform: "uppercase",
+                textDecoration: "none", display: "flex", alignItems: "center", gap: "0.3rem",
+              }}
+            >
+              Planos &amp; Preços
+            </Link>
             <a
               href="tel:+5531997383115"
               style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.7rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.35rem" }}

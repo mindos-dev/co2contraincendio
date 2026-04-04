@@ -8,6 +8,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { runDailyAlertJob } from "../saas-routers";
 import { createContext } from "./context";
+import { registerStripeWebhook } from "../billing-webhook";
 import { serveStatic, setupVite } from "./vite";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -48,6 +49,9 @@ async function startServer() {
     }
     next();
   });
+
+  // ⚠️ Stripe webhook MUST come BEFORE express.json() to preserve raw body
+  registerStripeWebhook(app);
 
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));

@@ -7,6 +7,7 @@ import { insertOrcamento } from "./db";
 import { saasRouter } from "./saas-routers";
 import { fieldRouter } from "./field-router";
 import { operisRouter } from "./operis-router";
+import { billingRouter } from "./billing-router";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -14,6 +15,7 @@ export const appRouter = router({
   saas: saasRouter,
   field: fieldRouter,
   operis: operisRouter,
+  billing: billingRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
