@@ -397,11 +397,11 @@
 
 ## Sprint: SMTP Real + E-mail OS + Perfil do Técnico
 
-- [ ] Configurar SMTP real via secrets (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM)
-- [ ] Atualizar helper sendEmail para usar variáveis de ambiente SMTP
-- [ ] Template HTML de e-mail de confirmação de OS (criação e conclusão)
-- [ ] Procedure saas.workOrders.create dispara e-mail de confirmação
-- [ ] Procedure saas.workOrders.updateStatus dispara e-mail ao concluir OS
+- [x] Configurar SMTP real via secrets (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM) — já implementado em notifications.ts
+- [x] Atualizar helper sendEmail para usar variáveis de ambiente SMTP — já implementado
+- [x] Template HTML de e-mail de confirmação de OS (criação e conclusão) — buildOsEmail() em notifications.ts
+- [x] Procedure saas.workOrders.create dispara e-mail de confirmação — linha 807 saas-routers.ts
+- [x] Procedure saas.workOrders.updateStatus dispara e-mail ao concluir OS — linha 846 saas-routers.ts
 - [x] Tabela saas_user_profiles (cargo, crea, bio, avatarUrl) — campos adicionados em saas_users
 - [x] Migration e aplicação da tabela de perfis
 - [x] Procedure saas.perfil.get, saas.perfil.update e saas.perfil.uploadAvatar
@@ -457,12 +457,12 @@
 - [x] Frontend: ficha técnica completa na página /app/equipamentos/:id
 
 ### SMTP Real + E-mails Automáticos de OS
-- [ ] Configurar SMTP real via secrets (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM)
-- [ ] Atualizar helper sendEmail para usar variáveis de ambiente SMTP reais
-- [ ] Template HTML de e-mail de confirmação de abertura de OS
-- [ ] Template HTML de e-mail de conclusão de OS
-- [ ] Procedure saas.workOrders.create dispara e-mail de confirmação ao criar OS
-- [ ] Procedure saas.workOrders.updateStatus dispara e-mail ao concluir OS
+- [x] Configurar SMTP real via secrets (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM) — já implementado
+- [x] Atualizar helper sendEmail para usar variáveis de ambiente SMTP reais — já implementado
+- [x] Template HTML de e-mail de confirmação de abertura de OS — buildOsEmail() com status 'criada'
+- [x] Template HTML de e-mail de conclusão de OS — buildOsEmail() com status 'concluida'
+- [x] Procedure saas.workOrders.create dispara e-mail de confirmação ao criar OS — linha 807
+- [x] Procedure saas.workOrders.updateStatus dispara e-mail ao concluir OS — linha 846
 
 ### Paywall — Controle de Acesso por Plano
 - [x] Frontend: componente PaywallGuard.tsx integrado no SaasDashboardLayout (desktop + mobile)
@@ -472,5 +472,5 @@
 
 ### Testes Vitest
 - [x] Teste: billing.test.ts — 16 testes cobrindo planos, isSubscriptionActive, webhook e paywall
-- [ ] Teste: saas.perfil.update — verifica atualização de perfil
-- [ ] Teste: vistoria.create e vistoria.sign — verifica fluxo de vistoria
+- [x] Teste: saas.perfil.update — verifica atualização de perfil (perfil-vistoria.test.ts)
+- [x] Teste: vistoria.create e vistoria.sign — verifica fluxo de vistoria (perfil-vistoria.test.ts)
