@@ -816,3 +816,97 @@ export const auditLog = mysqlTable("audit_log", {
 });
 export type AuditLog = typeof auditLog.$inferSelect;
 export type InsertAuditLog = typeof auditLog.$inferInsert;
+
+// ─── ART OPERIS — Responsabilidade Técnica Digital ───────────────────────────
+
+export const artServices = mysqlTable("art_services", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  technicianId: int("technicianId").references(() => saasUsers.id).notNull(),
+  engineerId: int("engineerId").references(() => saasUsers.id),
+  // Dados do serviço
+  serviceType: mysqlEnum("serviceType", [
+    "pmoc", "incendio", "eletrica", "gas", "hidraulico", "co2", "outro"
+  ]).notNull(),
+  description: text("description").notNull(),
+  clientName: varchar("clientName", { length: 200 }).notNull(),
+  clientDocument: varchar("clientDocument", { length: 30 }),
+  serviceAddress: varchar("serviceAddress", { length: 500 }),
+  serviceDate: date("serviceDate").notNull(),
+  // Declaração do técnico (assinatura obrigatória)
+  technicianDeclaration: boolean("technicianDeclaration").default(false).notNull(),
+  technicianSignatureTs: timestamp("technicianSignatureTs"),
+  // Antifraude
+  submissionHash: varchar("submissionHash", { length: 64 }), // SHA256
+  serverTimestamp: timestamp("serverTimestamp"),
+  geoLatitude: decimal("geoLatitude", { precision: 10, scale: 7 }),
+  geoLongitude: decimal("geoLongitude", { precision: 10, scale: 7 }),
+  // Fluxo de aprovação
+  status: mysqlEnum("status", [
+    "rascunho", "aguardando_aprovacao", "aprovado", "reprovado"
+  ]).default("rascunho").notNull(),
+  rejectionReason: text("rejectionReason"),
+  approvedAt: timestamp("approvedAt"),
+  // PDF gerado
+  pdfUrl: text("pdfUrl"),
+  pdfGeneratedAt: timestamp("pdfGeneratedAt"),
+  // Monetização
+  paymentStatus: mysqlEnum("paymentStatus", [
+    "free_plan", "pending_payment", "paid", "exempt"
+  ]).default("pending_payment").notNull(),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 100 }),
+  paidAt: timestamp("paidAt"),
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+}, (t) => ({
+  idxArtCompanyStatus: index("idx_art_company_status").on(t.companyId, t.status),
+  idxArtTechnician: index("idx_art_technician").on(t.technicianId),
+  idxArtCreated: index("idx_art_created").on(t.companyId, t.createdAt),
+}));
+export type ArtService = typeof artServices.$inferSelect;
+export type InsertArtService = typeof artServices.$inferInsert;
+
+export const artEvidences = mysqlTable("art_evidences", {
+  id: int("id").autoincrement().primaryKey(),
+  artServiceId: int("artServiceId").references(() => artServices.id).notNull(),
+  uploadedById: int("uploadedById").references(() => saasUsers.id).notNull(),
+  // Arquivo
+  fileUrl: text("fileUrl").notNull(),
+  fileKey: varchar("fileKey", { length: 500 }).notNull(),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  mimeType: varchar("mimeType", { length: 100 }).notNull(),
+  fileSizeBytes: int("fileSizeBytes"),
+  evidenceType: mysqlEnum("evidenceType", [
+    "foto", "video", "nota_fiscal", "laudo", "outro"
+  ]).notNull(),
+  // Antifraude — imutabilidade garantida por hash
+  sha256Hash: varchar("sha256Hash", { length: 64 }).notNull(), // hash do arquivo
+  serverTimestamp: timestamp("serverTimestamp").defaultNow().notNull(),
+  geoLatitude: decimal("geoLatitude", { precision: 10, scale: 7 }),
+  geoLongitude: decimal("geoLongitude", { precision: 10, scale: 7 }),
+  // OCR / IA (apenas para nota_fiscal)
+  ocrExtractedData: json("ocrExtractedData"), // dados extraídos via LLM
+  ocrProcessedAt: timestamp("ocrProcessedAt"),
+  // Evidência imutável — não pode ser editada após upload
+  isLocked: boolean("isLocked").default(false).notNull(),
+  lockedAt: timestamp("lockedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => ({
+  idxEvidenceArt: index("idx_evidence_art").on(t.artServiceId),
+}));
+export type ArtEvidence = typeof artEvidences.$inferSelect;
+export type InsertArtEvidence = typeof artEvidences.$inferInsert;
+
+export const artApprovals = mysqlTable("art_approvals", {
+  id: int("id").autoincrement().primaryKey(),
+  artServiceId: int("artServiceId").references(() => artServices.id).notNull(),
+  reviewerId: int("reviewerId").references(() => saasUsers.id).notNull(),
+  action: mysqlEnum("action", ["aprovado", "reprovado"]).notNull(),
+  notes: text("notes"),
+  reviewedAt: timestamp("reviewedAt").defaultNow().notNull(),
+}, (t) => ({
+  idxApprovalArt: index("idx_approval_art").on(t.artServiceId),
+}));
+export type ArtApproval = typeof artApprovals.$inferSelect;
+export type InsertArtApproval = typeof artApprovals.$inferInsert;

@@ -8,7 +8,8 @@ import {
   Users, DollarSign, Receipt, Brain, Settings, BookOpen,
   ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
   Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle,
-  CreditCard, TrendingUp, ClipboardCheck, HardHat, Landmark, FileSpreadsheet, BarChart3
+  CreditCard, TrendingUp, ClipboardCheck, HardHat, Landmark, FileSpreadsheet, BarChart3,
+  FileBadge2
 } from "lucide-react";
 
 // ─── Navigation Structure (Procore-style grouped) ─────────────────────────────
@@ -50,6 +51,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Propostas", path: "/app/propostas", icon: <FolderOpen size={16} />, adminOnly: true },
       { label: "Clientes", path: "/app/clientes", icon: <Building2 size={16} />, adminOnly: true },
       { label: "Documentos", path: "/app/documentos", icon: <FolderOpen size={16} /> },
+      { label: "ART OPERIS", path: "/app/art", icon: <FileBadge2 size={16} /> },
     ],
   },
   {

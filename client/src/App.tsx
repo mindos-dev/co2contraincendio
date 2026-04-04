@@ -47,6 +47,8 @@ import Manutencoes from "./pages/plataforma/Manutencoes";
 import QRCodes from "./pages/plataforma/QRCodes";
 import Alertas from "./pages/plataforma/Alertas";
 import Documentos from "./pages/plataforma/Documentos";
+import ArtOperis from "./pages/plataforma/ArtOperis";
+import ArtDetalheView, { NovaArt } from "./pages/plataforma/ArtDetalhe";
 import Notificacoes from "./pages/plataforma/Notificacoes";
 import Clientes from "./pages/plataforma/Clientes";
 import Relatorios from "./pages/plataforma/Relatorios";
@@ -153,6 +155,9 @@ function Router() {
       <Route path="/app/qrcodes" component={QRCodes} />
       <Route path="/app/alertas" component={Alertas} />
       <Route path="/app/documentos" component={Documentos} />
+      <Route path="/app/art" component={ArtOperis} />
+      <Route path="/app/art/nova" component={NovaArt} />
+      <Route path="/app/art/:id" component={ArtDetalheView} />
        <Route path="/app/notificacoes" component={Notificacoes} />
       <Route path="/app/clientes" component={Clientes} />
       <Route path="/app/relatorios" component={Relatorios} />

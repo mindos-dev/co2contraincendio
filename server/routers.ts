@@ -10,6 +10,7 @@ import { operisRouter } from "./operis-router";
 import { billingRouter } from "./billing-router";
 import { vistoriaRouter } from "./vistoria-router";
 import { enterpriseRouter } from "./enterprise-router";
+import { artRouter } from "./art-router";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -20,6 +21,7 @@ export const appRouter = router({
   billing: billingRouter,
   vistoria: vistoriaRouter,
   enterprise: enterpriseRouter,
+  art: artRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

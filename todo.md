@@ -527,3 +527,37 @@
 - [x] Corrigir: índices adicionais em tabelas secundárias (documents, checklist_executions) — 5 índices criados
 - [x] Migrar tabela documents para schema atual (companyId, equipmentId, documentNumber, extractedData, processingStatus)
 - [x] Aplicar todas as migrations pendentes (0001-0014)
+
+## Módulo ART OPERIS — Responsabilidade Técnica Digital
+
+### Fase 1 — Schema DB
+- [x] Tabela art_services (cadastro de serviço técnico)
+- [x] Tabela art_evidences (fotos, vídeos, NF-e com hash SHA256)
+- [x] Tabela art_approvals (fluxo técnico → engenheiro)
+- [x] Tabela art_payments (pagamento por ART ou plano premium)
+- [x] Migration SQL aplicada no banco (0015)
+
+### Fase 2 — Backend (server/art-router.ts)
+- [x] Procedure art.create (cadastrar serviço + declaração do técnico)
+- [x] Procedure art.uploadEvidence (upload S3 + hash SHA256 + geolocalização)
+- [x] Procedure art.submit (enviar para aprovação)
+- [x] Procedure art.approve / art.reject (engenheiro aprova/reprova)
+- [x] Procedure art.generatePdf (gerar PDF após aprovação via LLM + S3)
+- [x] Procedure art.checkAccess (verificar plano premium ou pagamento)
+- [x] Procedure art.ocrInvoice (IA: OCR de nota fiscal via invokeLLM)
+- [x] Procedure art.validateAntifraud (IA: validação antifraude)
+- [x] Integrar art-router no server/routers.ts
+
+### Fase 3 — Frontend
+- [x] Página /app/art (listagem de ARTs — ArtOperis.tsx)
+- [x] Página /app/art/nova (cadastro de serviço + upload de evidências — ArtDetalhe.tsx)
+- [x] Página /app/art/:id (detalhes + fluxo de aprovação — ArtDetalhe.tsx)
+- [x] Item "ART OPERIS" no menu lateral do SaasDashboardLayout
+- [x] Paywall para plano não-premium (banner + checkout Stripe)
+
+### Fase 4 — PDF + Stripe
+- [x] Geração de PDF da ART com jsPDF (client-side, exportArtPdf.ts)
+- [x] Botão "Baixar PDF" na página de detalhes (apenas ARTs aprovadas)
+- [x] Checkout Stripe para pagamento por ART (R$ 49,00)
+- [x] Webhook Stripe para liberar ART após pagamento
+- [x] 12 testes unitários: antifraude SHA256, monetização, fluxo de status
