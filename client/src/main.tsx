@@ -11,7 +11,20 @@ import { SaasAuthProvider } from "./contexts/SaasAuthContext";
 import { getSaasToken } from "./hooks/useSaasToken";
 import "./index.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Dados ficam "frescos" por 30s — reduz re-fetches desnecessários em navegação
+      staleTime: 30_000,
+      // Mantém dados em cache por 5 minutos após o componente desmontar
+      gcTime: 5 * 60_000,
+      // Não re-fetcha ao focar na janela (evita requests excessivos em mobile)
+      refetchOnWindowFocus: false,
+      // Retry apenas 1 vez em erros de rede
+      retry: 1,
+    },
+  },
+});
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;

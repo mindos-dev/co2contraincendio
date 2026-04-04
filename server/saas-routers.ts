@@ -234,7 +234,8 @@ export const saasRouter = router({
         const token = randomBytes(32).toString("hex");
         const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
         await setResetToken(user.id, token, expiry);
-        const resetUrl = `https://co2contra.com/app/redefinir-senha?token=${token}`;
+        const appUrl = process.env.APP_URL ?? "https://co2contra.com";
+        const resetUrl = `${appUrl}/app/redefinir-senha?token=${token}`;
         const html = `
           <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">
             <div style="background:#111;padding:24px;text-align:center;">
@@ -575,11 +576,17 @@ export const saasRouter = router({
         companyId: z.number().optional(),
         equipmentId: z.number().optional(),
         files: z.array(z.object({
-          name: z.string(),
-          base64: z.string(),
-          mimeType: z.string(),
+          name: z.string().max(255),
+          base64: z.string().max(20_000_000, "Arquivo muito grande (máx 15MB)"), // ~15MB base64
+          mimeType: z.enum([
+            "image/jpeg", "image/png", "image/webp", "image/gif",
+            "application/pdf",
+            "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "text/plain", "text/csv",
+          ], { message: "Tipo de arquivo não permitido." }),
           type: z.enum(["nota_fiscal", "ordem_servico", "relatorio", "laudo", "art", "outro"]),
-        })),
+        })).max(10, "Máximo de 10 arquivos por upload"),
       }))
       .mutation(async ({ input }) => {
         const results = [];
@@ -1079,13 +1086,19 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
     /** Upload de foto de perfil */
     uploadAvatar: saasAuthProcedure
       .input(z.object({
-        fileBase64: z.string(),
-        mimeType: z.string().default("image/jpeg"),
+        fileBase64: z.string().max(5_000_000, "Imagem muito grande (máx 3.5MB)"), // ~3.5MB base64
+        mimeType: z.enum(["image/jpeg", "image/png", "image/webp"], {
+          message: "Tipo de arquivo inválido. Use JPEG, PNG ou WebP.",
+        }).default("image/jpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
         const { saasUser } = ctx as { saasUser: { userId: number } };
         const buffer = Buffer.from(input.fileBase64, "base64");
-        const ext = input.mimeType.includes("png") ? "png" : "jpg";
+        // Validação adicional: máx 3.5MB após decodificação
+        if (buffer.length > 3_670_016) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Imagem muito grande (máx 3.5MB)" });
+        }
+        const ext = input.mimeType.includes("png") ? "png" : input.mimeType.includes("webp") ? "webp" : "jpg";
         const key = `avatars/user-${saasUser.userId}-${Date.now()}.${ext}`;
         const { url } = await storagePut(key, buffer, input.mimeType);
         await updateSaasUserProfile(saasUser.userId, { avatarUrl: url });

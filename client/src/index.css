@@ -268,3 +268,50 @@
     .timeline-line { display: none; }
   }
 }
+
+/* ─── Mobile-first: tabelas responsivas e touch-friendly ─────────────────── */
+@layer utilities {
+  /* Wrapper para tabelas em mobile — scroll horizontal */
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Tabela padrão OPERIS */
+  .saas-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .saas-table th,
+  .saas-table td {
+    padding: 0.625rem 0.875rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+  }
+
+  /* Scroll horizontal automático em contêineres de tabela */
+  div:has(> table[style]) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Botões touch-friendly em mobile */
+  @media (max-width: 640px) {
+    button, [role="button"] {
+      min-height: 44px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="tel"],
+    select,
+    textarea {
+      font-size: 16px; /* Evita zoom automático no iOS */
+    }
+  }
+}

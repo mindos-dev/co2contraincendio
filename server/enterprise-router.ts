@@ -51,7 +51,7 @@ const obrasRouter = router({
       const conditions = [eq(obras.companyId, companyId)];
       if (input?.status) conditions.push(eq(obras.status, input.status));
 
-      return db.select().from(obras).where(and(...conditions)).orderBy(desc(obras.createdAt));
+      return db.select().from(obras).where(and(...conditions)).orderBy(desc(obras.createdAt)).limit(500);
     }),
 
   get: protectedProcedure
@@ -219,7 +219,8 @@ const custosRouter = router({
 
       return db.select().from(lancamentosCusto)
         .where(and(...conditions))
-        .orderBy(desc(lancamentosCusto.createdAt));
+        .orderBy(desc(lancamentosCusto.createdAt))
+        .limit(500);
     }),
 
   create: protectedProcedure
@@ -355,7 +356,8 @@ const financeiroRouter = router({
 
       return db.select().from(contasPagar)
         .where(and(...conditions))
-        .orderBy(contasPagar.vencimento);
+        .orderBy(contasPagar.vencimento)
+        .limit(500);
     }),
 
   contasPagarCreate: protectedProcedure
@@ -425,7 +427,8 @@ const financeiroRouter = router({
 
       return db.select().from(contasReceber)
         .where(and(...conditions))
-        .orderBy(contasReceber.vencimento);
+        .orderBy(contasReceber.vencimento)
+        .limit(500);
     }),
 
   contasReceberCreate: protectedProcedure
@@ -619,7 +622,8 @@ const maoDeObraRouter = router({
 
       return db.select().from(registrosPonto)
         .where(and(...conditions))
-        .orderBy(desc(registrosPonto.data));
+        .orderBy(desc(registrosPonto.data))
+        .limit(500);
     }),
 });
 
@@ -639,7 +643,8 @@ const nfeRouter = router({
 
       return db.select().from(notasFiscais)
         .where(and(...conditions))
-        .orderBy(desc(notasFiscais.createdAt));
+        .orderBy(desc(notasFiscais.createdAt))
+        .limit(500);
     }),
 
   importar: protectedProcedure

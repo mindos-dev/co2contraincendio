@@ -18,11 +18,14 @@ export default function QRCodes() {
   const { data, isLoading } = trpc.saas.equipment.list.useQuery({ companyId, limit: 200 });
   const items: Equip[] = (data?.items ?? []) as Equip[];
 
+  const [batchError, setBatchError] = useState<string | null>(null);
   const generateQr = trpc.saas.equipment.generateQr.useMutation({
     onSuccess: () => utils.saas.equipment.list.invalidate(),
+    // Erro individual tratado no try/catch do handleGenerateSingle
   });
   const generateBatch = trpc.saas.equipment.generateQrBatch.useMutation({
-    onSuccess: () => utils.saas.equipment.list.invalidate(),
+    onSuccess: () => { setBatchError(null); utils.saas.equipment.list.invalidate(); },
+    onError: (e: { message: string }) => setBatchError(e.message),
   });
 
   const filtered = search
@@ -48,7 +51,7 @@ export default function QRCodes() {
 
   const handleGenerateAll = async () => {
     if (!companyId) return;
-    try { await generateBatch.mutateAsync({ companyId, baseUrl }); } catch (err) { console.error(err); }
+    try { await generateBatch.mutateAsync({ companyId, baseUrl }); } catch (err) { console.error("[QRCodes] Erro ao gerar lote:", err); }
   };
 
   const printAll = () => {
@@ -95,6 +98,11 @@ export default function QRCodes() {
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por código ou localização..." style={{ padding: "8px 12px", border: "1px solid #D8D8D8", fontSize: 13, width: "100%", boxSizing: "border-box", outline: "none" }} />
         </div>
 
+        {batchError && (
+          <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", padding: "10px 16px", marginBottom: 12, fontSize: 13, color: "#B91C1C", display: "flex", alignItems: "center", gap: 8 }}>
+            <AlertCircle size={14} /> Erro ao gerar QR Codes em lote: {batchError}
+          </div>
+        )}
         {isLoading ? (
           <div style={{ textAlign: "center", padding: 40, color: "#8A8A8A" }}>Carregando...</div>
         ) : !filtered.length ? (

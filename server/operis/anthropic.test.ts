@@ -13,7 +13,9 @@ describe("Anthropic claude-3-haiku — OPERIS IA", () => {
     expect(key?.startsWith("sk-ant-"), "Chave deve começar com sk-ant-").toBe(true);
   });
 
-  it("deve conectar ao claude-3-haiku e receber resposta", async () => {
+  // Teste de integração real — requer acesso à internet e chave válida
+  // Execute manualmente: pnpm test -- --run server/operis/anthropic.test.ts
+  it.skip("deve conectar ao claude-3-haiku e receber resposta", async () => {
     const ok = await validateAnthropicConnection();
     expect(ok, "claude-3-haiku não respondeu — verifique a ANTHROPIC_API_KEY").toBe(true);
   }, 30_000);

@@ -85,7 +85,7 @@ export async function updateSaasUserProfile(
   const db = await getDb();
   if (!db) throw new Error("DB unavailable");
   await db.update(saasUsers).set(data).where(eq(saasUsers.id, id));
-  const rows = await db.select().from(saasUsers).where(eq(saasUsers.id, id));
+  const rows = await db.select(safeUserFields).from(saasUsers).where(eq(saasUsers.id, id));
   return rows[0] ?? null;
 }
 
@@ -95,16 +95,33 @@ export async function createSaasUser(data: InsertSaasUser) {
   return db.insert(saasUsers).values(data);
 }
 
+// Campos seguros para retornar ao frontend (sem passwordHash, resetToken, resetTokenExpiry)
+const safeUserFields = {
+  id: saasUsers.id,
+  companyId: saasUsers.companyId,
+  name: saasUsers.name,
+  email: saasUsers.email,
+  role: saasUsers.role,
+  active: saasUsers.active,
+  cargo: saasUsers.cargo,
+  crea: saasUsers.crea,
+  telefone: saasUsers.telefone,
+  avatarUrl: saasUsers.avatarUrl,
+  bio: saasUsers.bio,
+  createdAt: saasUsers.createdAt,
+  updatedAt: saasUsers.updatedAt,
+};
+
 export async function getUsersByCompany(companyId: number) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(saasUsers).where(eq(saasUsers.companyId, companyId));
+  return db.select(safeUserFields).from(saasUsers).where(eq(saasUsers.companyId, companyId));
 }
 
 export async function getAllSaasUsers() {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(saasUsers).orderBy(desc(saasUsers.createdAt));
+  return db.select(safeUserFields).from(saasUsers).orderBy(desc(saasUsers.createdAt));
 }
 
 // ─── Equipment ───────────────────────────────────────────────────────────────
@@ -230,7 +247,7 @@ export async function createMaintenance(data: InsertMaintenanceRecord) {
   return db.insert(maintenanceRecords).values(data);
 }
 
-export async function getAllMaintenance(companyId?: number) {
+export async function getAllMaintenance(companyId?: number, limit = 200) {
   const db = await getDb();
   if (!db) return [];
   if (companyId) {
@@ -239,9 +256,10 @@ export async function getAllMaintenance(companyId?: number) {
       .from(maintenanceRecords)
       .innerJoin(equipment, eq(maintenanceRecords.equipmentId, equipment.id))
       .where(eq(equipment.companyId, companyId))
-      .orderBy(desc(maintenanceRecords.serviceDate));
+      .orderBy(desc(maintenanceRecords.serviceDate))
+      .limit(limit);
   }
-  return db.select().from(maintenanceRecords).orderBy(desc(maintenanceRecords.serviceDate));
+  return db.select().from(maintenanceRecords).orderBy(desc(maintenanceRecords.serviceDate)).limit(limit);
 }
 
 // ─── Documents ───────────────────────────────────────────────────────────────
@@ -583,7 +601,7 @@ export async function getWorkOrders(companyId?: number, status?: string) {
   if (companyId) conditions.push(eq(workOrders.companyId, companyId));
   if (status) conditions.push(eq(workOrders.status, status as "aberta" | "em_andamento" | "aguardando_peca" | "concluida" | "cancelada"));
   const where = conditions.length > 0 ? and(...conditions) : undefined;
-  return db.select().from(workOrders).where(where).orderBy(desc(workOrders.createdAt));
+  return db.select().from(workOrders).where(where).orderBy(desc(workOrders.createdAt)).limit(500);
 }
 
 export async function getWorkOrderById(id: number) {

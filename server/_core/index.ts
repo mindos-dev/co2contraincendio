@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import compression from "compression";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -37,13 +39,38 @@ async function startServer() {
   // Gzip compression — reduces page size by ~70%, improves Core Web Vitals
   app.use(compression({ level: 6, threshold: 1024 }));
 
-  // SEO & Security headers
+  // Helmet — sets secure HTTP headers (XSS protection, clickjacking, MIME sniffing, HSTS)
+  app.use(helmet({
+    contentSecurityPolicy: false,     // Vite/React handles CSP via meta tags
+    crossOriginEmbedderPolicy: false, // Required for external CDN assets (fonts, images)
+  }));
+
+  // Rate limiting — brute force protection on auth endpoints
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20,                   // max 20 requests per window per IP
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Muitas tentativas. Aguarde 15 minutos antes de tentar novamente." },
+    skip: (req) => process.env.NODE_ENV === "development" && (req.ip === "::1" || req.ip === "127.0.0.1"),
+  });
+  app.use("/api/trpc/saas.auth.login", authLimiter);
+  app.use("/api/trpc/saas.auth.register", authLimiter);
+  app.use("/api/trpc/saas.auth.forgotPassword", authLimiter);
+
+  // General API rate limit — prevents abuse (300 req/min per IP)
+  const apiLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => !req.path.startsWith("/api/"),
+  });
+  app.use("/api/", apiLimiter);
+
+  // Additional security & cache headers
   app.use((_req, res, next) => {
-    res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
     res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-    // Cache-Control: HTML pages — no-cache so bots always get fresh content
     if (res.getHeader("Content-Type")?.toString().includes("text/html")) {
       res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
     }
@@ -53,11 +80,13 @@ async function startServer() {
   // ⚠️ Stripe webhook MUST come BEFORE express.json() to preserve raw body
   registerStripeWebhook(app);
 
-  // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // Body parser — 10mb for regular JSON, 20mb for file uploads (base64 encoded)
+  app.use(express.json({ limit: "20mb" }));
+  app.use(express.urlencoded({ limit: "20mb", extended: true }));
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+
   // tRPC API
   app.use(
     "/api/trpc",
@@ -66,6 +95,7 @@ async function startServer() {
       createContext,
     })
   );
+
   // Google Search Console verification file — must be served BEFORE SPA fallback
   app.get("/googled35a310244e2041d.html", (_req, res) => {
     res.setHeader("Content-Type", "text/html");

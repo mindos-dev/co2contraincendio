@@ -31,25 +31,40 @@ class ErrorBoundary extends Component<Props, State> {
               className="text-destructive mb-6 flex-shrink-0"
             />
 
-            <h2 className="text-xl mb-4">An unexpected error occurred.</h2>
+            <h2 className="text-xl font-semibold mb-2">Ocorreu um erro inesperado</h2>
+            <p className="text-sm text-muted-foreground mb-4 text-center">
+              O sistema encontrou um problema. Recarregue a página ou entre em contato com o suporte se o erro persistir.
+            </p>
 
-            <div className="p-4 w-full rounded bg-muted overflow-auto mb-6">
-              <pre className="text-sm text-muted-foreground whitespace-break-spaces">
-                {this.state.error?.stack}
+            <div className="p-4 w-full rounded bg-muted overflow-auto mb-6 max-h-40">
+              <pre className="text-xs text-muted-foreground whitespace-break-spaces">
+                {this.state.error?.message}
               </pre>
             </div>
 
-            <button
-              onClick={() => window.location.reload()}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-lg",
-                "bg-primary text-primary-foreground",
-                "hover:opacity-90 cursor-pointer"
-              )}
-            >
-              <RotateCcw size={16} />
-              Reload Page
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => this.setState({ hasError: false, error: null })}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-lg",
+                  "border border-border bg-transparent text-foreground",
+                  "hover:bg-muted cursor-pointer"
+                )}
+              >
+                Tentar novamente
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-lg",
+                  "bg-primary text-primary-foreground",
+                  "hover:opacity-90 cursor-pointer"
+                )}
+              >
+                <RotateCcw size={16} />
+                Recarregar Página
+              </button>
+            </div>
           </div>
         </div>
       );

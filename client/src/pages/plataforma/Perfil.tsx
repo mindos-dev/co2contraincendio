@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import SaasDashboardLayout from "@/components/SaasDashboardLayout";
 import { OPERIS_COLORS } from "@/lib/operis-tokens";
@@ -95,18 +95,20 @@ export default function Perfil() {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize form when profile loads
-  if (profile && !formInitialized) {
-    setForm({
-      name: profile.name ?? "",
-      cargo: profile.cargo ?? "",
-      crea: profile.crea ?? "",
-      telefone: profile.telefone ?? "",
-      bio: profile.bio ?? "",
-    });
-    if (profile.avatarUrl) setAvatarPreview(profile.avatarUrl);
-    setFormInitialized(true);
-  }
+  // Initialize form when profile loads — using useEffect to avoid setState in render
+  useEffect(() => {
+    if (profile && !formInitialized) {
+      setForm({
+        name: profile.name ?? "",
+        cargo: profile.cargo ?? "",
+        crea: profile.crea ?? "",
+        telefone: profile.telefone ?? "",
+        bio: profile.bio ?? "",
+      });
+      if (profile.avatarUrl) setAvatarPreview(profile.avatarUrl);
+      setFormInitialized(true);
+    }
+  }, [profile, formInitialized]);
 
   const handleChange = useCallback(
     (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -138,7 +140,11 @@ export default function Perfil() {
     reader.onload = (ev) => {
       const base64 = (ev.target?.result as string).split(",")[1];
       setAvatarPreview(ev.target?.result as string);
-      uploadAvatarMutation.mutate({ fileBase64: base64, mimeType: file.type });
+      const allowedAvatarMimes = ["image/jpeg", "image/png", "image/webp"] as const;
+      const safeMime = (allowedAvatarMimes as readonly string[]).includes(file.type)
+        ? file.type as "image/jpeg" | "image/png" | "image/webp"
+        : "image/jpeg" as const;
+      uploadAvatarMutation.mutate({ fileBase64: base64, mimeType: safeMime });
     };
     reader.readAsDataURL(file);
   };
