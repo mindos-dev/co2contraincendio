@@ -1,4 +1,4 @@
-import { boolean, date, decimal, int, json, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, decimal, index, int, json, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 // ─── Core Auth ───────────────────────────────────────────────────────────────
 
@@ -121,7 +121,12 @@ export const equipment = mysqlTable("equipment", {
   qrCodeUrl: text("qrCodeUrl"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (t) => ({
+  // Índices para acelerar queries filtradas por empresa
+  idxCompanyCreatedAt: index("idx_equipment_company_created").on(t.companyId, t.createdAt),
+  idxCompanyStatus: index("idx_equipment_company_status").on(t.companyId, t.status),
+  idxCompanyNextMaint: index("idx_equipment_company_next_maint").on(t.companyId, t.nextMaintenanceDate),
+}));
 export type Equipment = typeof equipment.$inferSelect;
 export type InsertEquipment = typeof equipment.$inferInsert;
 
@@ -147,7 +152,11 @@ export const maintenanceRecords = mysqlTable("maintenance_records", {
   reportNumber: varchar("reportNumber", { length: 80 }),
   fileUrl: text("fileUrl"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (t) => ({
+  // Índice para acelerar queries de manutenções por equipamento e data
+  idxEquipmentServiceDate: index("idx_maint_equipment_date").on(t.equipmentId, t.serviceDate),
+  idxCreatedAt: index("idx_maint_created").on(t.createdAt),
+}));
 export type MaintenanceRecord = typeof maintenanceRecords.$inferSelect;
 export type InsertMaintenanceRecord = typeof maintenanceRecords.$inferInsert;
 
@@ -372,7 +381,11 @@ export const workOrders = mysqlTable("work_orders", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (t) => ({
+  // Índices para acelerar queries de OS por empresa e status
+  idxCompanyStatus: index("idx_wo_company_status").on(t.companyId, t.status),
+  idxCompanyCreatedAt: index("idx_wo_company_created").on(t.companyId, t.createdAt),
+}));
 export type WorkOrder = typeof workOrders.$inferSelect;
 export type InsertWorkOrder = typeof workOrders.$inferInsert;
 

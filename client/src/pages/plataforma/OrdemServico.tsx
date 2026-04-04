@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { useSaasAuth } from "@/contexts/SaasAuthContext";
 import {
@@ -18,6 +18,13 @@ import { toast } from "sonner";
 type OSStatus = "aberta" | "em_andamento" | "aguardando_peca" | "concluida" | "cancelada";
 type OSPriority = "baixa" | "media" | "alta" | "critica";
 type OSType = "preventiva" | "corretiva" | "inspecao" | "instalacao" | "desativacao";
+type WorkOrder = {
+  id: number; companyId: number; equipmentId: number | null; number: string; title: string;
+  description: string | null; type: OSType; priority: OSPriority; status: OSStatus;
+  assignedToId: number | null; scheduledDate: Date | null; startedAt: Date | null;
+  completedAt: Date | null; estimatedHours: number | null; actualHours: number | null;
+  notes: string | null; createdAt: Date; updatedAt: Date;
+};
 
 const STATUS_CONFIG: Record<OSStatus, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
   aberta:           { label: "Aberta",           color: "#60A5FA", bg: "rgba(96,165,250,0.12)",  icon: <Clock size={14} /> },
@@ -90,10 +97,33 @@ export default function OrdemServico() {
   const [showCreate, setShowCreate] = useState(false);
   const [showDetail, setShowDetail] = useState<number | null>(null);
 
-  const { data: orders = [], refetch } = trpc.saas.workOrders.list.useQuery({
+  const [cursor, setCursor] = useState<number | undefined>(undefined);
+  const [allOrders, setAllOrders] = useState<WorkOrder[]>([]);
+
+  const { data: pageData, refetch } = trpc.saas.workOrders.list.useQuery({
     companyId: saasUser?.companyId ?? undefined,
     status: filterStatus !== "all" ? filterStatus : undefined,
+    cursor,
+    limit: 50,
   });
+
+  useEffect(() => {
+    if (!pageData) return;
+    const items = (pageData.items ?? []) as WorkOrder[];
+    if (!cursor) setAllOrders(items);
+    else setAllOrders(prev => [...prev, ...items]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageData]);
+
+  const orders = allOrders;
+  const nextCursor = pageData?.nextCursor ?? null;
+
+  // Reset cursor when filter changes
+  const handleFilterChange = (status: string) => {
+    setCursor(undefined);
+    setAllOrders([]);
+    setFilterStatus(status);
+  };
 
   const { data: detailOS } = trpc.saas.workOrders.get.useQuery(
     { id: showDetail! },
@@ -189,7 +219,7 @@ export default function OrdemServico() {
           onChange={e => setSearch(e.target.value)}
           style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#E8E8E8", maxWidth: 300 }}
         />
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
+        <Select value={filterStatus} onValueChange={handleFilterChange}>
           <SelectTrigger style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#E8E8E8", width: 180 }}>
             <Filter size={14} style={{ marginRight: 6 }} />
             <SelectValue placeholder="Status" />
@@ -270,6 +300,18 @@ export default function OrdemServico() {
           );
         })}
       </div>
+
+      {/* Carregar mais */}
+      {nextCursor && (
+        <div style={{ textAlign: "center", marginTop: 20 }}>
+          <Button
+            onClick={() => setCursor(nextCursor)}
+            style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.15)", color: "#9CA3AF" }}
+          >
+            Carregar mais OS
+          </Button>
+        </div>
+      )}
 
       {/* Create OS Dialog */}
       <Dialog open={showCreate} onOpenChange={setShowCreate}>

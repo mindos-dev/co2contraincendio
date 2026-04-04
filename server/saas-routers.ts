@@ -504,8 +504,12 @@ export const saasRouter = router({
       .query(({ input }) => getMaintenanceByEquipment(input.equipmentId)),
 
     listAll: saasAuthProcedure
-      .input(z.object({ companyId: z.number().optional() }))
-      .query(({ input }) => getAllMaintenance(input.companyId)),
+      .input(z.object({
+        companyId: z.number().optional(),
+        cursor: z.number().optional(), // id do último item para paginação cursor-based
+        limit: z.number().min(1).max(200).optional(),
+      }))
+      .query(({ input }) => getAllMaintenance(input.companyId, input.limit ?? 50, input.cursor)),
 
     create: saasAuthProcedure
       .input(z.object({
@@ -782,8 +786,13 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
   // ── WORK ORDERS (OS) ──────────────────────────────────────────────────────
   workOrders: router({
     list: saasAuthProcedure
-      .input(z.object({ companyId: z.number().optional(), status: z.string().optional() }))
-      .query(({ input }) => getWorkOrders(input.companyId, input.status)),
+      .input(z.object({
+        companyId: z.number().optional(),
+        status: z.string().optional(),
+        cursor: z.number().optional(), // id do último item para paginação cursor-based
+        limit: z.number().min(1).max(500).optional(),
+      }))
+      .query(({ input }) => getWorkOrders(input.companyId, input.status, input.limit ?? 50, input.cursor)),
 
     get: saasAuthProcedure
       .input(z.object({ id: z.number() }))

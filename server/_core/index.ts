@@ -49,21 +49,46 @@ async function startServer() {
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 20,                   // max 20 requests per window per IP
-    standardHeaders: true,
+    standardHeaders: true,     // Envia RateLimit-* headers (RFC 6585)
     legacyHeaders: false,
     message: { error: "Muitas tentativas. Aguarde 15 minutos antes de tentar novamente." },
+    handler: (_req, res, _next, options) => {
+      res.setHeader("Retry-After", Math.ceil(options.windowMs / 1000));
+      res.status(options.statusCode).json(options.message);
+    },
     skip: (req) => process.env.NODE_ENV === "development" && (req.ip === "::1" || req.ip === "127.0.0.1"),
   });
   app.use("/api/trpc/saas.auth.login", authLimiter);
   app.use("/api/trpc/saas.auth.register", authLimiter);
   app.use("/api/trpc/saas.auth.forgotPassword", authLimiter);
 
-  // General API rate limit — prevents abuse (300 req/min per IP)
-  const apiLimiter = rateLimit({
+  // Upload rate limit — mais restritivo para uploads pesados
+  const uploadLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
-    max: 300,
+    max: 30,             // max 30 uploads/min por IP
     standardHeaders: true,
     legacyHeaders: false,
+    message: { error: "Limite de uploads atingido. Aguarde 1 minuto." },
+    handler: (_req, res, _next, options) => {
+      res.setHeader("Retry-After", Math.ceil(options.windowMs / 1000));
+      res.status(options.statusCode).json(options.message);
+    },
+    skip: (req) => !req.path.startsWith("/api/"),
+  });
+  app.use("/api/trpc/saas.documents.upload", uploadLimiter);
+  app.use("/api/trpc/saas.users.updateAvatar", uploadLimiter);
+
+  // General API rate limit — 500 req/min para suportar 100+ usuários simultâneos
+  const apiLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 500,            // aumentado de 300 para 500 req/min por IP
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Limite de requisições atingido. Tente novamente em instantes." },
+    handler: (_req, res, _next, options) => {
+      res.setHeader("Retry-After", Math.ceil(options.windowMs / 1000));
+      res.status(options.statusCode).json(options.message);
+    },
     skip: (req) => !req.path.startsWith("/api/"),
   });
   app.use("/api/", apiLimiter);

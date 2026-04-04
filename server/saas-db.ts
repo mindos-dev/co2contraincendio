@@ -247,19 +247,41 @@ export async function createMaintenance(data: InsertMaintenanceRecord) {
   return db.insert(maintenanceRecords).values(data);
 }
 
-export async function getAllMaintenance(companyId?: number, limit = 200) {
+export async function getAllMaintenance(
+  companyId?: number,
+  limit = 50,
+  cursor?: number, // id do último item da página anterior
+) {
   const db = await getDb();
-  if (!db) return [];
+  if (!db) return { items: [], nextCursor: null as number | null };
+  const safeLimit = Math.min(limit, 200);
   if (companyId) {
-    return db
+    const conditions: ReturnType<typeof eq>[] = [eq(equipment.companyId, companyId)];
+    if (cursor) conditions.push(lte(maintenanceRecords.id, cursor) as ReturnType<typeof eq>);
+    const rows = await db
       .select({ mr: maintenanceRecords, equip: equipment })
       .from(maintenanceRecords)
       .innerJoin(equipment, eq(maintenanceRecords.equipmentId, equipment.id))
-      .where(eq(equipment.companyId, companyId))
-      .orderBy(desc(maintenanceRecords.serviceDate))
-      .limit(limit);
+      .where(and(...conditions))
+      .orderBy(desc(maintenanceRecords.id))
+      .limit(safeLimit + 1);
+    const hasMore = rows.length > safeLimit;
+    const items = hasMore ? rows.slice(0, safeLimit) : rows;
+    const nextCursor = hasMore ? (items[items.length - 1]?.mr.id ?? null) : null;
+    return { items, nextCursor };
   }
-  return db.select().from(maintenanceRecords).orderBy(desc(maintenanceRecords.serviceDate)).limit(limit);
+  const conditions: ReturnType<typeof eq>[] = [];
+  if (cursor) conditions.push(lte(maintenanceRecords.id, cursor) as ReturnType<typeof eq>);
+  const rows = await db
+    .select()
+    .from(maintenanceRecords)
+    .where(conditions.length ? and(...conditions) : undefined)
+    .orderBy(desc(maintenanceRecords.id))
+    .limit(safeLimit + 1);
+  const hasMore = rows.length > safeLimit;
+  const items = hasMore ? rows.slice(0, safeLimit) : rows;
+  const nextCursor = hasMore ? (items[items.length - 1]?.id ?? null) : null;
+  return { items, nextCursor };
 }
 
 // ─── Documents ───────────────────────────────────────────────────────────────
@@ -594,14 +616,30 @@ export async function clearResetToken(userId: number, newPasswordHash: string) {
 
 // ─── Work Orders (OS) ─────────────────────────────────────────────────────────
 
-export async function getWorkOrders(companyId?: number, status?: string) {
+export async function getWorkOrders(
+  companyId?: number,
+  status?: string,
+  limit = 50,
+  cursor?: number, // id do último item da página anterior
+) {
   const db = await getDb();
-  if (!db) return [];
-  const conditions = [];
+  if (!db) return { items: [], nextCursor: null as number | null };
+  const safeLimit = Math.min(limit, 500);
+  const conditions: ReturnType<typeof eq>[] = [];
   if (companyId) conditions.push(eq(workOrders.companyId, companyId));
   if (status) conditions.push(eq(workOrders.status, status as "aberta" | "em_andamento" | "aguardando_peca" | "concluida" | "cancelada"));
+  if (cursor) conditions.push(lte(workOrders.id, cursor) as ReturnType<typeof eq>);
   const where = conditions.length > 0 ? and(...conditions) : undefined;
-  return db.select().from(workOrders).where(where).orderBy(desc(workOrders.createdAt)).limit(500);
+  const rows = await db
+    .select()
+    .from(workOrders)
+    .where(where)
+    .orderBy(desc(workOrders.id))
+    .limit(safeLimit + 1);
+  const hasMore = rows.length > safeLimit;
+  const items = hasMore ? rows.slice(0, safeLimit) : rows;
+  const nextCursor = hasMore ? (items[items.length - 1]?.id ?? null) : null;
+  return { items, nextCursor };
 }
 
 export async function getWorkOrderById(id: number) {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { useSaasAuth } from "@/contexts/SaasAuthContext";
 import SaasDashboardLayout from "@/components/SaasDashboardLayout";
@@ -7,7 +7,7 @@ const SERVICE_LABELS: Record<string, string> = { recarga: "Recarga", inspecao: "
 const SERVICE_COLORS: Record<string, string> = { recarga: "#2563EB", inspecao: "#16A34A", substituicao: "#7C3AED", instalacao: "#0891B2", teste: "#D97706", outro: "#8A8A8A" };
 const inputStyle: React.CSSProperties = { padding: "8px 10px", border: "1px solid #D8D8D8", background: "#fff", fontSize: 13, color: "#111111", outline: "none", width: "100%", boxSizing: "border-box" };
 const labelStyle: React.CSSProperties = { display: "block", fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", color: "#4A4A4A", marginBottom: 4 };
-type Maint = { id: number; serviceDate: Date | null; serviceType: string | null; description: string | null; technicianName: string | null; nextMaintenanceDate: Date | null; equipment?: { code: string } | null };
+type Maint = { id: number; serviceDate: Date | null; serviceType: string | null; description: string | null; technicianName: string | null; nextMaintenanceDate: Date | null; equipment?: { code: string } | null; equipmentId?: number };
 
 export default function Manutencoes() {
   const { user } = useSaasAuth();
@@ -15,8 +15,26 @@ export default function Manutencoes() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ equipmentId: "", serviceType: "inspecao" as "recarga" | "inspecao" | "substituicao" | "instalacao" | "outro" | "teste", serviceDate: "", description: "", technicianName: "", nextMaintenanceDate: "" });
   const [formError, setFormError] = useState("");
+  const [cursor, setCursor] = useState<number | undefined>(undefined);
+  const [allItems, setAllItems] = useState<Maint[]>([]);
 
-  const { data: maintenances, isLoading, refetch } = trpc.saas.maintenance.listAll.useQuery({ companyId });
+  const { data: pageData, isLoading, refetch } = trpc.saas.maintenance.listAll.useQuery(
+    { companyId, cursor, limit: 50 }
+  );
+
+  useEffect(() => {
+    if (!pageData) return;
+    const newItems = ((pageData.items ?? []) as Array<{ mr?: Maint; equip?: { code: string } } | Maint>).map((row) => {
+      if ('mr' in row && row.mr) return { ...row.mr, equipment: row.equip ?? null } as Maint;
+      return row as Maint;
+    });
+    if (!cursor) setAllItems(newItems);
+    else setAllItems(prev => [...prev, ...newItems]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageData]);
+
+  const maintenances = allItems;
+  const nextCursor = pageData?.nextCursor ?? null;
   const { data: equipList } = trpc.saas.equipment.list.useQuery({ companyId, limit: 200 });
   const createMutation = trpc.saas.maintenance.create.useMutation({
     onSuccess: () => { setShowModal(false); setForm({ equipmentId: "", serviceType: "inspecao", serviceDate: "", description: "", technicianName: "", nextMaintenanceDate: "" }); void refetch(); },
@@ -58,9 +76,9 @@ export default function Manutencoes() {
             <tbody>
               {isLoading ? (
                 <tr><td colSpan={6} style={{ padding: "32px", textAlign: "center", color: "#8A8A8A", fontSize: 13 }}>Carregando...</td></tr>
-              ) : !(maintenances as Maint[] | undefined)?.length ? (
+              ) : !maintenances.length ? (
                 <tr><td colSpan={6} style={{ padding: "32px", textAlign: "center", color: "#8A8A8A", fontSize: 13 }}>Nenhuma manutenção registrada.</td></tr>
-              ) : (maintenances as Maint[]).map((m, i: number) => (
+              ) : maintenances.map((m, i: number) => (
                 <tr key={m.id} style={{ background: i % 2 === 0 ? "#fff" : "#F8F8F8", borderBottom: "1px solid #F2F2F2" }}>
                   <td style={{ padding: "10px 14px", fontWeight: 600, fontSize: 13, color: "#111111" }}>{m.equipment?.code ?? "—"}</td>
                   <td style={{ padding: "10px 14px" }}>
@@ -86,6 +104,18 @@ export default function Manutencoes() {
             </tbody>
           </table>
         </div>
+
+        {nextCursor && (
+          <div style={{ textAlign: "center", marginTop: 16 }}>
+            <button
+              onClick={() => setCursor(nextCursor)}
+              disabled={isLoading}
+              style={{ padding: "9px 24px", background: "transparent", border: "1px solid #D8D8D8", color: "#4A4A4A", fontSize: 12, fontWeight: 600, cursor: "pointer", letterSpacing: "0.04em" }}
+            >
+              {isLoading ? "CARREGANDO..." : "CARREGAR MAIS"}
+            </button>
+          </div>
+        )}
 
         {showModal && (
           <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>

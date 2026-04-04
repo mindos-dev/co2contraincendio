@@ -474,3 +474,48 @@
 - [x] Teste: billing.test.ts — 16 testes cobrindo planos, isSubscriptionActive, webhook e paywall
 - [x] Teste: saas.perfil.update — verifica atualização de perfil (perfil-vistoria.test.ts)
 - [x] Teste: vistoria.create e vistoria.sign — verifica fluxo de vistoria (perfil-vistoria.test.ts)
+
+## Melhorias Pós-Auditoria Big Tech (Abril 2026)
+
+### Paginação cursor-based
+- [ ] Atualizar `getEquipmentFiltered` no `saas-db.ts` para suportar cursor + limit
+- [ ] Atualizar `getAllMaintenance` no `saas-db.ts` para suportar cursor + limit
+- [ ] Atualizar `getWorkOrders` no `saas-db.ts` para suportar cursor + limit
+- [ ] Atualizar procedure `saas.equipment.list` com parâmetros `cursor` e `limit`
+- [ ] Atualizar procedure `saas.maintenance.list` com parâmetros `cursor` e `limit`
+- [ ] Atualizar `Equipamentos.tsx` com botão "Carregar mais" e estado de paginação
+- [ ] Atualizar `Manutencoes.tsx` com botão "Carregar mais" e estado de paginação
+
+### Índices de banco de dados
+- [ ] Adicionar índice composto `(companyId, createdAt)` na tabela `equipment`
+- [ ] Adicionar índice composto `(companyId, serviceDate)` na tabela `maintenanceRecords`
+- [ ] Adicionar índice composto `(companyId, createdAt)` na tabela `workOrders`
+- [ ] Adicionar índice `(companyId, status)` na tabela `equipment`
+- [ ] Gerar migration e aplicar via SQL
+
+### Rate limiter e resiliência
+- [ ] Ajustar rate limiter para 600 req/min em rotas de leitura
+- [ ] Adicionar header `Retry-After` nas respostas 429
+- [ ] Criar script de teste de carga `server/load-test.ts`
+
+## Melhorias Pós-Auditoria Big Tech (Abril 2026)
+
+### Fase 1 — Paginação Cursor-Based
+- [x] Paginação cursor-based em getAllMaintenance (saas-db.ts)
+- [x] Paginação cursor-based em getWorkOrders (saas-db.ts)
+- [x] Procedure maintenance.listAll atualizada com cursor/limit
+- [x] Procedure workOrders.list atualizada com cursor/limit
+- [x] Manutencoes.tsx adaptado para useEffect + botão "Carregar mais"
+- [x] OrdemServico.tsx adaptado para useEffect + botão "Carregar mais"
+
+### Fase 2 — Índices de Banco de Dados
+- [x] Índices compostos adicionados no schema.ts (equipment, maintenanceRecords, workOrders)
+- [x] Migration SQL gerada (0013_chilly_swordsman.sql)
+- [x] 7 índices aplicados no banco de dados (idx_equipment_company_created, idx_equipment_company_status, idx_equipment_company_next_maint, idx_maint_equipment_date, idx_maint_created, idx_wo_company_status, idx_wo_company_created)
+
+### Fase 3 — Rate Limiter e Teste de Carga
+- [x] Rate limiter melhorado: Retry-After header em todos os limiters
+- [x] Upload limiter separado (30 req/min) para endpoints de upload
+- [x] Limite geral aumentado de 300 para 500 req/min
+- [x] Script de teste de carga criado (scripts/load-test.mjs)
+- [x] Teste de carga executado: 100 usuários × 3 req = 100% sucesso, P50=503ms, zero rate limiting
