@@ -71,6 +71,24 @@ export async function getSaasUserById(id: number) {
   return rows[0] ?? null;
 }
 
+export async function updateSaasUserProfile(
+  id: number,
+  data: {
+    name?: string;
+    cargo?: string;
+    crea?: string;
+    telefone?: string;
+    avatarUrl?: string;
+    bio?: string;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.update(saasUsers).set(data).where(eq(saasUsers.id, id));
+  const rows = await db.select().from(saasUsers).where(eq(saasUsers.id, id));
+  return rows[0] ?? null;
+}
+
 export async function createSaasUser(data: InsertSaasUser) {
   const db = await getDb();
   if (!db) throw new Error("DB unavailable");

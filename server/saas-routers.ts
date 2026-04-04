@@ -72,10 +72,11 @@ import {
   createLgpdRequest,
   getLgpdRequestsByUser,
   exportUserData,
+  updateSaasUserProfile,
 } from "./saas-db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
-import { sendAlertNotification, sendEmail, buildWelcomeEmail } from "./notifications";
+import { sendAlertNotification, sendEmail, buildWelcomeEmail, buildOsEmail } from "./notifications";
 import { getSubscriptionsByCompany, sendPushNotification } from "./push-notifications";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "co2-saas-secret-2025";
@@ -759,7 +760,25 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
       .mutation(async ({ input }) => {
         const data: Record<string, unknown> = { ...input };
         if (input.scheduledDate) data.scheduledDate = new Date(input.scheduledDate);
-        return createWorkOrder(data as Parameters<typeof createWorkOrder>[0]);
+        const wo = await createWorkOrder(data as Parameters<typeof createWorkOrder>[0]);
+        // E-mail de confirmação ao técnico responsável (assíncrono)
+        if (input.assignedToId) {
+          getSaasUserById(input.assignedToId).then(async (assignee) => {
+            if (assignee?.email) {
+              const { subject, text, html } = buildOsEmail({
+                name: assignee.name,
+                osNumber: input.number,
+                title: input.title,
+                type: input.type ?? "preventiva",
+                priority: input.priority ?? "media",
+                status: "criada",
+                scheduledDate: input.scheduledDate,
+              });
+              await sendEmail(assignee.email, subject, text, html);
+            }
+          }).catch(() => {});
+        }
+        return wo;
       }),
 
     update: saasAuthProcedure
@@ -778,7 +797,27 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
         if (input.completedAt) upd.completedAt = new Date(input.completedAt);
         if (input.status === "em_andamento") upd.startedAt = new Date();
         if (input.status === "concluida") upd.completedAt = new Date();
-        return updateWorkOrder(id, upd as Parameters<typeof updateWorkOrder>[1]);
+        const updated = await updateWorkOrder(id, upd as Parameters<typeof updateWorkOrder>[1]);
+        // E-mail ao concluir OS (assíncrono)
+        if (input.status === "concluida") {
+          getWorkOrderById(id).then(async (wo) => {
+            if (wo?.assignedToId) {
+              const assignee = await getSaasUserById(wo.assignedToId);
+              if (assignee?.email) {
+                const { subject, text, html } = buildOsEmail({
+                  name: assignee.name,
+                  osNumber: wo.number,
+                  title: wo.title,
+                  type: wo.type ?? "preventiva",
+                  priority: wo.priority ?? "media",
+                  status: "concluida",
+                });
+                await sendEmail(assignee.email, subject, text, html);
+              }
+            }
+          }).catch(() => {});
+        }
+        return updated;
       }),
 
     delete: saasAdminProcedure
@@ -946,6 +985,72 @@ STATUS: OK=valid, NEAR=expires in 30 days, EXPIRED=past date. Missing fields = n
       .query(async ({ ctx }) => {
         const { saasUser } = ctx as { saasUser: { userId: number } };
         return getLgpdRequestsByUser(saasUser.userId);
+      }),
+  }),
+
+  // ─── Perfil do Usuário ──────────────────────────────────────────────────────
+  perfil: router({
+    /** Retorna dados do perfil do usuário autenticado */
+    get: saasAuthProcedure
+      .query(async ({ ctx }) => {
+        const { saasUser } = ctx as { saasUser: { userId: number } };
+        const user = await getSaasUserById(saasUser.userId);
+        if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "Usuário não encontrado" });
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          cargo: user.cargo ?? null,
+          crea: user.crea ?? null,
+          telefone: user.telefone ?? null,
+          avatarUrl: user.avatarUrl ?? null,
+          bio: user.bio ?? null,
+          createdAt: user.createdAt,
+        };
+      }),
+
+    /** Atualiza dados do perfil */
+    update: saasAuthProcedure
+      .input(z.object({
+        name: z.string().min(2).max(200).optional(),
+        cargo: z.string().max(100).optional(),
+        crea: z.string().max(30).optional(),
+        telefone: z.string().max(30).optional(),
+        bio: z.string().max(500).optional(),
+        avatarUrl: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { saasUser } = ctx as { saasUser: { userId: number } };
+        const updated = await updateSaasUserProfile(saasUser.userId, input);
+        if (!updated) throw new TRPCError({ code: "NOT_FOUND", message: "Usuário não encontrado" });
+        return {
+          id: updated.id,
+          name: updated.name,
+          email: updated.email,
+          role: updated.role,
+          cargo: updated.cargo ?? null,
+          crea: updated.crea ?? null,
+          telefone: updated.telefone ?? null,
+          avatarUrl: updated.avatarUrl ?? null,
+          bio: updated.bio ?? null,
+        };
+      }),
+
+    /** Upload de foto de perfil */
+    uploadAvatar: saasAuthProcedure
+      .input(z.object({
+        fileBase64: z.string(),
+        mimeType: z.string().default("image/jpeg"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { saasUser } = ctx as { saasUser: { userId: number } };
+        const buffer = Buffer.from(input.fileBase64, "base64");
+        const ext = input.mimeType.includes("png") ? "png" : "jpg";
+        const key = `avatars/user-${saasUser.userId}-${Date.now()}.${ext}`;
+        const { url } = await storagePut(key, buffer, input.mimeType);
+        await updateSaasUserProfile(saasUser.userId, { avatarUrl: url });
+        return { avatarUrl: url };
       }),
   }),
 });

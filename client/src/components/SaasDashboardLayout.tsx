@@ -6,7 +6,7 @@ import {
   LayoutDashboard, ClipboardList, CheckSquare, Package, FileText,
   Users, DollarSign, Receipt, Brain, Settings, BookOpen,
   ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
-  Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield
+  Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle
 } from "lucide-react";
 
 // ─── Navigation Structure (Procore-style grouped) ─────────────────────────────
@@ -377,25 +377,46 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
                 {user?.role ?? "user"}
               </div>
             </div>
-            <button
-              onClick={logout}
-              title="Sair"
-              style={{
-                background: "transparent",
-                border: "none",
-                color: OPERIS_COLORS.textMuted,
-                cursor: "pointer",
-                padding: "0.25rem",
-                display: "flex",
-                alignItems: "center",
-                flexShrink: 0,
-                transition: "color 0.15s",
-              }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.danger)}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.textMuted)}
-            >
-              <LogOut size={15} />
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.125rem", flexShrink: 0 }}>
+              <button
+                onClick={() => setLocation("/app/perfil")}
+                title="Meu Perfil"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: OPERIS_COLORS.textMuted,
+                  cursor: "pointer",
+                  padding: "0.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  flexShrink: 0,
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.primary)}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.textMuted)}
+              >
+                <UserCircle size={15} />
+              </button>
+              <button
+                onClick={logout}
+                title="Sair"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: OPERIS_COLORS.textMuted,
+                  cursor: "pointer",
+                  padding: "0.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  flexShrink: 0,
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.danger)}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.textMuted)}
+              >
+                <LogOut size={15} />
+              </button>
+            </div>
           </>
         )}
       </div>

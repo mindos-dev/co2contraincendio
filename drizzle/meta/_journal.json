@@ -64,6 +64,13 @@
       "when": 1775245187062,
       "tag": "0008_classy_orphan",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1775269031908,
+      "tag": "0009_sudden_rogue",
+      "breakpoints": true
     }
   ]
 }

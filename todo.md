@@ -394,3 +394,19 @@
 ## Sprint: Redesign Login + Cadastro (Posicionamento Institucional OPERIS)
 - [x] Redesenhar SaasLogin.tsx com painel institucional expandido (texto técnico, credenciais normativas, selo)
 - [x] Redesenhar SaasCadastro.tsx com mesmo padrão visual do login
+
+## Sprint: SMTP Real + E-mail OS + Perfil do Técnico
+
+- [ ] Configurar SMTP real via secrets (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM)
+- [ ] Atualizar helper sendEmail para usar variáveis de ambiente SMTP
+- [ ] Template HTML de e-mail de confirmação de OS (criação e conclusão)
+- [ ] Procedure saas.workOrders.create dispara e-mail de confirmação
+- [ ] Procedure saas.workOrders.updateStatus dispara e-mail ao concluir OS
+- [x] Tabela saas_user_profiles (cargo, crea, bio, avatarUrl) — campos adicionados em saas_users
+- [x] Migration e aplicação da tabela de perfis
+- [x] Procedure saas.perfil.get, saas.perfil.update e saas.perfil.uploadAvatar
+- [x] Página /app/perfil com formulário de edição (nome, cargo, CREA, telefone, bio)
+- [x] Upload de foto de perfil via S3
+- [x] Link "Meu Perfil" no footer do SaasDashboardLayout (botão UserCircle)
+- [x] Rota /app/perfil registrada no App.tsx
+- [ ] Testes vitest para e-mail de OS e perfil

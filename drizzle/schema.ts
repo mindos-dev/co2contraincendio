@@ -61,6 +61,12 @@ export const saasUsers = mysqlTable("saas_users", {
   active: boolean("active").default(true).notNull(),
   resetToken: varchar("resetToken", { length: 255 }),
   resetTokenExpiry: timestamp("resetTokenExpiry"),
+  // Perfil profissional
+  cargo: varchar("cargo", { length: 100 }),
+  crea: varchar("crea", { length: 30 }),
+  telefone: varchar("telefone", { length: 30 }),
+  avatarUrl: text("avatarUrl"),
+  bio: text("bio"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

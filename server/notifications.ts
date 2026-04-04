@@ -375,3 +375,90 @@ export function buildWelcomeEmail(name: string): { subject: string; text: string
 </html>`;
   return { subject, text, html };
 }
+
+// ─── E-mail de Confirmação de OS ─────────────────────────────────────────────
+export function buildOsEmail(opts: {
+  name: string;
+  osNumber: string;
+  title: string;
+  type: string;
+  priority: string;
+  status: "criada" | "concluida";
+  scheduledDate?: string;
+}): { subject: string; text: string; html: string } {
+  const statusLabel = opts.status === "criada" ? "criada" : "concluída";
+  const statusColor = opts.status === "criada" ? "#ef4444" : "#22c55e";
+  const priorityMap: Record<string, string> = {
+    baixa: "Baixa", media: "Média", alta: "Alta", critica: "Crítica",
+  };
+  const typeMap: Record<string, string> = {
+    preventiva: "Preventiva", corretiva: "Corretiva", inspecao: "Inspeção",
+    instalacao: "Instalação", desativacao: "Desativação",
+  };
+  const subject = `[OPERIS] OS #${opts.osNumber} ${statusLabel} — ${opts.title}`;
+  const text = [
+    "OPERIS — Plataforma de Inspeção Técnica",
+    "",
+    `Olá, ${opts.name}.`,
+    "",
+    `A Ordem de Serviço abaixo foi ${statusLabel}:`,
+    "",
+    `  OS Nº: ${opts.osNumber}`,
+    `  Título: ${opts.title}`,
+    `  Tipo: ${typeMap[opts.type] ?? opts.type}`,
+    `  Prioridade: ${priorityMap[opts.priority] ?? opts.priority}`,
+    opts.scheduledDate ? `  Data prevista: ${opts.scheduledDate}` : "",
+    "",
+    "Acesse o sistema para acompanhar o andamento:",
+    "https://co2contra.com/app/os",
+    "",
+    "OPERIS — CO₂ Contra Incêndio",
+    "NBR 12615 · NFPA 12 · UL 300",
+  ].filter(Boolean).join("\n");
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Segoe UI',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:32px 0;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+      <tr><td style="background:#0f172a;padding:28px 40px;">
+        <table width="100%"><tr>
+          <td><span style="font-size:22px;font-weight:700;color:#fff;letter-spacing:3px;">OPERIS</span><br>
+          <span style="font-size:11px;color:#94a3b8;letter-spacing:1px;">PLATAFORMA DE INSPEÇÃO TÉCNICA</span></td>
+          <td align="right"><span style="background:${statusColor};color:#fff;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;">OS ${statusLabel}</span></td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="padding:36px 40px;">
+        <p style="margin:0 0 8px;color:#64748b;font-size:14px;">Olá, <strong>${opts.name}</strong>.</p>
+        <p style="margin:0 0 28px;color:#334155;font-size:15px;">A Ordem de Serviço abaixo foi <strong>${statusLabel}</strong>.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:28px;">
+          <tr><td style="padding:20px 24px;">
+            <p style="margin:0 0 16px;font-size:13px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Detalhes da OS</p>
+            <table width="100%">
+              <tr><td style="padding:6px 0;color:#64748b;font-size:13px;width:140px;">Número</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-weight:600;">#${opts.osNumber}</td></tr>
+              <tr><td style="padding:6px 0;color:#64748b;font-size:13px;">Título</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${opts.title}</td></tr>
+              <tr><td style="padding:6px 0;color:#64748b;font-size:13px;">Tipo</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${typeMap[opts.type] ?? opts.type}</td></tr>
+              <tr><td style="padding:6px 0;color:#64748b;font-size:13px;">Prioridade</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${priorityMap[opts.priority] ?? opts.priority}</td></tr>
+            </table>
+          </td></tr>
+        </table>
+        <table width="100%"><tr><td align="center">
+          <a href="https://co2contra.com/app/os" style="display:inline-block;background:#ef4444;color:#fff;text-decoration:none;padding:12px 32px;border-radius:6px;font-size:14px;font-weight:600;">Acessar o OPERIS</a>
+        </td></tr></table>
+      </td></tr>
+      <tr><td style="background:#0f172a;padding:20px 40px;">
+        <table width="100%"><tr>
+          <td><span style="color:#94a3b8;font-size:11px;">OPERIS · CO₂ Contra Incêndio</span></td>
+          <td align="right"><span style="color:#475569;font-size:10px;letter-spacing:1px;">NBR 12615 · NFPA 12 · UL 300</span></td>
+        </tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+
+  return { subject, text, html };
+}

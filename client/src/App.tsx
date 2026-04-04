@@ -59,6 +59,7 @@ import Financeiro from "./pages/plataforma/Financeiro";
 import NFSe from "./pages/plataforma/NFSe";
 import Onboarding from "./pages/plataforma/Onboarding";
 import Configuracoes from "./pages/plataforma/Configuracoes";
+import Perfil from "./pages/plataforma/Perfil";
 // Mobile Field Inspection
 import MobileDashboard from "./pages/mobile/MobileDashboard";
 import NovaVistoria from "./pages/mobile/NovaVistoria";
@@ -150,6 +151,7 @@ function Router() {
       <Route path="/app/nfse" component={NFSe} />
       <Route path="/app/onboarding" component={Onboarding} />
       <Route path="/app/configuracoes" component={Configuracoes} />
+      <Route path="/app/perfil" component={Perfil} />
       {/* Mobile Field Inspection */}
       <Route path="/mobile" component={MobileDashboard} />
       <Route path="/mobile/nova-vistoria" component={NovaVistoria} />
