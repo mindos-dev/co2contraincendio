@@ -49,6 +49,7 @@ import Alertas from "./pages/plataforma/Alertas";
 import Documentos from "./pages/plataforma/Documentos";
 import ArtOperis from "./pages/plataforma/ArtOperis";
 import ArtDetalheView, { NovaArt } from "./pages/plataforma/ArtDetalhe";
+import ArtAprovacoes from "./pages/plataforma/ArtAprovacoes";
 import Notificacoes from "./pages/plataforma/Notificacoes";
 import Clientes from "./pages/plataforma/Clientes";
 import Relatorios from "./pages/plataforma/Relatorios";
@@ -157,6 +158,7 @@ function Router() {
       <Route path="/app/documentos" component={Documentos} />
       <Route path="/app/art" component={ArtOperis} />
       <Route path="/app/art/nova" component={NovaArt} />
+      <Route path="/app/art/aprovacoes" component={ArtAprovacoes} />
       <Route path="/app/art/:id" component={ArtDetalheView} />
        <Route path="/app/notificacoes" component={Notificacoes} />
       <Route path="/app/clientes" component={Clientes} />

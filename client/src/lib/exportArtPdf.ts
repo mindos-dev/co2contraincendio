@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 
 export interface ArtPdfData {
   id: number;
+  artNumber?: string | null;
   serviceType: string;
   description: string;
   clientName: string;
@@ -110,7 +111,8 @@ export function exportArtPdf(data: ArtPdfData): void {
 
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
-  pdf.text(`ART #${data.id}`, pageWidth - margin, 12, { align: "right" });
+  const artLabel = data.artNumber ?? `ART #${data.id}`;
+  pdf.text(artLabel, pageWidth - margin, 12, { align: "right" });
 
   pdf.setFontSize(8);
   pdf.setFont("helvetica", "normal");
@@ -351,7 +353,7 @@ export function exportArtPdf(data: ArtPdfData): void {
     pdf.setFontSize(7);
     pdf.setFont("helvetica", "normal");
     pdf.text(
-      `OPERIS — ART #${data.id} · CO2 Contra Incêndio Ltda · Gerado em ${new Date().toLocaleDateString("pt-BR")}`,
+      `OPERIS — ${data.artNumber ?? `ART #${data.id}`} · CO2 Contra Incêndio Ltda · Gerado em ${new Date().toLocaleDateString("pt-BR")}`,
       margin,
       pageHeight - 4
     );

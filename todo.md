@@ -561,3 +561,31 @@
 - [x] Checkout Stripe para pagamento por ART (R$ 49,00)
 - [x] Webhook Stripe para liberar ART após pagamento
 - [x] 12 testes unitários: antifraude SHA256, monetização, fluxo de status
+
+## Sugestões Pós-ART OPERIS (Abril 2026)
+
+### Painel do Engenheiro Aprovador
+- [ ] Backend: procedure art.listPendingApprovals (todas as ARTs aguardando de todas as empresas)
+- [ ] Frontend: página /app/art/aprovacoes (adminOnly) com listagem em lote
+- [ ] Frontend: botões aprovar/reprovar em lote com campo de comentário
+- [ ] Menu lateral: item "Aprovações ART" visível apenas para admin
+
+### Notificações Automáticas de ART
+- [ ] Backend: notificar engenheiro (WhatsApp/e-mail) quando ART é submetida
+- [ ] Backend: notificar técnico (WhatsApp/e-mail) quando ART é aprovada/reprovada
+- [ ] Integrar com módulo notifications.ts existente
+
+### Numeração Sequencial ART-YYYY-NNNN
+- [ ] Schema: coluna artNumber (VARCHAR 20) na tabela art_services
+- [ ] Migration SQL aplicada no banco
+- [ ] Backend: gerar número sequencial por ano (ART-2026-0001, ART-2026-0002...)
+- [ ] PDF: exibir número oficial no cabeçalho do PDF gerado
+
+### Skill Reutilizável art-operis-module
+- [ ] Inicializar skill com init_skill.py
+- [ ] Escrever SKILL.md com processo completo
+- [ ] Criar references/schema.md com schema das tabelas
+- [ ] Criar references/procedures.md com lista de procedures
+- [ ] Criar references/frontend-patterns.md com padrões de UI
+- [ ] Validar com quick_validate.py
+- [ ] Entregar ao usuário

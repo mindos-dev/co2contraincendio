@@ -856,6 +856,8 @@ export const artServices = mysqlTable("art_services", {
   ]).default("pending_payment").notNull(),
   stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 100 }),
   paidAt: timestamp("paidAt"),
+  // Número oficial sequencial (ART-YYYY-NNNN)
+  artNumber: varchar("artNumber", { length: 20 }),
   // Auditoria
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -863,6 +865,7 @@ export const artServices = mysqlTable("art_services", {
   idxArtCompanyStatus: index("idx_art_company_status").on(t.companyId, t.status),
   idxArtTechnician: index("idx_art_technician").on(t.technicianId),
   idxArtCreated: index("idx_art_created").on(t.companyId, t.createdAt),
+  idxArtNumber: index("idx_art_number").on(t.artNumber),
 }));
 export type ArtService = typeof artServices.$inferSelect;
 export type InsertArtService = typeof artServices.$inferInsert;

@@ -16,6 +16,8 @@ import {
   getArtServicesByCompany,
   getArtServicesByTechnician,
   getPendingApprovalArts,
+  getAllPendingApprovalArts,
+  generateArtNumber,
   updateArtService,
   createArtEvidence,
   getEvidencesByArtService,
@@ -24,6 +26,7 @@ import {
   createArtApproval,
   getApprovalsByArtService,
 } from "./art-db";
+import { notifyOwner } from "./_core/notification";
 
 // ─── Tipos internos ──────────────────────────────────────────────────────────
 
@@ -335,6 +338,12 @@ export const artRouter = router({
         updatedAt: serverTimestamp,
       });
 
+      // Notificar engenheiro/admin que há ART aguardando aprovação
+      void notifyOwner({
+        title: "📌 ART OPERIS aguardando aprovação",
+        content: `Técnico (ID ${saasUser.userId}) submeteu ART #${input.artServiceId} para aprovação.\nTipo: ${art.serviceType.toUpperCase()} | Cliente: ${art.clientName}\nHash: ${submissionHash.slice(0, 16)}...`,
+      }).catch(() => {});
+
       return { submissionHash, submittedAt: serverTimestamp.toISOString() };
     }),
 
@@ -367,29 +376,54 @@ export const artRouter = router({
         notes: input.notes ?? null,
       });
 
+      // Gerar número sequencial ART-YYYY-NNNN ao aprovar
+      let artNumber: string | undefined;
+      if (input.action === "aprovado") {
+        artNumber = await generateArtNumber(now.getFullYear());
+      }
+
       // Atualizar status da ART
       await updateArtService(input.artServiceId, {
         status: input.action,
         engineerId: saasUser.userId,
         approvedAt: input.action === "aprovado" ? now : null,
         rejectionReason: input.action === "reprovado" ? (input.notes ?? null) : null,
+        ...(artNumber ? { artNumber } : {}),
         updatedAt: now,
       });
+
+      // Notificar técnico sobre resultado da aprovação
+      const emoji = input.action === "aprovado" ? "✅" : "❌";
+      const statusText = input.action === "aprovado" ? "APROVADA" : "REPROVADA";
+      void notifyOwner({
+        title: `${emoji} ART OPERIS ${statusText}`,
+        content: `ART #${input.artServiceId}${artNumber ? ` (${artNumber})` : ""} foi ${statusText} pelo engenheiro (ID ${saasUser.userId}).${input.notes ? `\nMotivo: ${input.notes}` : ""}`,
+      }).catch(() => {});
 
       // Se aprovado, gerar PDF (assíncrono)
       if (input.action === "aprovado") {
         void generateArtPdf(input.artServiceId);
       }
 
-      return { success: true, action: input.action };
+      return { success: true, action: input.action, artNumber };
     }),
 
-  // ── 8. Listar ARTs pendentes de aprovação ─────────────────────────────────
+  // ── 8. Listar ARTs pendentes de aprovação (empresa) ─────────────────────────
   pendingApproval: saasAdminProcedure
     .query(async ({ ctx }) => {
       const { saasUser } = ctx as SaasCtx;
       if (!saasUser.companyId) return [];
       return getPendingApprovalArts(saasUser.companyId);
+    }),
+
+  // ── 8b. Listar TODAS as ARTs pendentes (superadmin — painel global) ─────────
+  allPendingApprovals: saasAdminProcedure
+    .query(async ({ ctx }) => {
+      const { saasUser } = ctx as SaasCtx;
+      if (saasUser.role !== "superadmin" && saasUser.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito a administradores" });
+      }
+      return getAllPendingApprovalArts();
     }),
 
   // ── 9. Criar checkout Stripe para pagamento por ART ───────────────────────

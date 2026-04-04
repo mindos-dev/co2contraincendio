@@ -52,6 +52,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Clientes", path: "/app/clientes", icon: <Building2 size={16} />, adminOnly: true },
       { label: "Documentos", path: "/app/documentos", icon: <FolderOpen size={16} /> },
       { label: "ART OPERIS", path: "/app/art", icon: <FileBadge2 size={16} /> },
+      { label: "Aprovações ART", path: "/app/art/aprovacoes", icon: <FileBadge2 size={16} />, adminOnly: true },
     ],
   },
   {

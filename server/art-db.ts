@@ -89,6 +89,31 @@ export async function getPendingApprovalArts(companyId: number): Promise<ArtServ
     .limit(100);
 }
 
+/** Admin global: todas as ARTs aguardando aprovação (todas as empresas) */
+export async function getAllPendingApprovalArts(): Promise<ArtService[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(artServices)
+    .where(eq(artServices.status, "aguardando_aprovacao"))
+    .orderBy(desc(artServices.createdAt))
+    .limit(200);
+}
+
+/** Gera próximo número sequencial ART-YYYY-NNNN */
+export async function generateArtNumber(year: number): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const prefix = `ART-${year}-`;
+  const [row] = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(artServices)
+    .where(sql`${artServices.artNumber} LIKE ${prefix + "%"}`);
+  const next = (Number(row?.count ?? 0) + 1).toString().padStart(4, "0");
+  return `${prefix}${next}`;
+}
+
 export async function updateArtService(
   id: number,
   data: Partial<Pick<ArtService,
@@ -108,6 +133,7 @@ export async function updateArtService(
     | "stripePaymentIntentId"
     | "paidAt"
     | "updatedAt"
+    | "artNumber"
   >>
 ): Promise<void> {
   const db = await getDb();
