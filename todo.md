@@ -410,3 +410,11 @@
 - [x] Link "Meu Perfil" no footer do SaasDashboardLayout (botão UserCircle)
 - [x] Rota /app/perfil registrada no App.tsx
 - [ ] Testes vitest para e-mail de OS e perfil
+
+## REGRA INEGOCIÁVEL — OPERIS visível em todas as páginas do site
+
+- [x] Criar componente OperisFloatingCTA.tsx — botão flutuante fixo (bottom-left) com escudo OPERIS + texto em todas as páginas públicas
+- [x] Adicionar strip OPERIS no top bar do Navbar (link "OPERIS IA — Acessar Plataforma" destacado em vermelho)
+- [x] Melhorar link OPERIS no desktop nav com fundo vermelho sutil
+- [x] Melhorar link OPERIS no menu mobile com card destacado
+- [x] OperisFloatingCTA visível em TODAS as rotas públicas via Layout.tsx

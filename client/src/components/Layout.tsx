@@ -1,5 +1,6 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import OperisFloatingCTA from "./OperisFloatingCTA";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,6 +8,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Navbar />
       <main style={{ flex: 1 }}>{children}</main>
       <Footer />
+
+      {/* OPERIS IA float — visível em todas as páginas (regra inegociável) */}
+      <OperisFloatingCTA />
 
       {/* WhatsApp float */}
       <a

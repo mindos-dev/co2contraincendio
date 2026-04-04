@@ -37,18 +37,41 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top bar */}
-      <div style={{ background: "var(--red)" }} className="hidden md:block">
+      {/* Top bar com OPERIS em destaque */}
+      <div style={{ background: "var(--gray-900)", borderBottom: "1px solid rgba(200,16,46,0.3)" }} className="hidden md:block">
         <div className="container flex justify-between items-center py-1.5">
-          <span style={{ color: "#fff", fontSize: "0.75rem", letterSpacing: "0.04em" }}>
+          <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.7rem", letterSpacing: "0.04em" }}>
             Atendemos Belo Horizonte, Minas Gerais e todo o Brasil
           </span>
-          <a
-            href="tel:+5531997383115"
-            style={{ color: "#fff", fontSize: "0.75rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.35rem" }}
-          >
-            <Phone size={12} /> (31) 9 9738-3115
-          </a>
+          <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+            <Link
+              href="/app/login"
+              style={{
+                display: "flex", alignItems: "center", gap: "0.45rem",
+                color: "#fff", fontSize: "0.6875rem", fontWeight: 700,
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                textDecoration: "none",
+                padding: "0.2rem 0.85rem 0.2rem 0.6rem",
+                background: "rgba(200,16,46,0.18)",
+                border: "1px solid rgba(200,16,46,0.45)",
+                transition: "background 0.2s, border-color 0.2s",
+              }}
+              onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "rgba(200,16,46,0.38)"; el.style.borderColor = "#C8102E"; }}
+              onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "rgba(200,16,46,0.18)"; el.style.borderColor = "rgba(200,16,46,0.45)"; }}
+            >
+              <svg width="13" height="14" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 4 L92 22 L92 58 C92 80 72 98 50 106 C28 98 8 80 8 58 L8 22 Z" fill="#C8102E" />
+                <text x="50" y="68" textAnchor="middle" fontFamily="'Barlow Condensed', sans-serif" fontWeight="900" fontSize="38" fill="#fff">OP</text>
+              </svg>
+              OPERIS IA &mdash; Acessar Plataforma
+            </Link>
+            <a
+              href="tel:+5531997383115"
+              style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.7rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.35rem" }}
+            >
+              <Phone size={11} /> (31) 9 9738-3115
+            </a>
+          </div>
         </div>
       </div>
 
@@ -190,13 +213,17 @@ export default function Navbar() {
             <Link
               href="/app/login"
               style={{
-                padding: "0 0.75rem", height: "68px",
+                padding: "0 0.875rem", height: "68px",
                 display: "flex", alignItems: "center",
                 textDecoration: "none",
-                borderLeft: "1px solid var(--gray-700)",
-                marginLeft: "0.25rem",
+                borderLeft: "2px solid rgba(200,16,46,0.4)",
+                marginLeft: "0.375rem",
+                background: "rgba(200,16,46,0.07)",
+                transition: "background 0.2s",
               }}
               title="Acessar OPERIS IA"
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,16,46,0.15)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,16,46,0.07)"; }}
             >
               <OperisLogo size="xs" dark={false} />
             </Link>
@@ -272,11 +299,24 @@ export default function Navbar() {
                 ))}
               </div>
 
+              {/* OPERIS IA — destaque no menu mobile */}
               <Link
                 href="/app/login"
-                style={{ display: "flex", alignItems: "center", padding: "0.75rem 0", borderBottom: "1px solid var(--gray-700)", textDecoration: "none" }}
+                style={{
+                  display: "flex", alignItems: "center", gap: "0.75rem",
+                  padding: "0.875rem 0.75rem",
+                  borderBottom: "1px solid var(--gray-700)",
+                  textDecoration: "none",
+                  background: "rgba(200,16,46,0.12)",
+                  border: "1px solid rgba(200,16,46,0.3)",
+                  marginTop: "0.75rem",
+                  marginBottom: "0.25rem",
+                }}
               >
                 <OperisLogo size="xs" dark={true} />
+                <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.04em" }}>
+                  Acessar Plataforma &rarr;
+                </span>
               </Link>
               <Link href="/contato" className="btn-primary" style={{ marginTop: "1.25rem", width: "100%", justifyContent: "center" }}>
                 Solicitar Orçamento
