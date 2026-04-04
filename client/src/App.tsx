@@ -75,6 +75,11 @@ import NovaInspecao from "./pages/operis/NovaInspecao";
 import InspecaoDetalhes from "./pages/operis/InspecaoDetalhes";
 import LaudoPublico from "./pages/operis/LaudoPublico";
 import AdminOperis from "./pages/operis/AdminOperis";
+// Vistorias de Imóveis (OPERIS)
+import VistoriasList from "./pages/operis/vistorias/VistoriasList";
+import NovaVistoriaImovel from "./pages/operis/vistorias/NovaVistoria";
+import VistoriaDetalhes from "./pages/operis/vistorias/VistoriaDetalhes";
+import LaudoVistoriaPublico from "./pages/operis/vistorias/LaudoPublico";
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfService from "./pages/legal/TermsOfService";
@@ -170,6 +175,11 @@ function Router() {
       <Route path="/operis/inspecao/:id" component={InspecaoDetalhes} />
       <Route path="/operis/laudo/:slug" component={LaudoPublico} />
       <Route path="/operis/admin" component={AdminOperis} />
+      {/* Vistorias de Imóveis */}
+      <Route path="/operis/vistorias" component={VistoriasList} />
+      <Route path="/operis/vistorias/nova" component={NovaVistoriaImovel} />
+      <Route path="/operis/vistorias/laudo/:slug" component={LaudoVistoriaPublico} />
+      <Route path="/operis/vistorias/:id" component={VistoriaDetalhes} />
       {/* Legal pages */}
       <Route path="/legal/privacy" component={PrivacyPolicy} />
       <Route path="/legal/terms" component={TermsOfService} />

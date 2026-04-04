@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useSaasAuth } from "@/contexts/SaasAuthContext";
+import PaywallGuard from "@/components/PaywallGuard";
 import { OPERIS_COLORS } from "@/lib/operis-tokens";
 import {
   LayoutDashboard, ClipboardList, CheckSquare, Package, FileText,
   Users, DollarSign, Receipt, Brain, Settings, BookOpen,
   ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
   Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle,
-  CreditCard, TrendingUp
+  CreditCard, TrendingUp, ClipboardCheck
 } from "lucide-react";
 
 // ─── Navigation Structure (Procore-style grouped) ─────────────────────────────
@@ -39,6 +40,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Manutenções", path: "/app/manutencoes", icon: <Wrench size={16} /> },
       { label: "QR Codes", path: "/app/qrcodes", icon: <QrCode size={16} /> },
       { label: "Alertas", path: "/app/alertas", icon: <AlertTriangle size={16} /> },
+      { label: "Vistorias de Imóveis", path: "/operis/vistorias", icon: <ClipboardCheck size={16} /> },
     ],
   },
   {
@@ -497,7 +499,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
             </div>
           </div>
           <main style={{ flex: 1, padding: "1.5rem", overflowY: "auto", color: OPERIS_COLORS.textPrimary }}>
-            {children}
+            <PaywallGuard>{children}</PaywallGuard>
           </main>
         </div>
       </div>
@@ -720,7 +722,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
         )}
 
         <main style={{ flex: 1, padding: "1rem", paddingBottom: "5rem", color: OPERIS_COLORS.textPrimary, overflowY: "auto" }}>
-          {children}
+          <PaywallGuard>{children}</PaywallGuard>
         </main>
 
         {/* Mobile Bottom Nav */}

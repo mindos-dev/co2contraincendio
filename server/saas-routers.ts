@@ -367,6 +367,7 @@ export const saasRouter = router({
         pressure: z.string().optional(),
         riskClass: z.string().optional(),
         installationDate: z.string().optional(),
+        lastMaintenanceDate: z.string().optional(),
         nextMaintenanceDate: z.string().optional(),
         // Campos ABNT NBR / NFPA 25
         patrimonyTag: z.string().optional(),
@@ -388,6 +389,7 @@ export const saasRouter = router({
       .mutation(async ({ input }) => {
         const data: Record<string, unknown> = { ...input };
         if (input.installationDate) data.installationDate = new Date(input.installationDate);
+        if (input.lastMaintenanceDate) data.lastMaintenanceDate = new Date(input.lastMaintenanceDate);
         if (input.nextMaintenanceDate) data.nextMaintenanceDate = new Date(input.nextMaintenanceDate);
         return createEquipment(data as Parameters<typeof createEquipment>[0]);
       }),

@@ -483,3 +483,83 @@ export const billingInvoices = mysqlTable("billing_invoices", {
 });
 export type BillingInvoice = typeof billingInvoices.$inferSelect;
 export type InsertBillingInvoice = typeof billingInvoices.$inferInsert;
+
+// ─── Vistorias de Imóveis ─────────────────────────────────────────────────────
+
+export const propertyInspections = mysqlTable("property_inspections", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => saasCompanies.id).notNull(),
+  createdByUserId: int("createdByUserId").references(() => saasUsers.id).notNull(),
+  // Tipo de vistoria
+  type: mysqlEnum("type", ["entrada", "saida", "periodica", "devolucao"]).notNull().default("entrada"),
+  status: mysqlEnum("status", ["rascunho", "em_andamento", "aguardando_assinatura", "concluida", "cancelada"]).notNull().default("rascunho"),
+  // Dados do imóvel
+  propertyAddress: text("propertyAddress").notNull(),
+  propertyType: mysqlEnum("propertyType", ["apartamento", "casa", "sala_comercial", "galpao", "outro"]).notNull().default("apartamento"),
+  propertyArea: varchar("propertyArea", { length: 20 }),
+  propertyRegistration: varchar("propertyRegistration", { length: 100 }),
+  // Dados do locador
+  landlordName: varchar("landlordName", { length: 200 }).notNull(),
+  landlordCpfCnpj: varchar("landlordCpfCnpj", { length: 20 }),
+  landlordPhone: varchar("landlordPhone", { length: 30 }),
+  landlordEmail: varchar("landlordEmail", { length: 320 }),
+  // Dados do inquilino
+  tenantName: varchar("tenantName", { length: 200 }).notNull(),
+  tenantCpfCnpj: varchar("tenantCpfCnpj", { length: 20 }),
+  tenantPhone: varchar("tenantPhone", { length: 30 }),
+  tenantEmail: varchar("tenantEmail", { length: 320 }),
+  // Dados do contrato
+  contractNumber: varchar("contractNumber", { length: 100 }),
+  contractStartDate: timestamp("contractStartDate"),
+  contractEndDate: timestamp("contractEndDate"),
+  rentValue: varchar("rentValue", { length: 30 }),
+  // Dados do vistoriador
+  inspectorName: varchar("inspectorName", { length: 200 }),
+  inspectorCrea: varchar("inspectorCrea", { length: 50 }),
+  inspectorCompany: varchar("inspectorCompany", { length: 200 }),
+  // Laudo gerado
+  reportHtml: text("reportHtml"),
+  reportSlug: varchar("reportSlug", { length: 100 }).unique(),
+  // Assinaturas
+  landlordSignatureUrl: text("landlordSignatureUrl"),
+  tenantSignatureUrl: text("tenantSignatureUrl"),
+  inspectorSignatureUrl: text("inspectorSignatureUrl"),
+  landlordSignedAt: timestamp("landlordSignedAt"),
+  tenantSignedAt: timestamp("tenantSignedAt"),
+  inspectorSignedAt: timestamp("inspectorSignedAt"),
+  // Observações gerais
+  generalNotes: text("generalNotes"),
+  inspectedAt: timestamp("inspectedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type PropertyInspection = typeof propertyInspections.$inferSelect;
+export type InsertPropertyInspection = typeof propertyInspections.$inferInsert;
+
+export const inspectionRooms = mysqlTable("inspection_rooms", {
+  id: int("id").autoincrement().primaryKey(),
+  inspectionId: int("inspectionId").references(() => propertyInspections.id).notNull(),
+  name: varchar("name", { length: 100 }).notNull(), // ex: "Sala de Estar", "Quarto 1"
+  type: mysqlEnum("type", ["sala", "quarto", "cozinha", "banheiro", "area_servico", "garagem", "varanda", "corredor", "outro"]).notNull().default("outro"),
+  order: int("order").default(0).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type InspectionRoom = typeof inspectionRooms.$inferSelect;
+export type InsertInspectionRoom = typeof inspectionRooms.$inferInsert;
+
+export const roomItems = mysqlTable("room_items", {
+  id: int("id").autoincrement().primaryKey(),
+  roomId: int("roomId").references(() => inspectionRooms.id).notNull(),
+  inspectionId: int("inspectionId").references(() => propertyInspections.id).notNull(),
+  name: varchar("name", { length: 150 }).notNull(), // ex: "Piso", "Parede", "Janela"
+  category: mysqlEnum("category", ["piso", "parede", "teto", "porta", "janela", "eletrico", "hidraulico", "movel", "equipamento", "outro"]).notNull().default("outro"),
+  condition: mysqlEnum("condition", ["otimo", "bom", "regular", "ruim", "pessimo", "inexistente"]).default("bom"),
+  notes: text("notes"),
+  photoUrl: text("photoUrl"),
+  order: int("order").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type RoomItem = typeof roomItems.$inferSelect;
+export type InsertRoomItem = typeof roomItems.$inferInsert;

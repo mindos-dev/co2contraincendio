@@ -434,3 +434,52 @@
 - [x] Link "Planos & Preços" no top bar do Navbar público
 - [x] Links "Assinatura" e "MRR Dashboard" no grupo Financial do sidebar OPERIS
 - [ ] Testes vitest para webhook e lógica de paywall
+
+## Sprint: Todas as Sugestões — Implementação Completa
+
+### Módulo de Vistorias de Imóveis (dentro do OPERIS)
+- [ ] Schema: tabelas property_inspections, inspection_rooms, room_items, inspection_signatures
+- [ ] Migração SQL aplicada no banco
+- [ ] Backend: procedure vistoria.create (nova vistoria com dados do imóvel e partes)
+- [ ] Backend: procedure vistoria.addRoom (adicionar cômodo com checklist de itens)
+- [ ] Backend: procedure vistoria.updateItem (atualizar estado do item: ótimo/bom/regular/ruim/inexistente)
+- [ ] Backend: procedure vistoria.uploadPhoto (foto por item via S3)
+- [ ] Backend: procedure vistoria.sign (assinatura digital do vistoriador e inquilino)
+- [ ] Backend: procedure vistoria.generateReport (laudo PDF com IA)
+- [ ] Backend: procedure vistoria.list e vistoria.get
+- [ ] Frontend: página /operis/vistorias — listagem de vistorias com status
+- [ ] Frontend: página /operis/vistorias/nova — wizard 4 passos (dados imóvel → cômodos → assinaturas → laudo)
+- [ ] Frontend: página /operis/vistorias/:id — detalhes, checklist por cômodo, fotos, assinatura
+- [ ] Frontend: página /operis/vistorias/:id/laudo — laudo gerado com proteção legal
+- [ ] Link "Vistorias" no menu lateral do OPERIS (SaasDashboardLayout)
+- [ ] Rota /operis/vistorias registrada no App.tsx
+
+### Cadastro de Equipamentos Expandido (ABNT NBR Completo)
+- [ ] Schema: adicionar campos norma_abnt, peso_kg, capacidade_agente, tag_patrimonio, certificacao_inmetro, fabricante, modelo, numero_serie, data_fabricacao, pressao_operacao, temperatura_operacao, classe_fogo, area_cobertura_m2, instrucoes_manutencao
+- [ ] Migração SQL aplicada
+- [ ] Backend: expandir procedure equipment.create e equipment.update com novos campos
+- [ ] Frontend: wizard de cadastro por tipo (Extintor CO2 / Hidrante / Sprinkler / Detector / Painel)
+- [ ] Frontend: cada tipo exibe campos específicos com tooltips explicando a norma
+- [ ] Frontend: ficha técnica completa na página /app/equipamentos/:id
+- [ ] Frontend: badge de conformidade ABNT na listagem
+
+### SMTP Real + E-mails Automáticos de OS
+- [ ] Configurar SMTP real via secrets (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM)
+- [ ] Atualizar helper sendEmail para usar variáveis de ambiente SMTP reais
+- [ ] Template HTML de e-mail de confirmação de abertura de OS
+- [ ] Template HTML de e-mail de conclusão de OS
+- [ ] Procedure saas.workOrders.create dispara e-mail de confirmação ao criar OS
+- [ ] Procedure saas.workOrders.updateStatus dispara e-mail ao concluir OS
+
+### Paywall — Controle de Acesso por Plano
+- [ ] Backend: middleware checkSubscription — verifica assinatura ativa antes de procedures críticas
+- [ ] Backend: procedure billing.checkAccess — retorna plano ativo e limites
+- [ ] Frontend: componente PaywallBanner — exibido quando assinatura vencida/sem plano
+- [ ] Frontend: bloquear acesso ao OPERIS IA (laudos) para plano Basic
+- [ ] Frontend: bloquear acesso ao Dashboard Financeiro para planos Basic e Pro
+
+### Testes Vitest
+- [ ] Teste: billing.createCheckout — verifica criação de sessão Stripe
+- [ ] Teste: billing-webhook — verifica processamento de eventos Stripe
+- [ ] Teste: saas.perfil.update — verifica atualização de perfil
+- [ ] Teste: vistoria.create e vistoria.sign — verifica fluxo de vistoria

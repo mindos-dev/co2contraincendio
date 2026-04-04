@@ -8,6 +8,7 @@ import { saasRouter } from "./saas-routers";
 import { fieldRouter } from "./field-router";
 import { operisRouter } from "./operis-router";
 import { billingRouter } from "./billing-router";
+import { vistoriaRouter } from "./vistoria-router";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -16,6 +17,7 @@ export const appRouter = router({
   field: fieldRouter,
   operis: operisRouter,
   billing: billingRouter,
+  vistoria: vistoriaRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
