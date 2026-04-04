@@ -563,3 +563,234 @@ export const roomItems = mysqlTable("room_items", {
 });
 export type RoomItem = typeof roomItems.$inferSelect;
 export type InsertRoomItem = typeof roomItems.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ERP ENTERPRISE — GESTÃO DE OBRAS, CUSTOS E COMPLIANCE
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── OBRAS (multi-obra, multi-filial) ─────────────────────────────────────────
+export const obras = mysqlTable("obras", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  codigo: varchar("codigo", { length: 30 }).notNull(),
+  nome: varchar("nome", { length: 200 }).notNull(),
+  descricao: text("descricao"),
+  tipo: mysqlEnum("tipo_obra", ["instalacao", "manutencao", "reforma", "inspecao", "projeto", "outro"]).default("instalacao"),
+  status: mysqlEnum("status_obra", ["planejamento", "em_andamento", "pausada", "concluida", "cancelada"]).default("planejamento"),
+  endereco: varchar("endereco", { length: 300 }),
+  cidade: varchar("cidade", { length: 100 }),
+  estado: varchar("estado", { length: 2 }),
+  cep: varchar("cep", { length: 9 }),
+  responsavelId: int("responsavel_id"),
+  clienteId: int("cliente_id"),
+  dataInicioPrevista: date("data_inicio_prevista"),
+  dataFimPrevista: date("data_fim_prevista"),
+  dataInicioReal: date("data_inicio_real"),
+  dataFimReal: date("data_fim_real"),
+  orcamentoTotal: decimal("orcamento_total", { precision: 15, scale: 2 }).default("0"),
+  custoRealTotal: decimal("custo_real_total", { precision: 15, scale: 2 }).default("0"),
+  receitaContratada: decimal("receita_contratada", { precision: 15, scale: 2 }).default("0"),
+  margemPrevista: decimal("margem_prevista", { precision: 5, scale: 2 }),
+  observacoes: text("observacoes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type Obra = typeof obras.$inferSelect;
+export type InsertObra = typeof obras.$inferInsert;
+
+// ── CENTROS DE CUSTO ──────────────────────────────────────────────────────────
+export const centrosCusto = mysqlTable("centros_custo", {
+  id: int("id").primaryKey().autoincrement(),
+  obraId: int("obra_id").notNull(),
+  companyId: int("company_id").notNull(),
+  codigo: varchar("codigo", { length: 20 }).notNull(),
+  nome: varchar("nome", { length: 150 }).notNull(),
+  categoria: mysqlEnum("categoria_cc", ["material", "mao_obra", "equipamento", "subempreiteiro", "indireto", "servico"]).notNull(),
+  orcado: decimal("orcado", { precision: 15, scale: 2 }).default("0"),
+  realizado: decimal("realizado", { precision: 15, scale: 2 }).default("0"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+export type CentroCusto = typeof centrosCusto.$inferSelect;
+export type InsertCentroCusto = typeof centrosCusto.$inferInsert;
+
+// ── LANÇAMENTOS DE CUSTO ──────────────────────────────────────────────────────
+export const lancamentosCusto = mysqlTable("lancamentos_custo", {
+  id: int("id").primaryKey().autoincrement(),
+  obraId: int("obra_id").notNull(),
+  centroCustoId: int("centro_custo_id"),
+  companyId: int("company_id").notNull(),
+  tipo: mysqlEnum("tipo_lancamento", ["material", "mao_obra", "equipamento", "subempreiteiro", "indireto", "servico"]).notNull(),
+  descricao: varchar("descricao", { length: 300 }).notNull(),
+  fornecedor: varchar("fornecedor", { length: 200 }),
+  quantidade: decimal("quantidade", { precision: 10, scale: 3 }).default("1"),
+  unidade: varchar("unidade", { length: 20 }).default("un"),
+  valorUnitario: decimal("valor_unitario", { precision: 15, scale: 2 }).notNull(),
+  valorTotal: decimal("valor_total", { precision: 15, scale: 2 }).notNull(),
+  status: mysqlEnum("status_lancamento", ["pendente", "aprovado", "pago", "cancelado"]).default("pendente"),
+  dataCompetencia: date("data_competencia"),
+  dataPagamento: date("data_pagamento"),
+  nfeId: int("nfe_id"),
+  nfeNumero: varchar("nfe_numero", { length: 50 }),
+  classificadoPorIA: boolean("classificado_por_ia").default(false),
+  confiancaIA: decimal("confianca_ia", { precision: 5, scale: 2 }),
+  lancadoPorId: int("lancado_por_id"),
+  observacoes: text("observacoes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type LancamentoCusto = typeof lancamentosCusto.$inferSelect;
+export type InsertLancamentoCusto = typeof lancamentosCusto.$inferInsert;
+
+// ── MÃO DE OBRA ───────────────────────────────────────────────────────────────
+export const maoDeObra = mysqlTable("mao_de_obra", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  obraId: int("obra_id"),
+  nome: varchar("nome", { length: 150 }).notNull(),
+  cpf: varchar("cpf", { length: 14 }),
+  tipo: mysqlEnum("tipo_mdo", ["funcionario", "terceiro", "empreiteiro"]).default("funcionario"),
+  funcao: varchar("funcao", { length: 100 }),
+  custoDiario: decimal("custo_diario", { precision: 10, scale: 2 }),
+  custoHora: decimal("custo_hora", { precision: 10, scale: 2 }),
+  ativo: boolean("ativo").default(true),
+  dataAdmissao: date("data_admissao"),
+  dataDemissao: date("data_demissao"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+export type MaoDeObra = typeof maoDeObra.$inferSelect;
+export type InsertMaoDeObra = typeof maoDeObra.$inferInsert;
+
+// ── PONTO / PRESENÇA ──────────────────────────────────────────────────────────
+export const registrosPonto = mysqlTable("registros_ponto", {
+  id: int("id").primaryKey().autoincrement(),
+  maoDeObraId: int("mao_de_obra_id").notNull(),
+  obraId: int("obra_id").notNull(),
+  companyId: int("company_id").notNull(),
+  data: date("data").notNull(),
+  entrada: varchar("entrada", { length: 5 }),
+  saida: varchar("saida", { length: 5 }),
+  horasTrabalhadas: decimal("horas_trabalhadas", { precision: 5, scale: 2 }),
+  custoCalculado: decimal("custo_calculado", { precision: 10, scale: 2 }),
+  observacao: varchar("observacao", { length: 300 }),
+  registradoPorId: int("registrado_por_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+export type RegistroPonto = typeof registrosPonto.$inferSelect;
+export type InsertRegistroPonto = typeof registrosPonto.$inferInsert;
+
+// ── CONTAS A PAGAR ────────────────────────────────────────────────────────────
+export const contasPagar = mysqlTable("contas_pagar", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  obraId: int("obra_id"),
+  centroCustoId: int("centro_custo_id"),
+  descricao: varchar("descricao", { length: 300 }).notNull(),
+  fornecedor: varchar("fornecedor", { length: 200 }),
+  categoria: mysqlEnum("categoria_cp", ["material", "servico", "equipamento", "subempreiteiro", "imposto", "outro"]).default("servico"),
+  valor: decimal("valor", { precision: 15, scale: 2 }).notNull(),
+  vencimento: date("vencimento").notNull(),
+  dataPagamento: date("data_pagamento"),
+  status: mysqlEnum("status_cp", ["pendente", "pago", "vencido", "cancelado"]).default("pendente"),
+  nfeId: int("nfe_id"),
+  comprovante: varchar("comprovante", { length: 500 }),
+  observacoes: text("observacoes"),
+  lancadoPorId: int("lancado_por_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type ContaPagar = typeof contasPagar.$inferSelect;
+export type InsertContaPagar = typeof contasPagar.$inferInsert;
+
+// ── CONTAS A RECEBER ──────────────────────────────────────────────────────────
+export const contasReceber = mysqlTable("contas_receber", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  obraId: int("obra_id"),
+  clienteId: int("cliente_id"),
+  descricao: varchar("descricao", { length: 300 }).notNull(),
+  numeroMedicao: varchar("numero_medicao", { length: 50 }),
+  valor: decimal("valor", { precision: 15, scale: 2 }).notNull(),
+  vencimento: date("vencimento").notNull(),
+  dataRecebimento: date("data_recebimento"),
+  status: mysqlEnum("status_cr", ["pendente", "recebido", "vencido", "cancelado"]).default("pendente"),
+  comprovante: varchar("comprovante", { length: 500 }),
+  observacoes: text("observacoes"),
+  lancadoPorId: int("lancado_por_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type ContaReceber = typeof contasReceber.$inferSelect;
+export type InsertContaReceber = typeof contasReceber.$inferInsert;
+
+// ── NF-e / NFS-e ──────────────────────────────────────────────────────────────
+export const notasFiscais = mysqlTable("notas_fiscais", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  obraId: int("obra_id"),
+  tipo: mysqlEnum("tipo_nf", ["nfe", "nfse", "nfce"]).default("nfe"),
+  numero: varchar("numero", { length: 20 }),
+  serie: varchar("serie", { length: 5 }),
+  chaveAcesso: varchar("chave_acesso", { length: 44 }),
+  dataEmissao: date("data_emissao"),
+  emitenteCnpj: varchar("emitente_cnpj", { length: 18 }),
+  emitenteNome: varchar("emitente_nome", { length: 200 }),
+  destinatarioCnpj: varchar("destinatario_cnpj", { length: 18 }),
+  destinatarioNome: varchar("destinatario_nome", { length: 200 }),
+  valorTotal: decimal("valor_total", { precision: 15, scale: 2 }),
+  valorProdutos: decimal("valor_produtos", { precision: 15, scale: 2 }),
+  valorServicos: decimal("valor_servicos", { precision: 15, scale: 2 }),
+  valorImpostos: decimal("valor_impostos", { precision: 15, scale: 2 }),
+  xmlUrl: varchar("xml_url", { length: 500 }),
+  pdfUrl: varchar("pdf_url", { length: 500 }),
+  itensClassificados: json("itens_classificados"),
+  classificadoPorIA: boolean("classificado_por_ia").default(false),
+  obraVinculadaPorIA: boolean("obra_vinculada_por_ia").default(false),
+  status: mysqlEnum("status_nf", ["importada", "processando", "classificada", "vinculada", "erro"]).default("importada"),
+  erroProcessamento: text("erro_processamento"),
+  importadaPorId: int("importada_por_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type NotaFiscal = typeof notasFiscais.$inferSelect;
+export type InsertNotaFiscal = typeof notasFiscais.$inferInsert;
+
+// ── DRE POR OBRA ──────────────────────────────────────────────────────────────
+export const dreObra = mysqlTable("dre_obra", {
+  id: int("id").primaryKey().autoincrement(),
+  obraId: int("obra_id").notNull(),
+  companyId: int("company_id").notNull(),
+  periodo: varchar("periodo", { length: 7 }).notNull(),
+  receitaBruta: decimal("receita_bruta", { precision: 15, scale: 2 }).default("0"),
+  deducoes: decimal("deducoes", { precision: 15, scale: 2 }).default("0"),
+  receitaLiquida: decimal("receita_liquida", { precision: 15, scale: 2 }).default("0"),
+  custoMaterial: decimal("custo_material", { precision: 15, scale: 2 }).default("0"),
+  custoMaoObra: decimal("custo_mao_obra", { precision: 15, scale: 2 }).default("0"),
+  custoEquipamento: decimal("custo_equipamento", { precision: 15, scale: 2 }).default("0"),
+  custoSubempreiteiro: decimal("custo_subempreiteiro", { precision: 15, scale: 2 }).default("0"),
+  custoIndireto: decimal("custo_indireto", { precision: 15, scale: 2 }).default("0"),
+  custoTotal: decimal("custo_total", { precision: 15, scale: 2 }).default("0"),
+  lucroBruto: decimal("lucro_bruto", { precision: 15, scale: 2 }).default("0"),
+  margemBruta: decimal("margem_bruta", { precision: 5, scale: 2 }).default("0"),
+  geradoEm: timestamp("gerado_em").defaultNow(),
+  geradoPorId: int("gerado_por_id"),
+});
+export type DreObra = typeof dreObra.$inferSelect;
+export type InsertDreObra = typeof dreObra.$inferInsert;
+
+// ── AUDIT LOG ─────────────────────────────────────────────────────────────────
+export const auditLog = mysqlTable("audit_log", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id"),
+  userId: int("user_id"),
+  userName: varchar("user_name", { length: 150 }),
+  acao: varchar("acao", { length: 100 }).notNull(),
+  entidade: varchar("entidade", { length: 50 }),
+  entidadeId: int("entidade_id"),
+  dadosAntes: json("dados_antes"),
+  dadosDepois: json("dados_depois"),
+  ip: varchar("ip", { length: 45 }),
+  userAgent: varchar("user_agent", { length: 300 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+export type AuditLog = typeof auditLog.$inferSelect;
+export type InsertAuditLog = typeof auditLog.$inferInsert;

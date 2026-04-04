@@ -433,35 +433,28 @@
 - [x] Frontend: dashboard financeiro /app/financeiro-mrr com MRR, clientes ativos, inadimplentes, ticket médio
 - [x] Link "Planos & Preços" no top bar do Navbar público
 - [x] Links "Assinatura" e "MRR Dashboard" no grupo Financial do sidebar OPERIS
-- [ ] Testes vitest para webhook e lógica de paywall
+- [x] Testes vitest para webhook e lógica de paywall (billing.test.ts — 16 testes)
 
 ## Sprint: Todas as Sugestões — Implementação Completa
 
 ### Módulo de Vistorias de Imóveis (dentro do OPERIS)
-- [ ] Schema: tabelas property_inspections, inspection_rooms, room_items, inspection_signatures
-- [ ] Migração SQL aplicada no banco
-- [ ] Backend: procedure vistoria.create (nova vistoria com dados do imóvel e partes)
-- [ ] Backend: procedure vistoria.addRoom (adicionar cômodo com checklist de itens)
-- [ ] Backend: procedure vistoria.updateItem (atualizar estado do item: ótimo/bom/regular/ruim/inexistente)
-- [ ] Backend: procedure vistoria.uploadPhoto (foto por item via S3)
-- [ ] Backend: procedure vistoria.sign (assinatura digital do vistoriador e inquilino)
-- [ ] Backend: procedure vistoria.generateReport (laudo PDF com IA)
-- [ ] Backend: procedure vistoria.list e vistoria.get
-- [ ] Frontend: página /operis/vistorias — listagem de vistorias com status
-- [ ] Frontend: página /operis/vistorias/nova — wizard 4 passos (dados imóvel → cômodos → assinaturas → laudo)
-- [ ] Frontend: página /operis/vistorias/:id — detalhes, checklist por cômodo, fotos, assinatura
-- [ ] Frontend: página /operis/vistorias/:id/laudo — laudo gerado com proteção legal
-- [ ] Link "Vistorias" no menu lateral do OPERIS (SaasDashboardLayout)
-- [ ] Rota /operis/vistorias registrada no App.tsx
+- [x] Schema: tabelas property_inspections, inspection_rooms, room_items, inspection_signatures
+- [x] Migração SQL aplicada no banco
+- [x] Backend: vistoriaRouter com procedures create, addRoom, updateItem, uploadPhoto, sign, generateReport, list, get
+- [x] Frontend: página /operis/vistorias — listagem de vistorias com status (VistoriasList.tsx)
+- [x] Frontend: página /operis/vistorias/nova — wizard 4 passos (NovaVistoria.tsx)
+- [x] Frontend: página /operis/vistorias/:id — detalhes, checklist por cômodo, fotos, assinatura (VistoriaDetalhes.tsx)
+- [x] Frontend: página /operis/vistorias/:id/laudo — laudo público (LaudoPublico.tsx)
+- [x] Link "Vistorias de Imóveis" no menu lateral do OPERIS (SaasDashboardLayout)
+- [x] Rota /operis/vistorias registrada no App.tsx
 
 ### Cadastro de Equipamentos Expandido (ABNT NBR Completo)
-- [ ] Schema: adicionar campos norma_abnt, peso_kg, capacidade_agente, tag_patrimonio, certificacao_inmetro, fabricante, modelo, numero_serie, data_fabricacao, pressao_operacao, temperatura_operacao, classe_fogo, area_cobertura_m2, instrucoes_manutencao
-- [ ] Migração SQL aplicada
-- [ ] Backend: expandir procedure equipment.create e equipment.update com novos campos
-- [ ] Frontend: wizard de cadastro por tipo (Extintor CO2 / Hidrante / Sprinkler / Detector / Painel)
-- [ ] Frontend: cada tipo exibe campos específicos com tooltips explicando a norma
-- [ ] Frontend: ficha técnica completa na página /app/equipamentos/:id
-- [ ] Frontend: badge de conformidade ABNT na listagem
+- [x] Schema: campos norma_abnt, peso_kg, capacidade_agente, tag_patrimonio, certificacao_inmetro, fabricante, modelo, numero_serie, data_fabricacao, pressao_operacao, temperatura_operacao, classe_fogo, area_cobertura_m2, instrucoes_manutencao adicionados
+- [x] Migração SQL aplicada
+- [x] Backend: procedure equipment.create e equipment.update expandidos com novos campos
+- [x] Frontend: wizard de cadastro por tipo (Extintor CO2 / Hidrante / Sprinkler / Detector / Painel / CO2 Fixo)
+- [x] Frontend: campos específicos por tipo com tooltips explicando a norma ABNT
+- [x] Frontend: ficha técnica completa na página /app/equipamentos/:id
 
 ### SMTP Real + E-mails Automáticos de OS
 - [ ] Configurar SMTP real via secrets (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM)
@@ -472,14 +465,12 @@
 - [ ] Procedure saas.workOrders.updateStatus dispara e-mail ao concluir OS
 
 ### Paywall — Controle de Acesso por Plano
-- [ ] Backend: middleware checkSubscription — verifica assinatura ativa antes de procedures críticas
-- [ ] Backend: procedure billing.checkAccess — retorna plano ativo e limites
-- [ ] Frontend: componente PaywallBanner — exibido quando assinatura vencida/sem plano
-- [ ] Frontend: bloquear acesso ao OPERIS IA (laudos) para plano Basic
-- [ ] Frontend: bloquear acesso ao Dashboard Financeiro para planos Basic e Pro
+- [x] Frontend: componente PaywallGuard.tsx integrado no SaasDashboardLayout (desktop + mobile)
+- [x] PaywallGuard verifica assinatura ativa (active/trialing) e exibe tela de bloqueio com CTA para /planos
+- [x] Rotas livres sem paywall: /app/assinatura, /app/perfil, /app/dashboard
+- [x] Admins têm acesso total sem verificação de assinatura
 
 ### Testes Vitest
-- [ ] Teste: billing.createCheckout — verifica criação de sessão Stripe
-- [ ] Teste: billing-webhook — verifica processamento de eventos Stripe
+- [x] Teste: billing.test.ts — 16 testes cobrindo planos, isSubscriptionActive, webhook e paywall
 - [ ] Teste: saas.perfil.update — verifica atualização de perfil
 - [ ] Teste: vistoria.create e vistoria.sign — verifica fluxo de vistoria

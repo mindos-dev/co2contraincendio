@@ -8,7 +8,7 @@ import {
   Users, DollarSign, Receipt, Brain, Settings, BookOpen,
   ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
   Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle,
-  CreditCard, TrendingUp, ClipboardCheck
+  CreditCard, TrendingUp, ClipboardCheck, HardHat, Landmark, FileSpreadsheet, BarChart3
 } from "lucide-react";
 
 // ─── Navigation Structure (Procore-style grouped) ─────────────────────────────
@@ -70,6 +70,16 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    group: "Enterprise",
+    items: [
+      { label: "Dashboard Executivo", path: "/app/executivo", icon: <BarChart3 size={16} />, adminOnly: true },
+      { label: "Gestão de Obras", path: "/app/obras", icon: <HardHat size={16} />, adminOnly: true },
+      { label: "Financeiro Enterprise", path: "/app/financeiro-enterprise", icon: <Landmark size={16} />, adminOnly: true },
+      { label: "Mão de Obra", path: "/app/mao-de-obra", icon: <Users size={16} />, adminOnly: true },
+      { label: "NF-e / Fiscal", path: "/app/nfe", icon: <FileSpreadsheet size={16} />, adminOnly: true },
+    ],
+  },
+  {
     group: "Settings",
     items: [
       { label: "Usuários", path: "/app/usuarios", icon: <Users size={16} />, adminOnly: true },
@@ -102,6 +112,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
     "Engineering": false,
     "Financial": false,
     "Intelligence": false,
+    "Enterprise": false,
     "Settings": false,
   });
 

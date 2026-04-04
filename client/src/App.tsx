@@ -63,6 +63,12 @@ import Perfil from "./pages/plataforma/Perfil";
 import Planos from "./pages/Planos";
 import Assinatura from "./pages/plataforma/Assinatura";
 import DashboardFinanceiro from "./pages/plataforma/DashboardFinanceiro";
+// Enterprise modules
+import DashboardExecutivo from "./pages/enterprise/DashboardExecutivo";
+import GestaoObras from "./pages/enterprise/GestaoObras";
+import GestaoFinanceiro from "./pages/enterprise/GestaoFinanceiro";
+import GestaoMaoDeObra from "./pages/enterprise/GestaoMaoDeObra";
+import GestaoNFe from "./pages/enterprise/GestaoNFe";
 // Mobile Field Inspection
 import MobileDashboard from "./pages/mobile/MobileDashboard";
 import NovaVistoria from "./pages/mobile/NovaVistoria";
@@ -163,6 +169,12 @@ function Router() {
       <Route path="/app/assinatura" component={Assinatura} />
       <Route path="/app/financeiro-mrr" component={DashboardFinanceiro} />
       <Route path="/planos" component={Planos} />
+      {/* Enterprise */}
+      <Route path="/app/executivo" component={DashboardExecutivo} />
+      <Route path="/app/obras" component={GestaoObras} />
+      <Route path="/app/financeiro-enterprise" component={GestaoFinanceiro} />
+      <Route path="/app/mao-de-obra" component={GestaoMaoDeObra} />
+      <Route path="/app/nfe" component={GestaoNFe} />
       {/* Mobile Field Inspection */}
       <Route path="/mobile" component={MobileDashboard} />
       <Route path="/mobile/nova-vistoria" component={NovaVistoria} />

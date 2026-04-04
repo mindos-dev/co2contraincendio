@@ -9,6 +9,7 @@ import { fieldRouter } from "./field-router";
 import { operisRouter } from "./operis-router";
 import { billingRouter } from "./billing-router";
 import { vistoriaRouter } from "./vistoria-router";
+import { enterpriseRouter } from "./enterprise-router";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -18,6 +19,7 @@ export const appRouter = router({
   operis: operisRouter,
   billing: billingRouter,
   vistoria: vistoriaRouter,
+  enterprise: enterpriseRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
