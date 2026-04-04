@@ -75,7 +75,7 @@ import {
 } from "./saas-db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
-import { sendAlertNotification, sendEmail } from "./notifications";
+import { sendAlertNotification, sendEmail, buildWelcomeEmail } from "./notifications";
 import { getSubscriptionsByCompany, sendPushNotification } from "./push-notifications";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "co2-saas-secret-2025";
@@ -216,6 +216,11 @@ export const saasRouter = router({
         const user = await getSaasUserByEmail(input.email);
         if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao criar usuário" });
         const token = signToken({ userId: user.id, role: user.role, companyId: user.companyId });
+        // Envia e-mail de boas-vindas de forma assíncrona (não bloqueia o cadastro)
+        const welcome = buildWelcomeEmail(user.name ?? input.name);
+        sendEmail(user.email, welcome.subject, welcome.text, welcome.html).catch(() => {
+          // Falha silenciosa: o cadastro já foi concluído com sucesso
+        });
         return { token, user: { id: user.id, name: user.name, email: user.email, role: user.role, companyId: user.companyId } };
       }),
 

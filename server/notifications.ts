@@ -219,3 +219,159 @@ export async function sendAlertNotification(opts: {
 
   return results;
 }
+
+// ─── Template: E-mail de boas-vindas OPERIS ───────────────────────────────────
+export function buildWelcomeEmail(name: string): { subject: string; text: string; html: string } {
+  const subject = "Bem-vindo ao OPERIS — Sua conta está ativa";
+  const text = `Olá, ${name}.\n\nSua conta no OPERIS foi criada com sucesso.\n\nA plataforma permite controle completo de equipamentos, execução de checklists e emissão de laudos técnicos com rastreabilidade e padronização.\n\nAcesse: https://co2contra.com/app/login\n\nCO₂ Contra Incêndio — Engenharia e Automação`;
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#F0F0F0;font-family:'Helvetica Neue',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F0F0;padding:40px 0;">
+  <tr><td align="center">
+    <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+
+      <!-- Cabeçalho OPERIS -->
+      <tr>
+        <td style="background:#0D0D0D;padding:0;border-left:4px solid #C8102E;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="padding:24px 28px;">
+                <table cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="background:#C8102E;padding:8px 12px;vertical-align:middle;">
+                      <span style="color:#FFFFFF;font-weight:900;font-size:13px;letter-spacing:3px;font-family:'Helvetica Neue',Arial,sans-serif;">OP</span>
+                    </td>
+                    <td style="padding-left:12px;vertical-align:middle;">
+                      <div style="color:#FFFFFF;font-weight:800;font-size:16px;letter-spacing:4px;line-height:1;">OPERIS</div>
+                      <div style="color:#555555;font-size:8px;letter-spacing:3px;margin-top:3px;">PLATAFORMA DE INSPEÇÃO TÉCNICA</div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td align="right" style="padding:24px 28px;vertical-align:middle;">
+                <span style="color:#333333;font-size:9px;letter-spacing:2px;">CO₂ CONTRA INCÊNDIO</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Faixa vermelha de acento -->
+      <tr><td style="background:#C8102E;height:3px;line-height:3px;font-size:0;">&nbsp;</td></tr>
+
+      <!-- Corpo principal -->
+      <tr>
+        <td style="background:#FFFFFF;padding:40px 36px;">
+
+          <!-- Saudação -->
+          <p style="margin:0 0 6px 0;color:#888888;font-size:10px;letter-spacing:3px;text-transform:uppercase;">Conta ativada</p>
+          <h1 style="margin:0 0 24px 0;color:#111111;font-size:22px;font-weight:800;letter-spacing:1px;line-height:1.2;">
+            Olá, ${name}.<br>Seu acesso está pronto.
+          </h1>
+
+          <!-- Linha divisória -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+            <tr>
+              <td style="background:#C8102E;width:32px;height:2px;line-height:2px;font-size:0;">&nbsp;</td>
+              <td style="background:#E8E8E8;height:2px;line-height:2px;font-size:0;">&nbsp;</td>
+            </tr>
+          </table>
+
+          <!-- Texto institucional -->
+          <p style="margin:0 0 16px 0;color:#444444;font-size:14px;line-height:1.7;">
+            Sua conta no <strong>OPERIS</strong> foi criada com sucesso. A plataforma foi desenvolvida para atender operações reais de campo, permitindo controle completo de equipamentos, execução de checklists e emissão de laudos técnicos com rastreabilidade e padronização.
+          </p>
+          <p style="margin:0 0 32px 0;color:#444444;font-size:14px;line-height:1.7;">
+            Todas as inspeções seguem critérios técnicos aplicados por profissionais qualificados, garantindo confiabilidade, conformidade normativa e segurança operacional em cada registro gerado.
+          </p>
+
+          <!-- O que está disponível -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;border:1px solid #EEEEEE;">
+            <tr><td style="background:#F8F8F8;padding:12px 16px;border-bottom:1px solid #EEEEEE;">
+              <span style="color:#888888;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;">Recursos disponíveis</span>
+            </td></tr>
+            <tr><td style="padding:16px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                ${[
+                  ["Ordens de Serviço", "Criação, acompanhamento e encerramento com timeline de estados"],
+                  ["Checklists de campo", "Execução guiada com critérios C / NC / NA e barra de progresso"],
+                  ["Laudos técnicos", "Emissão com rastreabilidade, assinatura e compartilhamento"],
+                  ["Gestão de equipamentos", "QR Code, histórico de manutenções e alertas automáticos"],
+                ].map(([titulo, desc]) => `
+                <tr>
+                  <td style="padding:6px 0;vertical-align:top;width:6px;">
+                    <div style="width:4px;height:4px;background:#C8102E;margin-top:6px;"></div>
+                  </td>
+                  <td style="padding:6px 0 6px 10px;">
+                    <strong style="color:#111111;font-size:13px;">${titulo}</strong>
+                    <span style="color:#888888;font-size:12px;"> — ${desc}</span>
+                  </td>
+                </tr>`).join("")}
+              </table>
+            </td></tr>
+          </table>
+
+          <!-- CTA -->
+          <table cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+            <tr>
+              <td style="background:#C8102E;padding:0;">
+                <a href="https://co2contra.com/app/login"
+                   style="display:inline-block;padding:14px 32px;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;">
+                  ACESSAR O OPERIS →
+                </a>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Nota de suporte -->
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="border-left:3px solid #EEEEEE;padding:10px 14px;">
+                <p style="margin:0;color:#AAAAAA;font-size:11px;line-height:1.6;">
+                  Em caso de dúvidas, entre em contato pelo site
+                  <a href="https://co2contra.com" style="color:#C8102E;text-decoration:none;">co2contra.com</a>
+                  ou pelo WhatsApp <strong>(31) 9 9738-3115</strong>.
+                </p>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+
+      <!-- Rodapé -->
+      <tr>
+        <td style="background:#0D0D0D;padding:20px 28px;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <span style="color:#444444;font-size:10px;letter-spacing:1px;">OPERIS IA · CO₂ CONTRA INCÊNDIO</span><br>
+                <span style="color:#333333;font-size:10px;">Engenharia e Automação · Belo Horizonte, MG</span>
+              </td>
+              <td align="right" style="vertical-align:top;">
+                <table cellpadding="0" cellspacing="0">
+                  <tr>
+                    ${["NBR 12615", "NFPA 12", "UL 300"].map(n =>
+                      `<td style="padding-left:6px;"><span style="border:1px solid #2A2A2A;color:#444444;font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 5px;">${n}</span></td>`
+                    ).join("")}
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <p style="margin:12px 0 0 0;color:#2A2A2A;font-size:10px;line-height:1.5;">
+            Este e-mail foi enviado automaticamente após a criação da sua conta. Não responda a este endereço.
+            Caso não tenha criado esta conta, entre em contato imediatamente.
+          </p>
+        </td>
+      </tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+  return { subject, text, html };
+}
