@@ -266,10 +266,20 @@ export default function Checklist() {
     );
   }
 
-  // ── TELA DE EXECUÇÃO ──────────────────────────────────────────────────────
+  // Modo demonstração: quando não há template selecionado ou os itens são os DEMO_ITEMS
+  const isDemoMode = !selectedTemplateId || !templateItems || templateItems.length === 0;
+
+  // ── TELA DE EXECUÇÃO ────────────────────────────────────────────
   return (
     <SaasDashboardLayout>
       <div style={{ background: "#0A0A0F", minHeight: "100vh", color: "#E8E8E8", paddingBottom: 100 }}>
+        {/* Banner modo demonstração */}
+        {isDemoMode && (
+          <div style={{ background: "rgba(251,191,36,0.1)", borderBottom: "1px solid rgba(251,191,36,0.3)", padding: "8px 24px", display: "flex", alignItems: "center", gap: 8 }}>
+            <AlertTriangle size={14} color="#FBBF24" />
+            <span style={{ fontSize: 12, color: "#FBBF24", fontWeight: 500 }}>Modo demonstração — checklist padrão NBR 12615. Crie um template personalizado em Configurações para usar dados reais.</span>
+          </div>
+        )}
         {/* Sticky Header */}
         <div style={{ position: "sticky", top: 0, zIndex: 30, background: "#0A0A0F", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "12px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>

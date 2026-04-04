@@ -175,7 +175,11 @@ export const documents = mysqlTable("documents", {
   extractedData: text("extractedData"), // JSON string
   processingStatus: mysqlEnum("processingStatus", ["pending", "processed", "error"]).default("pending").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (t) => ({
+  // Índices para acelerar listagem de documentos por empresa e por equipamento
+  idxDocCompanyCreated: index("idx_doc_company_created").on(t.companyId, t.createdAt),
+  idxDocEquipment: index("idx_doc_equipment").on(t.equipmentId),
+}));
 export type Document = typeof documents.$inferSelect;
 export type InsertDocument = typeof documents.$inferInsert;
 
@@ -426,7 +430,12 @@ export const checklistExecutions = mysqlTable("checklist_executions", {
   startedAt: timestamp("startedAt").defaultNow().notNull(),
   completedAt: timestamp("completedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (t) => ({
+  // Índices para acelerar listagem de execuções por empresa e por equipamento
+  idxExecCompanyCreated: index("idx_exec_company_created").on(t.companyId, t.createdAt),
+  idxExecEquipment: index("idx_exec_equipment").on(t.equipmentId),
+  idxExecStatus: index("idx_exec_status").on(t.companyId, t.status),
+}));
 export type ChecklistExecution = typeof checklistExecutions.$inferSelect;
 
 // ─── LGPD: Consentimento de Cookies ──────────────────────────────────────────

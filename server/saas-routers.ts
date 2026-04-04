@@ -317,7 +317,11 @@ export const saasRouter = router({
       .mutation(async ({ input }) => {
         const passwordHash = await bcrypt.hash(input.password, 10);
         const { password: _p, ...rest } = input;
-        return createSaasUser({ ...rest, passwordHash });
+        await createSaasUser({ ...rest, passwordHash });
+        // Retornar apenas campos seguros — nunca expor passwordHash ao cliente
+        const created = await getSaasUserByEmail(input.email);
+        if (!created) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao criar usuário" });
+        return { id: created.id, name: created.name, email: created.email, role: created.role, companyId: created.companyId, active: created.active };
       }),
     updateRole: saasAdminProcedure
       .input(z.object({

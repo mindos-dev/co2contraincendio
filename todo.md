@@ -478,25 +478,25 @@
 ## Melhorias Pós-Auditoria Big Tech (Abril 2026)
 
 ### Paginação cursor-based
-- [ ] Atualizar `getEquipmentFiltered` no `saas-db.ts` para suportar cursor + limit
-- [ ] Atualizar `getAllMaintenance` no `saas-db.ts` para suportar cursor + limit
-- [ ] Atualizar `getWorkOrders` no `saas-db.ts` para suportar cursor + limit
-- [ ] Atualizar procedure `saas.equipment.list` com parâmetros `cursor` e `limit`
-- [ ] Atualizar procedure `saas.maintenance.list` com parâmetros `cursor` e `limit`
-- [ ] Atualizar `Equipamentos.tsx` com botão "Carregar mais" e estado de paginação
-- [ ] Atualizar `Manutencoes.tsx` com botão "Carregar mais" e estado de paginação
+- [x] Atualizar `getEquipmentFiltered` no `saas-db.ts` para suportar cursor + limit
+- [x] Atualizar `getAllMaintenance` no `saas-db.ts` para suportar cursor + limit
+- [x] Atualizar `getWorkOrders` no `saas-db.ts` para suportar cursor + limit
+- [x] Atualizar procedure `saas.equipment.list` com parâmetros `cursor` e `limit`
+- [x] Atualizar procedure `saas.maintenance.list` com parâmetros `cursor` e `limit`
+- [x] Atualizar `Equipamentos.tsx` com botão "Carregar mais" e estado de paginação
+- [x] Atualizar `Manutencoes.tsx` com botão "Carregar mais" e estado de paginação
 
 ### Índices de banco de dados
-- [ ] Adicionar índice composto `(companyId, createdAt)` na tabela `equipment`
-- [ ] Adicionar índice composto `(companyId, serviceDate)` na tabela `maintenanceRecords`
-- [ ] Adicionar índice composto `(companyId, createdAt)` na tabela `workOrders`
-- [ ] Adicionar índice `(companyId, status)` na tabela `equipment`
-- [ ] Gerar migration e aplicar via SQL
+- [x] Adicionar índice composto `(companyId, createdAt)` na tabela `equipment`
+- [x] Adicionar índice composto `(companyId, serviceDate)` na tabela `maintenanceRecords`
+- [x] Adicionar índice composto `(companyId, createdAt)` na tabela `workOrders`
+- [x] Adicionar índice `(companyId, status)` na tabela `equipment`
+- [x] Gerar migration e aplicar via SQL
 
 ### Rate limiter e resiliência
-- [ ] Ajustar rate limiter para 600 req/min em rotas de leitura
-- [ ] Adicionar header `Retry-After` nas respostas 429
-- [ ] Criar script de teste de carga `server/load-test.ts`
+- [x] Ajustar rate limiter para 500 req/min em rotas de leitura (aumentado de 300)
+- [x] Adicionar header `Retry-After` nas respostas 429
+- [x] Criar script de teste de carga `scripts/load-test.mjs`
 
 ## Melhorias Pós-Auditoria Big Tech (Abril 2026)
 
@@ -519,3 +519,11 @@
 - [x] Limite geral aumentado de 300 para 500 req/min
 - [x] Script de teste de carga criado (scripts/load-test.mjs)
 - [x] Teste de carga executado: 100 usuários × 3 req = 100% sucesso, P50=503ms, zero rate limiting
+
+## Auditoria E2E Completa — Correções (Abril 2026)
+
+- [x] Corrigir: createSaasUser (saas-routers.ts:320) retorna resultado bruto do INSERT — retornar apenas campos seguros
+- [x] Corrigir: banner "Modo demonstração" no Checklist.tsx quando DEMO_ITEMS é usado
+- [x] Corrigir: índices adicionais em tabelas secundárias (documents, checklist_executions) — 5 índices criados
+- [x] Migrar tabela documents para schema atual (companyId, equipmentId, documentNumber, extractedData, processingStatus)
+- [x] Aplicar todas as migrations pendentes (0001-0014)
