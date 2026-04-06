@@ -171,14 +171,22 @@ export async function lockEvidence(id: number): Promise<void> {
 
 export async function updateEvidenceOcr(
   id: number,
-  ocrData: Record<string, unknown>
+  ocrData: Record<string, unknown> | string
 ): Promise<void> {
   const db = await getDb();
   if (!db) return;
+  const parsed = typeof ocrData === "string" ? JSON.parse(ocrData) : ocrData;
   await db.update(artEvidences).set({
-    ocrExtractedData: ocrData,
+    ocrExtractedData: parsed,
     ocrProcessedAt: new Date(),
   }).where(eq(artEvidences.id, id));
+}
+
+// ─── Delete Evidence (apenas em rascunho, antes do lock) ─────────────────────
+export async function deleteArtEvidence(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(artEvidences).where(eq(artEvidences.id, id));
 }
 
 // ─── ART Approvals ────────────────────────────────────────────────────────────

@@ -565,27 +565,40 @@
 ## Sugestões Pós-ART OPERIS (Abril 2026)
 
 ### Painel do Engenheiro Aprovador
-- [ ] Backend: procedure art.listPendingApprovals (todas as ARTs aguardando de todas as empresas)
-- [ ] Frontend: página /app/art/aprovacoes (adminOnly) com listagem em lote
-- [ ] Frontend: botões aprovar/reprovar em lote com campo de comentário
-- [ ] Menu lateral: item "Aprovações ART" visível apenas para admin
+- [x] Backend: procedure art.listPendingApprovals (todas as ARTs aguardando de todas as empresas)
+- [x] Frontend: página /app/art/aprovacoes (adminOnly) com listagem em lote
+- [x] Frontend: botões aprovar/reprovar em lote com campo de comentário
+- [x] Menu lateral: item "Aprovações ART" visível apenas para admin
 
 ### Notificações Automáticas de ART
-- [ ] Backend: notificar engenheiro (WhatsApp/e-mail) quando ART é submetida
-- [ ] Backend: notificar técnico (WhatsApp/e-mail) quando ART é aprovada/reprovada
-- [ ] Integrar com módulo notifications.ts existente
+- [x] Backend: notificar engenheiro (WhatsApp/e-mail) quando ART é submetida (via notifyOwner)
+- [x] Backend: notificar técnico (WhatsApp/e-mail) quando ART é aprovada/reprovada (via notifyOwner)
+- [x] Integrar com módulo notifications.ts existente
 
 ### Numeração Sequencial ART-YYYY-NNNN
-- [ ] Schema: coluna artNumber (VARCHAR 20) na tabela art_services
-- [ ] Migration SQL aplicada no banco
-- [ ] Backend: gerar número sequencial por ano (ART-2026-0001, ART-2026-0002...)
-- [ ] PDF: exibir número oficial no cabeçalho do PDF gerado
+- [x] Schema: coluna artNumber (VARCHAR 20) na tabela art_services
+- [x] Migration SQL aplicada no banco (0016)
+- [x] Backend: gerar número sequencial por ano (ART-2026-0001, ART-2026-0002...)
+- [x] PDF: exibir número oficial no cabeçalho do PDF gerado
 
 ### Skill Reutilizável art-operis-module
-- [ ] Inicializar skill com init_skill.py
-- [ ] Escrever SKILL.md com processo completo
-- [ ] Criar references/schema.md com schema das tabelas
-- [ ] Criar references/procedures.md com lista de procedures
-- [ ] Criar references/frontend-patterns.md com padrões de UI
-- [ ] Validar com quick_validate.py
-- [ ] Entregar ao usuário
+- [x] Inicializar skill com init_skill.py
+- [x] Escrever SKILL.md com processo completo (5 fases + pitfalls + testing checklist)
+- [x] Criar references/schema.md com schema das tabelas
+- [x] Criar references/pdf-structure.md com guia completo de PDF jsPDF
+- [x] Validar com quick_validate.py (Skill is valid!)
+- [x] Entregar ao usuário
+
+## Implementação Final — Módulo ART + Skill Completa (Abril 2026)
+
+### Backend — Procedures faltantes
+- [ ] Procedure art.ocrInvoice (OCR de NF-e via LLM — extração de dados estruturados)
+- [ ] Procedure art.checkAccess (verificar plano premium ou pagamento antes de criar ART)
+- [ ] Procedure art.deleteEvidence (remover evidência antes da submissão)
+
+### Skill art-operis-module — Enriquecimento
+- [ ] Script scripts/migrate-art-tables.mjs (migração reutilizável das 3 tabelas)
+- [ ] Template templates/art.test.ts.template (template de testes reutilizável)
+- [ ] Reference references/procedures.md (lista completa das 11 procedures com inputs/outputs)
+- [ ] Validar skill com quick_validate.py
+- [ ] Entregar skill ao usuário

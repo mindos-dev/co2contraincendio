@@ -25,6 +25,7 @@ import {
   updateEvidenceOcr,
   createArtApproval,
   getApprovalsByArtService,
+  deleteArtEvidence,
 } from "./art-db";
 import { notifyOwner } from "./_core/notification";
 
@@ -495,6 +496,111 @@ export const artRouter = router({
         paidAt: new Date(),
         updatedAt: new Date(),
       });
+      return { success: true };
+    }),
+
+  // ── 11. Verificar acesso (premium ou pago) ────────────────────────────────
+  checkAccess: saasAuthProcedure
+    .query(async ({ ctx }) => {
+      const { saasUser } = ctx as SaasCtx;
+      if (!saasUser.companyId) return { hasAccess: false, reason: "no_company" as const };
+      const premium = await hasPremiumPlan(saasUser.companyId);
+      if (premium) return { hasAccess: true, reason: "premium" as const };
+      // Verificar se tem créditos de ART pagos não utilizados
+      const { items: arts } = await getArtServicesByTechnician(saasUser.userId);
+      const paidUnused = arts.filter(
+        (a: { paymentStatus: string; status: string }) => a.paymentStatus === "paid" && a.status === "rascunho"
+      );
+      if (paidUnused.length > 0) return { hasAccess: true, reason: "paid_credit" as const };
+      return { hasAccess: false, reason: "requires_payment" as const };
+    }),
+
+  // ── 12. OCR de nota fiscal via LLM ───────────────────────────────────────
+  ocrInvoice: saasAuthProcedure
+    .input(z.object({
+      evidenceId: z.number().int().positive(),
+      artServiceId: z.number().int().positive(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { saasUser } = ctx as SaasCtx;
+      const art = await getArtServiceById(input.artServiceId);
+      if (!art) throw new TRPCError({ code: "NOT_FOUND", message: "ART não encontrada" });
+      if (art.technicianId !== saasUser.userId)
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado" });
+      const evidences = await getEvidencesByArtService(input.artServiceId);
+      const evidence = evidences.find(e => e.id === input.evidenceId);
+      if (!evidence) throw new TRPCError({ code: "NOT_FOUND", message: "Evidência não encontrada" });
+      if (!evidence.fileUrl)
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Evidência sem arquivo" });
+      // Chamar LLM para extrair dados da NF-e
+      const result = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content: `Você é um especialista em leitura de Notas Fiscais Eletrônicas (NF-e) brasileiras.
+Extraia os dados estruturados da nota fiscal fornecida e retorne JSON com os campos:
+numeroNF, dataEmissao, valorTotal, cnpjEmitente, nomeEmitente, cnpjDestinatario, nomeDestinatario, descricaoServico, chaveAcesso.
+Se um campo não existir, use null. Retorne APENAS o JSON, sem explicações.`,
+          },
+          {
+            role: "user",
+            content: [
+              { type: "text" as const, text: "Extraia os dados desta nota fiscal:" },
+              { type: "image_url" as const, image_url: { url: evidence.fileUrl, detail: "high" as const } },
+            ],
+          },
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "nfe_data",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                numeroNF: { type: ["string", "null"] },
+                dataEmissao: { type: ["string", "null"] },
+                valorTotal: { type: ["string", "null"] },
+                cnpjEmitente: { type: ["string", "null"] },
+                nomeEmitente: { type: ["string", "null"] },
+                cnpjDestinatario: { type: ["string", "null"] },
+                nomeDestinatario: { type: ["string", "null"] },
+                descricaoServico: { type: ["string", "null"] },
+                chaveAcesso: { type: ["string", "null"] },
+              },
+              required: ["numeroNF","dataEmissao","valorTotal","cnpjEmitente","nomeEmitente","cnpjDestinatario","nomeDestinatario","descricaoServico","chaveAcesso"],
+              additionalProperties: false,
+            },
+          },
+        },
+      });
+      const raw = result.choices?.[0]?.message?.content;
+      const ocrData = typeof raw === "string" ? JSON.parse(raw) : raw;
+      // Salvar resultado do OCR na evidência
+      await updateEvidenceOcr(input.evidenceId, JSON.stringify(ocrData));
+      return { success: true, data: ocrData };
+    }),
+
+  // ── 13. Remover evidência (apenas em rascunho) ────────────────────────────
+  deleteEvidence: saasAuthProcedure
+    .input(z.object({
+      evidenceId: z.number().int().positive(),
+      artServiceId: z.number().int().positive(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { saasUser } = ctx as SaasCtx;
+      const art = await getArtServiceById(input.artServiceId);
+      if (!art) throw new TRPCError({ code: "NOT_FOUND", message: "ART não encontrada" });
+      if (art.technicianId !== saasUser.userId)
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado" });
+      if (art.status !== "rascunho")
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Evidências só podem ser removidas em rascunho" });
+      const evidences = await getEvidencesByArtService(input.artServiceId);
+      const evidence = evidences.find(e => e.id === input.evidenceId);
+      if (!evidence) throw new TRPCError({ code: "NOT_FOUND", message: "Evidência não encontrada" });
+      if (evidence.isLocked)
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Evidência bloqueada — ART já submetida" });
+      await deleteArtEvidence(input.evidenceId);
       return { success: true };
     }),
 });
