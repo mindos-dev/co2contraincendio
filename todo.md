@@ -604,4 +604,6 @@
 - [x] Entregar skill ao usuário
 
 ## Correções de Bug (Abril 2026)
-- [x] Corrigir tagline duplicado na seção OPERIS da página Home ("Conformidade que protege. Tecnologia que comprova." aparece duas vezes)
+- [x] Corrigir tagline duplicado na seção OPERIS da página Home
+- [x] Auditar todas as páginas e componentes em busca de conteúdo duplicado
+- [x] Corrigir todos os problemas de duplicação encontrados (ExtintorPublico.tsx + arquivo .bak residual removido) ("Conformidade que protege. Tecnologia que comprova." aparece duas vezes)

@@ -39,7 +39,7 @@ export default function ExtintorPublico() {
           </div>
           <div style={{ fontSize: 10, color: "#8A8A8A", textAlign: "right" }}>
             <div>CNPJ: 29.905.123/0001-53</div>
-            <div>Eng. Judson Aleixo Sampaio</div>
+            <div>Belo Horizonte / MG</div>
           </div>
         </div>
       </header>
