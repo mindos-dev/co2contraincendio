@@ -592,13 +592,16 @@
 ## Implementação Final — Módulo ART + Skill Completa (Abril 2026)
 
 ### Backend — Procedures faltantes
-- [ ] Procedure art.ocrInvoice (OCR de NF-e via LLM — extração de dados estruturados)
-- [ ] Procedure art.checkAccess (verificar plano premium ou pagamento antes de criar ART)
-- [ ] Procedure art.deleteEvidence (remover evidência antes da submissão)
+- [x] Procedure art.ocrInvoice (OCR de NF-e via LLM — extração de dados estruturados)
+- [x] Procedure art.checkAccess (verificar plano premium ou pagamento antes de criar ART)
+- [x] Procedure art.deleteEvidence (remover evidência antes da submissão)
 
 ### Skill art-operis-module — Enriquecimento
-- [ ] Script scripts/migrate-art-tables.mjs (migração reutilizável das 3 tabelas)
-- [ ] Template templates/art.test.ts.template (template de testes reutilizável)
-- [ ] Reference references/procedures.md (lista completa das 11 procedures com inputs/outputs)
-- [ ] Validar skill com quick_validate.py
-- [ ] Entregar skill ao usuário
+- [x] Script scripts/migrate-art-tables.sql (migração reutilizável das 3 tabelas)
+- [x] Template templates/art-test-template.ts (template de testes reutilizável)
+- [x] Reference references/procedures.md (lista completa das 14 procedures com inputs/outputs)
+- [x] Validar skill com quick_validate.py
+- [x] Entregar skill ao usuário
+
+## Correções de Bug (Abril 2026)
+- [x] Corrigir tagline duplicado na seção OPERIS da página Home ("Conformidade que protege. Tecnologia que comprova." aparece duas vezes)
