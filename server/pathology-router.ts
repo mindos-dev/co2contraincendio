@@ -280,6 +280,89 @@ export const comparisonRouter = router({
         .orderBy(desc(inspectionComparisons.createdAt));
     }),
 
+  // Gerar diffSummary via LLM e salvar na comparação
+  generateDiff: saasAuthProcedure
+    .input(z.object({ comparisonId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB indisponível." });
+      const companyId = ctx.saasUser.companyId;
+      if (!companyId) throw new TRPCError({ code: "FORBIDDEN", message: "Usuário sem empresa vinculada." });
+
+      const [comparison] = await db.select().from(inspectionComparisons)
+        .where(and(
+          eq(inspectionComparisons.id, input.comparisonId),
+          eq(inspectionComparisons.companyId, companyId),
+        ));
+      if (!comparison) throw new TRPCError({ code: "NOT_FOUND", message: "Comparação não encontrada." });
+
+      const [entry] = await db.select().from(propertyInspections)
+        .where(eq(propertyInspections.id, comparison.entryInspectionId));
+      const exit = comparison.exitInspectionId
+        ? (await db.select().from(propertyInspections)
+            .where(eq(propertyInspections.id, comparison.exitInspectionId)))[0]
+        : null;
+
+      // Buscar patologias das duas vistorias
+      const entryPathologies = await db.select().from(inspectionPathologies)
+        .where(eq(inspectionPathologies.inspectionId, comparison.entryInspectionId));
+      const exitPathologies = exit
+        ? await db.select().from(inspectionPathologies)
+            .where(eq(inspectionPathologies.inspectionId, comparison.exitInspectionId!))
+        : [];
+
+      const { invokeLLM } = await import("./_core/llm");
+      const prompt = `Você é um perito em engenharia diagnóstica imobiliária. Compare as duas vistorias abaixo e gere um relatório técnico de diferenças.
+
+VISTORIA DE ENTRADA:
+- Endereço: ${entry?.propertyAddress ?? "não informado"}
+- Data: ${entry?.createdAt ? new Date(entry.createdAt).toLocaleDateString("pt-BR") : "não informada"}
+- Condição geral: ${comparison.overallConditionEntry ?? "não avaliada"}
+- Patologias registradas: ${entryPathologies.length} (${entryPathologies.map(p => p.category).join(", ") || "nenhuma"})
+
+VISTORIA DE SAÍDA:
+- Data: ${exit?.createdAt ? new Date(exit.createdAt).toLocaleDateString("pt-BR") : "pendente"}
+- Condição geral: ${comparison.overallConditionExit ?? "não avaliada"}
+- Patologias registradas: ${exitPathologies.length} (${exitPathologies.map(p => p.category).join(", ") || "nenhuma"})
+
+Gere um JSON com a seguinte estrutura:
+{
+  "resumo": "texto resumido da comparação em 2-3 frases",
+  "degradacao": "nenhuma" | "leve" | "moderada" | "severa",
+  "itensAfetados": ["lista de itens com degradação"],
+  "causasProvaveis": ["lista de causas prováveis"],
+  "reparosRecomendados": ["lista de reparos recomendados"],
+  "estimativaDepreciacao": numero_em_reais_ou_null,
+  "fundamentoLegal": "Art. 23, II da Lei 8.245/91 — responsabilidade do locatário"
+}`;
+
+      const response = await invokeLLM({
+        messages: [
+          { role: "system", content: "Você é um perito em engenharia diagnóstica imobiliária. Responda apenas com JSON válido." },
+          { role: "user", content: prompt },
+        ],
+        response_format: { type: "json_object" } as any,
+      });
+
+      const rawContent = response.choices?.[0]?.message?.content;
+      const diffSummary: string = typeof rawContent === "string" ? rawContent : "{}";
+
+      // Atualizar a comparação com o diffSummary e estimativa de depreciação do LLM
+      let parsedDiff: any = {};
+      try { parsedDiff = JSON.parse(diffSummary); } catch { /* JSON inválido */ }
+
+      await db.update(inspectionComparisons)
+        .set({
+          diffSummary,
+          depreciationEstimate: parsedDiff.estimativaDepreciacao
+            ? String(parsedDiff.estimativaDepreciacao)
+            : comparison.depreciationEstimate,
+        })
+        .where(eq(inspectionComparisons.id, input.comparisonId));
+
+      return { diffSummary, parsed: parsedDiff };
+    }),
+
   // Buscar comparação por ID
   getById: saasAuthProcedure
     .input(z.object({ id: z.number() }))

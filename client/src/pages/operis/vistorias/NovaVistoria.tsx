@@ -236,6 +236,7 @@ export default function NovaVistoria() {
         tenantEmail: tenantEmail || undefined,
         inspectorName: inspectorName || undefined,
         inspectorCrea: inspectorCrea || undefined,
+        engineerPartnerId: selectedEngineerId ?? undefined,
         contractStartDate: contractStart || undefined,
         contractEndDate: contractEnd || undefined,
         rentValue: rentValue || undefined,

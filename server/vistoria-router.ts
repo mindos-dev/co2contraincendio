@@ -174,6 +174,7 @@ export const vistoriaRouter = router({
         inspectorName: z.string().optional(),
         inspectorCrea: z.string().optional(),
         inspectorCompany: z.string().optional(),
+        engineerPartnerId: z.number().optional(),
         generalNotes: z.string().optional(),
         // Cômodos iniciais
         rooms: z.array(z.object({
@@ -312,6 +313,30 @@ export const vistoriaRouter = router({
       const key = `vistoria-fotos/${input.itemId}-${randomSuffix()}.jpg`;
       const { url } = await storagePut(key, buffer, input.mimeType);
       await db.update(roomItems).set({ photoUrl: url }).where(eq(roomItems.id, input.itemId));
+      return { url };
+    }),
+
+  // Upload da segunda foto (Foto de Detalhe) para itens REGULAR/RUIM/PESSIMO
+  uploadItemPhoto2: saasAuthProcedure
+    .input(z.object({
+      itemId: z.number(),
+      photoBase64: z.string(),
+      mimeType: z.string().default("image/jpeg"),
+      gps: z.string().optional(), // "lat,lng" capturado no frontend
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      const buffer = Buffer.from(input.photoBase64.replace(/^data:[^;]+;base64,/, ""), "base64");
+      const key = `vistoria-fotos/${input.itemId}-detalhe-${randomSuffix()}.jpg`;
+      const { url } = await storagePut(key, buffer, input.mimeType);
+      await db.update(roomItems)
+        .set({
+          photoUrl2: url,
+          photoGps: input.gps ?? null,
+          photoTimestamp: new Date(),
+        })
+        .where(eq(roomItems.id, input.itemId));
       return { url };
     }),
 

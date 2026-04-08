@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   ArrowLeft, GitCompare, Building2, Calendar, User, Shield,
-  CheckCircle2, AlertTriangle, TrendingDown, Plus, Eye
+  CheckCircle2, AlertTriangle, TrendingDown, Plus, Eye,
+  Wand2, Loader2, ChevronRight, Wrench, Lightbulb, Scale
 } from "lucide-react";
 
 const CONDITION_LABELS: Record<string, { label: string; color: string; bg: string }> = {
@@ -29,10 +30,32 @@ export default function ComparadorVistorias() {
 
   const { data: comparisons, isLoading, refetch } = trpc.comparison.list.useQuery();
   const { data: vistorias } = trpc.vistoria.list.useQuery({ page: 1, limit: 100 });
-  const { data: detail } = trpc.comparison.getById.useQuery(
+  const { data: detail, refetch: detailRefetch } = trpc.comparison.getById.useQuery(
     { id: selectedId! },
     { enabled: selectedId !== null }
   );
+
+  // Parse do diffSummary JSON
+  const parsedDiff = (() => {
+    if (!detail?.comparison.diffSummary) return null;
+    try { return JSON.parse(detail.comparison.diffSummary); } catch { return null; }
+  })();
+
+  const DEGRADACAO_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
+    nenhuma: { label: "Sem Degradação", color: "text-green-400", bg: "bg-green-500/10 border-green-500/30", icon: "✅" },
+    leve: { label: "Degradação Leve", color: "text-yellow-400", bg: "bg-yellow-500/10 border-yellow-500/30", icon: "⚠️" },
+    moderada: { label: "Degradação Moderada", color: "text-orange-400", bg: "bg-orange-500/10 border-orange-500/30", icon: "🔶" },
+    severa: { label: "Degradação Severa", color: "text-red-400", bg: "bg-red-500/10 border-red-500/30", icon: "🔴" },
+  };
+
+  const generateDiffMutation = trpc.comparison.generateDiff.useMutation({
+    onSuccess: () => {
+      toast.success("Análise LLM gerada com sucesso!");
+      refetch();
+      if (selectedId) detailRefetch();
+    },
+    onError: (e) => toast.error("Erro ao gerar análise: " + e.message),
+  });
 
   const createMutation = trpc.comparison.create.useMutation({
     onSuccess: () => {
@@ -286,6 +309,102 @@ export default function ComparadorVistorias() {
                           <p className="text-xs text-gray-500">Responsável</p>
                           <p className="text-sm text-gray-300 flex items-center gap-1"><User size={11} /> {detail.entry?.inspectorName || "—"}</p>
                           <p className="text-xs text-gray-500">{detail.entry?.inspectorCrea || ""}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Botão Gerar Análise LLM */}
+                    <div className="mt-4 flex items-center justify-between">
+                      <Button
+                        size="sm"
+                        onClick={() => generateDiffMutation.mutate({ comparisonId: comp.id })}
+                        disabled={generateDiffMutation.isPending}
+                        className="bg-purple-600 hover:bg-purple-700 text-white gap-2"
+                      >
+                        {generateDiffMutation.isPending
+                          ? <><Loader2 size={13} className="animate-spin" /> Analisando...</>
+                          : <><Wand2 size={13} /> Gerar Análise Pericial (IA)</>
+                        }
+                      </Button>
+                      {parsedDiff && (
+                        <Badge className={`text-xs ${DEGRADACAO_CONFIG[parsedDiff.degradacao]?.bg ?? "bg-gray-500/10"} ${DEGRADACAO_CONFIG[parsedDiff.degradacao]?.color ?? "text-gray-400"}`}>
+                          {DEGRADACAO_CONFIG[parsedDiff.degradacao]?.icon} {DEGRADACAO_CONFIG[parsedDiff.degradacao]?.label ?? parsedDiff.degradacao}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Painel de Diff Visual LLM */}
+                    {parsedDiff && (
+                      <div className="mt-4 space-y-4">
+                        {/* Resumo */}
+                        <div className="bg-gray-900 border border-purple-500/20 rounded-xl p-4">
+                          <p className="text-purple-400 text-xs font-semibold uppercase tracking-widest mb-2 flex items-center gap-1">
+                            <Wand2 size={11} /> Análise Pericial — OPERIS IA
+                          </p>
+                          <p className="text-gray-300 text-sm leading-relaxed">{parsedDiff.resumo}</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Itens Afetados */}
+                          {parsedDiff.itensAfetados?.length > 0 && (
+                            <div className="bg-gray-900 border border-orange-500/20 rounded-xl p-4">
+                              <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1">
+                                <AlertTriangle size={11} /> Itens com Degradação
+                              </p>
+                              <ul className="space-y-1">
+                                {parsedDiff.itensAfetados.map((item: string, i: number) => (
+                                  <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                    <ChevronRight size={12} className="text-orange-400 mt-0.5 shrink-0" />
+                                    {item}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Causas Prováveis */}
+                          {parsedDiff.causasProvaveis?.length > 0 && (
+                            <div className="bg-gray-900 border border-yellow-500/20 rounded-xl p-4">
+                              <p className="text-yellow-400 text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1">
+                                <Lightbulb size={11} /> Causas Prováveis
+                              </p>
+                              <ul className="space-y-1">
+                                {parsedDiff.causasProvaveis.map((causa: string, i: number) => (
+                                  <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                    <ChevronRight size={12} className="text-yellow-400 mt-0.5 shrink-0" />
+                                    {causa}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Reparos Recomendados */}
+                          {parsedDiff.reparosRecomendados?.length > 0 && (
+                            <div className="bg-gray-900 border border-blue-500/20 rounded-xl p-4">
+                              <p className="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1">
+                                <Wrench size={11} /> Reparos Recomendados
+                              </p>
+                              <ul className="space-y-1">
+                                {parsedDiff.reparosRecomendados.map((reparo: string, i: number) => (
+                                  <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                    <ChevronRight size={12} className="text-blue-400 mt-0.5 shrink-0" />
+                                    {reparo}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Fundamento Legal */}
+                          {parsedDiff.fundamentoLegal && (
+                            <div className="bg-gray-900 border border-green-500/20 rounded-xl p-4">
+                              <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-2 flex items-center gap-1">
+                                <Scale size={11} /> Fundamento Legal
+                              </p>
+                              <p className="text-gray-300 text-sm">{parsedDiff.fundamentoLegal}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}

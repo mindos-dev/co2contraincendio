@@ -43,9 +43,13 @@ export default function VistoriaDetalhes() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [uploadingItem, setUploadingItem] = useState<number | null>(null);
+  const [uploadingItem2, setUploadingItem2] = useState<number | null>(null);
   const [photoPreview, setPhotoPreview] = useState<Record<number, string>>({});
+  const [photo2Preview, setPhoto2Preview] = useState<Record<number, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInput2Ref = useRef<HTMLInputElement>(null);
   const [activePhotoItemId, setActivePhotoItemId] = useState<number | null>(null);
+  const [activePhoto2ItemId, setActivePhoto2ItemId] = useState<number | null>(null);
 
   const utils = trpc.useUtils();
   const { data, isLoading } = trpc.vistoria.get.useQuery({ id: Number(id) });
@@ -79,7 +83,7 @@ export default function VistoriaDetalhes() {
 
   const uploadPhotoMutation = trpc.vistoria.uploadItemPhoto.useMutation({
     onSuccess: (data, vars) => {
-      toast.success("Foto salva com sucesso!");
+      toast.success("Foto de Contexto salva!");
       setPhotoPreview(prev => ({ ...prev, [vars.itemId]: data.url }));
       setUploadingItem(null);
       utils.vistoria.get.invalidate({ id: Number(id) });
@@ -90,9 +94,56 @@ export default function VistoriaDetalhes() {
     },
   });
 
+  const uploadPhoto2Mutation = trpc.vistoria.uploadItemPhoto2.useMutation({
+    onSuccess: (data, vars) => {
+      toast.success("Foto de Detalhe salva!");
+      setPhoto2Preview(prev => ({ ...prev, [vars.itemId]: data.url }));
+      setUploadingItem2(null);
+      utils.vistoria.get.invalidate({ id: Number(id) });
+    },
+    onError: (err) => {
+      toast.error("Erro ao enviar foto de detalhe: " + err.message);
+      setUploadingItem2(null);
+    },
+  });
+
   const handlePhotoCapture = (itemId: number) => {
     setActivePhotoItemId(itemId);
     fileInputRef.current?.click();
+  };
+
+  const handlePhoto2Capture = (itemId: number) => {
+    setActivePhoto2ItemId(itemId);
+    fileInput2Ref.current?.click();
+  };
+
+  const handleFile2Change = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activePhoto2ItemId) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Foto muito grande. Máximo 5 MB.");
+      return;
+    }
+    setUploadingItem2(activePhoto2ItemId);
+    let gps: string | undefined;
+    try {
+      const pos = await new Promise<GeolocationPosition>((res, rej) =>
+        navigator.geolocation.getCurrentPosition(res, rej, { timeout: 3000 })
+      );
+      gps = `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`;
+    } catch { /* geolocalização negada */ }
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result as string;
+      uploadPhoto2Mutation.mutate({
+        itemId: activePhoto2ItemId!,
+        photoBase64: base64,
+        mimeType: file.type,
+        gps,
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -250,14 +301,24 @@ export default function VistoriaDetalhes() {
 
   // Input de arquivo oculto para captura de foto
   const hiddenFileInput = (
-    <input
-      ref={fileInputRef}
-      type="file"
-      accept="image/*"
-      capture="environment"
-      className="hidden"
-      onChange={handleFileChange}
-    />
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+      <input
+        ref={fileInput2Ref}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleFile2Change}
+      />
+    </>
   );
   const statusCfg = STATUS_CONFIG[inspection.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.rascunho;
 
@@ -498,7 +559,7 @@ export default function VistoriaDetalhes() {
                                 onClick={() => handlePhotoCapture(item.id)}
                                 disabled={uploadingItem === item.id}
                                 className="text-gray-500 hover:text-blue-400 transition-colors disabled:opacity-50"
-                                title="Adicionar foto"
+                                title="Foto de Contexto (obrigatória)"
                               >
                                 {uploadingItem === item.id
                                   ? <Upload className="w-3.5 h-3.5 animate-pulse text-blue-400" />
@@ -507,6 +568,21 @@ export default function VistoriaDetalhes() {
                                     : <Camera className="w-3.5 h-3.5" />
                                 }
                               </button>
+                              {["regular", "ruim", "pessimo"].includes(item.condition ?? "") && (
+                                <button
+                                  onClick={() => handlePhoto2Capture(item.id)}
+                                  disabled={uploadingItem2 === item.id}
+                                  className="text-gray-500 hover:text-orange-400 transition-colors disabled:opacity-50"
+                                  title="Foto de Detalhe (obrigatória para Regular/Ruim/Péssimo)"
+                                >
+                                  {uploadingItem2 === item.id
+                                    ? <Upload className="w-3.5 h-3.5 animate-pulse text-orange-400" />
+                                    : (item.photoUrl2 || photo2Preview[item.id])
+                                      ? <ImageIcon className="w-3.5 h-3.5 text-orange-400" />
+                                      : <Camera className="w-3.5 h-3.5 text-orange-500" />
+                                  }
+                                </button>
+                              )}
                               </div>
                             )}
                           </div>

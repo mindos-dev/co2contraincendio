@@ -709,3 +709,9 @@
 - [x] Adicionar link "Vistoria Blindada" no menu de Serviços da navbar
 - [x] Implementar marca d'água real nas fotos do exportVistoriaPdf.ts (canvas overlay GPS/timestamp/contractId)
 - [x] Conectar botão "Exportar PDF" no VistoriaDetalhes.tsx chamando exportVistoriaPdf
+
+## Sprint SUGESTOES_FINAIS (2026-04-08)
+- [x] Skill: criar skill operis-photo-evidence-freelance com skill-creator documentando o processo completo
+- [x] photoUrl2: botão "Foto de Detalhe" no VistoriaDetalhes.tsx + procedure uploadItemPhoto2 no backend
+- [x] ComparadorVistorias.tsx: diff visual entrada vs saída por cômodo com estimativa de depreciação via LLM
+- [x] vistoria.create: persistir engineerPartnerId selecionado no Passo 1 do wizard
