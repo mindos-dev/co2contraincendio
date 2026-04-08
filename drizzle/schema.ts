@@ -520,6 +520,11 @@ export const propertyInspections = mysqlTable("property_inspections", {
   auditHash: varchar("auditHash", { length: 64 }), // SHA-256 do payload no momento do fechamento
   lockedAt: timestamp("lockedAt"), // timestamp do LOCK_EDITION
   lockedByUserId: int("lockedByUserId"), // quem fechou o registro
+  // Engenheiro Parceiro / Freelancer (DYNAMIC_FOOTER)
+  engineerPartnerId: int("engineer_partner_id"), // FK para engineer_partners
+  engineerName: varchar("engineer_name", { length: 255 }), // snapshot no momento do fechamento
+  engineerCrea: varchar("engineer_crea", { length: 60 }),  // snapshot no momento do fechamento
+  engineerContractUrl: text("engineer_contract_url"), // contrato de prest. de serviço
   // Dados do imóvel
   propertyAddress: text("propertyAddress").notNull(),
   propertyType: mysqlEnum("propertyType", ["apartamento", "casa", "sala_comercial", "galpao", "outro"]).notNull().default("apartamento"),
@@ -554,6 +559,13 @@ export const propertyInspections = mysqlTable("property_inspections", {
   landlordSignedAt: timestamp("landlordSignedAt"),
   tenantSignedAt: timestamp("tenantSignedAt"),
   inspectorSignedAt: timestamp("inspectorSignedAt"),
+  // Log de conformidade de assinaturas (SIGNATURE_COMPLIANCE)
+  landlordSignedIp: varchar("landlordSignedIp", { length: 45 }),
+  tenantSignedIp: varchar("tenantSignedIp", { length: 45 }),
+  inspectorSignedIp: varchar("inspectorSignedIp", { length: 45 }),
+  landlordSignedHash: varchar("landlordSignedHash", { length: 64 }),  // SHA-256 do payload no momento da firma
+  tenantSignedHash: varchar("tenantSignedHash", { length: 64 }),
+  inspectorSignedHash: varchar("inspectorSignedHash", { length: 64 }),
   // Reforma Tributária 2026 (LC 214/2025)
   redutorSocial: boolean("redutorSocial").default(false),
   clausulaVigencia: boolean("clausulaVigencia").default(false),
@@ -594,6 +606,9 @@ export const roomItems = mysqlTable("room_items", {
   condition: mysqlEnum("condition", ["otimo", "bom", "regular", "ruim", "pessimo", "inexistente"]).default("bom"),
   notes: text("notes"),
   photoUrl: text("photoUrl"),
+  photoUrl2: text("photoUrl2"),          // Foto de Detalhe (obrigatória para REGULAR/RUIM/PESSIMO)
+  photoGps: varchar("photoGps", { length: 60 }),  // "lat,lng" capturado no momento do upload
+  photoTimestamp: timestamp("photoTimestamp"),     // Timestamp exato do upload da foto
   order: int("order").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -984,3 +999,50 @@ export const inspectionMaintenanceTasks = mysqlTable("inspection_maintenance_tas
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
   createdByUserId: int("created_by_user_id").notNull(),
 });
+
+// ─── ENGENHEIROS PARCEIROS / FREELANCERS ──────────────────────────────────────
+export const engineerPartners = mysqlTable("engineer_partners", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  crea: varchar("crea", { length: 60 }).notNull(),
+  specialty: varchar("specialty", { length: 255 }),
+  phone: varchar("phone", { length: 30 }),
+  email: varchar("email", { length: 320 }),
+  cpf: varchar("cpf", { length: 20 }),
+  // Financeiro
+  commissionRate: decimal("commission_rate", { precision: 5, scale: 2 }).default("0.00"), // % sobre rentValue
+  fixedFee: decimal("fixed_fee", { precision: 10, scale: 2 }).default("0.00"),            // valor fixo por vistoria
+  pixKey: varchar("pix_key", { length: 255 }),
+  bankAccount: varchar("bank_account", { length: 255 }),
+  // Contrato de prestação de serviço
+  serviceContractUrl: text("service_contract_url"),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+  createdByUserId: int("created_by_user_id").notNull(),
+});
+export type EngineerPartner = typeof engineerPartners.$inferSelect;
+export type InsertEngineerPartner = typeof engineerPartners.$inferInsert;
+
+// ─── PAGAMENTOS FREELANCERS ───────────────────────────────────────────────────
+export const freelancePayouts = mysqlTable("freelance_payouts", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  inspectionId: int("inspection_id").notNull(),
+  engineerPartnerId: int("engineer_partner_id").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  status: mysqlEnum("status", ["pending_approval", "approved", "paid", "cancelled"]).default("pending_approval").notNull(),
+  paymentMethod: varchar("payment_method", { length: 50 }), // pix | bank_transfer | stripe
+  paymentReference: varchar("payment_reference", { length: 255 }), // ID Stripe ou chave PIX
+  approvedByUserId: int("approved_by_user_id"),
+  approvedAt: timestamp("approved_at"),
+  paidAt: timestamp("paid_at"),
+  notes: text("notes"),
+  auditLog: text("audit_log"), // JSON com histórico de ações
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+  createdByUserId: int("created_by_user_id").notNull(),
+});
+export type FreelancePayout = typeof freelancePayouts.$inferSelect;
+export type InsertFreelancePayout = typeof freelancePayouts.$inferInsert;

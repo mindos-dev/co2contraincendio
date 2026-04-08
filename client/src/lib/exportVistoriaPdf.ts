@@ -567,13 +567,17 @@ export function exportVistoriaPdf(data: VistoriaPdfData): void {
     pdf.setFontSize(6.5);
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(180, 190, 200);
+    // Rodapé dinâmico: usa dados do engenheiro da vistoria específica
+    const engName = data.inspectorName || "Eng. Judson Aleixo Sampaio";
+    const engCrea = data.inspectorCrea || "CREA/MG 142203671-5";
+    const engCompany = data.inspectorCompany || "CO₂ Contra Incêndio LTDA";
     pdf.text(
-      "CO₂ Contra Incêndio LTDA · CNPJ 29.905.123/0001-53 · BH/MG · Resp. Técnico: Eng. Judson Aleixo Sampaio · CREA/MG 142203671-5",
+      `${engCompany} · CNPJ 29.905.123/0001-53 · BH/MG · Resp. Técnico: ${engName} · ${engCrea}`,
       margin,
       pageHeight - 8
     );
     pdf.text(
-      "Validade jurídica: Lei 13.709/2018 (LGPD) e Lei 8.245/1991 (Lei do Inquilinato)",
+      "Validade jurídica: Lei 13.709/2018 (LGPD), Lei 8.245/1991 (Inquilinato) e MP 2.200-2/2001 (Assinatura Digital)",
       margin,
       pageHeight - 4
     );

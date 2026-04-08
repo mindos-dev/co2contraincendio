@@ -126,6 +126,14 @@ export default function NovaVistoria() {
   const [tenantEmail, setTenantEmail] = useState("");
   const [inspectorName, setInspectorName] = useState("Eng. Judson Aleixo Sampaio");
   const [inspectorCrea, setInspectorCrea] = useState("CREA/MG 142203671-5");
+  const [selectedEngineerId, setSelectedEngineerId] = useState<number | null>(null);
+  const [engineerMode, setEngineerMode] = useState<"default" | "partner" | "freelance">("default");
+  // Cadastro inline de freelancer
+  const [freelanceName, setFreelanceName] = useState("");
+  const [freelanceCrea, setFreelanceCrea] = useState("");
+  const [freelancePhone, setFreelancePhone] = useState("");
+  const [freelanceEmail, setFreelanceEmail] = useState("");
+  const [freelanceCommission, setFreelanceCommission] = useState("");
   const [rentValue, setRentValue] = useState("");
   const [contractStart, setContractStart] = useState("");
   const [contractEnd, setContractEnd] = useState("");
@@ -187,6 +195,8 @@ export default function NovaVistoria() {
   const createMutation = trpc.vistoria.create.useMutation();
   const finalizeMutation = trpc.vistoria.finalizeAndGenerateContract.useMutation();
   const draftMutation = trpc.vistoria.create.useMutation();
+  const engineerListQuery = trpc.engineer.list.useQuery();
+  const createEngineerMutation = trpc.engineer.create.useMutation();
 
   // Cria vistoria draft ao entrar no Passo 3 para permitir patologias
   const handleAdvanceToStep3 = async () => {
@@ -520,23 +530,143 @@ export default function NovaVistoria() {
               </div>
             </div>
 
-            {/* Vistoriador */}
+            {/* Vistoriador / Responsável Técnico — Dinâmico */}
             <div className="bg-gray-800/40 rounded-xl p-5 border border-gray-700 space-y-4">
               <h3 className="text-gray-200 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
-                <ShieldCheck size={14} className="text-red-400" /> Vistoriador / Responsável Técnico
+                <ShieldCheck size={14} className="text-red-400" /> Responsável Técnico
+                <Badge className="bg-red-500/20 text-red-400 border-red-500/30 text-xs ml-auto">Obrigatório para emissão do laudo</Badge>
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-gray-400 text-xs mb-1 block">Nome do Vistoriador</Label>
-                  <Input value={inspectorName} onChange={e => setInspectorName(e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-white h-9" />
-                </div>
-                <div>
-                  <Label className="text-gray-400 text-xs mb-1 block">CREA / CRECI</Label>
-                  <Input value={inspectorCrea} onChange={e => setInspectorCrea(e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-white h-9" />
-                </div>
+
+              {/* Seleção de modo */}
+              <div className="flex gap-2 flex-wrap">
+                {(["default", "partner", "freelance"] as const).map(mode => (
+                  <button key={mode} type="button"
+                    onClick={() => {
+                      setEngineerMode(mode);
+                      if (mode === "default") {
+                        setInspectorName("Eng. Judson Aleixo Sampaio");
+                        setInspectorCrea("CREA/MG 142203671-5");
+                        setSelectedEngineerId(null);
+                      } else if (mode === "partner") {
+                        setInspectorName("");
+                        setInspectorCrea("");
+                        setSelectedEngineerId(null);
+                      } else {
+                        setInspectorName("");
+                        setInspectorCrea("");
+                        setSelectedEngineerId(null);
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                      engineerMode === mode
+                        ? "bg-red-500/20 border-red-500/50 text-red-300"
+                        : "bg-gray-900 border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300"
+                    }`}>
+                    {mode === "default" ? "🏢 Eng. Judson (Padrão)" : mode === "partner" ? "👥 Parceiro Cadastrado" : "✏️ Freelancer Avulso"}
+                  </button>
+                ))}
               </div>
+
+              {/* Modo padrão — exibe apenas o nome */}
+              {engineerMode === "default" && (
+                <div className="bg-green-900/10 rounded-lg p-3 border border-green-600/20">
+                  <p className="text-green-300 text-sm font-medium">Eng. Judson Aleixo Sampaio</p>
+                  <p className="text-gray-500 text-xs mt-0.5">CREA/MG 142203671-5 · CO₂ Contra Incêndio LTDA</p>
+                </div>
+              )}
+
+              {/* Modo parceiro cadastrado */}
+              {engineerMode === "partner" && (
+                <div className="space-y-3">
+                  <Label className="text-gray-400 text-xs mb-1 block">Selecionar Engenheiro Parceiro</Label>
+                  {engineerListQuery.isLoading ? (
+                    <p className="text-gray-500 text-sm">Carregando parceiros...</p>
+                  ) : engineerListQuery.data?.length === 0 ? (
+                    <p className="text-yellow-400 text-sm">Nenhum parceiro cadastrado. Use o modo Freelancer Avulso ou cadastre em Configurações → Parceiros.</p>
+                  ) : (
+                    <Select
+                      value={selectedEngineerId ? String(selectedEngineerId) : ""}
+                      onValueChange={val => {
+                        const eng = engineerListQuery.data?.find(e => e.id === parseInt(val));
+                        if (eng) {
+                          setSelectedEngineerId(eng.id);
+                          setInspectorName(eng.name);
+                          setInspectorCrea(eng.crea);
+                        }
+                      }}>
+                      <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                        <SelectValue placeholder="Selecione um engenheiro parceiro" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        {engineerListQuery.data?.map(eng => (
+                          <SelectItem key={eng.id} value={String(eng.id)} className="text-gray-300">
+                            {eng.name} — {eng.crea}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {selectedEngineerId && (
+                    <div className="bg-blue-900/10 rounded-lg p-3 border border-blue-600/20">
+                      <p className="text-blue-300 text-sm font-medium">{inspectorName}</p>
+                      <p className="text-gray-500 text-xs mt-0.5">{inspectorCrea}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Modo freelancer avulso — cadastro inline */}
+              {engineerMode === "freelance" && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-gray-400 text-xs mb-1 block">Nome Completo *</Label>
+                      <Input value={freelanceName} onChange={e => { setFreelanceName(e.target.value); setInspectorName(e.target.value); }}
+                        placeholder="Eng. Nome Sobrenome" className="bg-gray-700 border-gray-600 text-white h-9" />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs mb-1 block">CREA / CRECI *</Label>
+                      <Input value={freelanceCrea} onChange={e => { setFreelanceCrea(e.target.value); setInspectorCrea(e.target.value); }}
+                        placeholder="CREA/MG 000000000-0" className="bg-gray-700 border-gray-600 text-white h-9" />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs mb-1 block">Telefone</Label>
+                      <Input value={freelancePhone} onChange={e => setFreelancePhone(e.target.value)}
+                        placeholder="(31) 9 9999-9999" className="bg-gray-700 border-gray-600 text-white h-9" />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs mb-1 block">E-mail</Label>
+                      <Input value={freelanceEmail} onChange={e => setFreelanceEmail(e.target.value)}
+                        type="email" className="bg-gray-700 border-gray-600 text-white h-9" />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs mb-1 block">Comissão (% sobre aluguel)</Label>
+                      <Input value={freelanceCommission} onChange={e => setFreelanceCommission(e.target.value)}
+                        placeholder="10" type="number" min="0" max="100" className="bg-gray-700 border-gray-600 text-white h-9" />
+                    </div>
+                  </div>
+                  <Button type="button" size="sm" variant="outline"
+                    disabled={!freelanceName || !freelanceCrea || createEngineerMutation.isPending}
+                    onClick={async () => {
+                      try {
+                        const result = await createEngineerMutation.mutateAsync({
+                          name: freelanceName,
+                          crea: freelanceCrea,
+                          phone: freelancePhone || undefined,
+                          email: freelanceEmail || undefined,
+                          commissionRate: freelanceCommission ? parseFloat(freelanceCommission) : 0,
+                        });
+                        setSelectedEngineerId(result.id);
+                        toast.success(`Engenheiro ${freelanceName} cadastrado como parceiro`);
+                        engineerListQuery.refetch();
+                      } catch { toast.error("Erro ao cadastrar engenheiro"); }
+                    }}
+                    className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10">
+                    {createEngineerMutation.isPending ? "Salvando..." : "💾 Salvar como Parceiro Permanente"}
+                  </Button>
+                  <p className="text-gray-600 text-xs">Preencha os dados acima para este laudo. Clique em "Salvar" para adicionar ao cadastro permanente de parceiros.</p>
+                </div>
+              )}
             </div>
 
             {/* Condições Contratuais */}
@@ -758,12 +888,47 @@ export default function NovaVistoria() {
             {/* Rodapé de resguardo jurídico */}
             <div className="bg-gray-900 border border-gray-700 rounded-xl p-4">
               <p className="text-xs text-gray-500 leading-relaxed">
-                <strong className="text-gray-400">Resguardo Jurídico:</strong> Este laudo foi elaborado com base nas condições verificadas in loco na data de emissão, por profissional habilitado (CREA/MG 142203671-5), em conformidade com a Lei 8.245/91, NBR 15575 e demais normas técnicas aplicáveis. A OPERIS IA não se responsabiliza por alterações nas condições do imóvel após a data de emissão, nem por informações prestadas incorretamente pelas partes. O número de contrato gerado possui hash de auditoria imutável para fins de validade legal.
+                <strong className="text-gray-400">Resguardo Jurídico:</strong> Este laudo foi elaborado com base nas condições verificadas in loco na data de emissão, por profissional habilitado ({inspectorCrea || "CREA/MG 142203671-5"}), em conformidade com a Lei 8.245/91, NBR 15575 e demais normas técnicas aplicáveis. A OPERIS IA não se responsabiliza por alterações nas condições do imóvel após a data de emissão, nem por informações prestadas incorretamente pelas partes. O número de contrato gerado possui hash de auditoria imutável para fins de validade legal.
               </p>
             </div>
 
-            <Button onClick={handleSubmit} disabled={isSubmitting || !landlordName || !fullAddress}
-              className="w-full bg-green-600 hover:bg-green-700 text-white h-12 text-base font-semibold gap-2">
+            {/* CHECKLIST DE CONFORMIDADE — Bloqueio de finalização */}
+            {(() => {
+              const conformanceIssues: string[] = [];
+              if (!landlordName.trim()) conformanceIssues.push("Nome do Locador obrigatório");
+              if (!fullAddress.trim()) conformanceIssues.push("Endereço do imóvel obrigatório");
+              if (!inspectorName.trim()) conformanceIssues.push("Responsável Técnico não selecionado");
+              if (!inspectorCrea.trim()) conformanceIssues.push("CREA do Responsável Técnico obrigatório");
+              const hasBlockingIssues = conformanceIssues.length > 0;
+              return (
+                <div className={`rounded-xl border p-4 space-y-2 ${
+                  hasBlockingIssues ? "bg-red-900/10 border-red-600/30" : "bg-green-900/10 border-green-600/30"
+                }`}>
+                  <p className={`text-xs font-semibold uppercase tracking-wide flex items-center gap-2 ${
+                    hasBlockingIssues ? "text-red-400" : "text-green-400"
+                  }`}>
+                    {hasBlockingIssues ? <AlertTriangle size={12} /> : <CheckCircle2 size={12} />}
+                    Checklist de Conformidade
+                  </p>
+                  {hasBlockingIssues ? (
+                    <ul className="space-y-1">
+                      {conformanceIssues.map(issue => (
+                        <li key={issue} className="flex items-center gap-2 text-sm text-red-300">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+                          {issue}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-green-300">Todos os campos obrigatórios estão preenchidos. Pronto para finalizar.</p>
+                  )}
+                </div>
+              );
+            })()}
+
+            <Button onClick={handleSubmit}
+              disabled={isSubmitting || !landlordName || !fullAddress || !inspectorName || !inspectorCrea}
+              className="w-full bg-green-600 hover:bg-green-700 text-white h-12 text-base font-semibold gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
               <CheckCircle size={18} />
               {isSubmitting ? "Gerando contrato..." : "Finalizar e Gerar Contrato"}
             </Button>

@@ -315,12 +315,13 @@ export const vistoriaRouter = router({
       return { url };
     }),
 
-  // Salvar assinatura
+  // Salvar assinatura (SIGNATURE_COMPLIANCE: IP + Hash do documento no momento da firma)
   sign: saasAuthProcedure
     .input(z.object({
       inspectionId: z.number(),
       role: z.enum(["landlord", "tenant", "inspector"]),
       signatureBase64: z.string(),
+      signerName: z.string().optional(), // Nome completo do signatário
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
@@ -339,12 +340,46 @@ export const vistoriaRouter = router({
       const { url } = await storagePut(key, buffer, "image/png");
 
       const now = new Date();
+
+      // Capturar IP do signatário (SIGNATURE_COMPLIANCE)
+      const signerIp = (ctx.req as any).ip ||
+        (ctx.req as any).headers?.['x-forwarded-for']?.split(',')[0]?.trim() ||
+        (ctx.req as any).socket?.remoteAddress ||
+        'unknown';
+
+      // Gerar hash SHA-256 do payload de assinatura (MP 2.200-2/2001)
+      const signPayload = JSON.stringify({
+        inspectionId: input.inspectionId,
+        role: input.role,
+        signerName: input.signerName || `user-${ctx.saasUser.userId}`,
+        signerIp,
+        signedAt: now.toISOString(),
+        contractId: inspection.contractId,
+        auditHash: inspection.auditHash,
+      });
+      const signHash = createHash('sha256').update(signPayload).digest('hex');
+
       if (input.role === "landlord") {
-        await db.update(propertyInspections).set({ landlordSignatureUrl: url, landlordSignedAt: now }).where(eq(propertyInspections.id, input.inspectionId));
+        await db.update(propertyInspections).set({
+          landlordSignatureUrl: url,
+          landlordSignedAt: now,
+          landlordSignedIp: signerIp,
+          landlordSignedHash: signHash,
+        }).where(eq(propertyInspections.id, input.inspectionId));
       } else if (input.role === "tenant") {
-        await db.update(propertyInspections).set({ tenantSignatureUrl: url, tenantSignedAt: now }).where(eq(propertyInspections.id, input.inspectionId));
+        await db.update(propertyInspections).set({
+          tenantSignatureUrl: url,
+          tenantSignedAt: now,
+          tenantSignedIp: signerIp,
+          tenantSignedHash: signHash,
+        }).where(eq(propertyInspections.id, input.inspectionId));
       } else {
-        await db.update(propertyInspections).set({ inspectorSignatureUrl: url, inspectorSignedAt: now }).where(eq(propertyInspections.id, input.inspectionId));
+        await db.update(propertyInspections).set({
+          inspectorSignatureUrl: url,
+          inspectorSignedAt: now,
+          inspectorSignedIp: signerIp,
+          inspectorSignedHash: signHash,
+        }).where(eq(propertyInspections.id, input.inspectionId));
       }
 
       // Verificar se todas as assinaturas foram coletadas
@@ -355,7 +390,7 @@ export const vistoriaRouter = router({
         await db.update(propertyInspections).set({ status: "aguardando_assinatura" }).where(eq(propertyInspections.id, input.inspectionId));
       }
 
-      return { url };
+      return { url, signHash, signerIp };
     }),
 
   // Gerar laudo com IA
@@ -624,6 +659,26 @@ Use CSS inline. Paleta: branco com bordas cinza, texto preto, cabeçalho azul es
       // Validar campos obrigatórios antes de gerar o contrato
       if (!inspection.landlordName || !inspection.tenantName || !inspection.propertyAddress) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Preencha todos os campos obrigatórios antes de finalizar." });
+      }
+
+      // MANDATORY_PHOTOS: Bloquear finalização se itens REGULAR/RUIM/PESSIMO não tiverem ≥2 fotos
+      const allItems = await db
+        .select()
+        .from(roomItems)
+        .where(eq(roomItems.inspectionId, input.inspectionId));
+
+      const criticalConditions = ['regular', 'ruim', 'pessimo'];
+      const itemsMissingPhotos = allItems.filter(item =>
+        criticalConditions.includes(item.condition ?? '') &&
+        (!item.photoUrl || !item.photoUrl2)
+      );
+
+      if (itemsMissingPhotos.length > 0) {
+        const names = itemsMissingPhotos.map(i => i.name).join(', ');
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Bloqueio de conformidade: os seguintes itens com condição Regular/Ruim/Péssimo precisam de 2 fotos (Contexto + Detalhe): ${names}. Adicione as fotos antes de finalizar.`,
+        });
       }
 
       // Gerar número sequencial CONT-YYYY-XXXX

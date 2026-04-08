@@ -141,6 +141,20 @@
       "when": 1775634854581,
       "tag": "0019_narrow_blink",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1775647679226,
+      "tag": "0020_naive_franklin_richards",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1775648570668,
+      "tag": "0021_engineer_partners_and_payouts",
+      "breakpoints": true
     }
   ]
 }

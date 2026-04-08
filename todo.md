@@ -678,3 +678,28 @@
 - [x] Criar página pública /laudo/:slug com QR Code de autenticidade e rodapé jurídico (sem login)
 - [x] Criar exportVistoriaPdf.ts com Risk Score, fotos com timestamp e patologias reportadas
 - [x] Gerar Documento de Arquitetura Técnica (DER, Dicionário de Dados, Mapa de Endpoints, Triggers)
+
+## Sprint UPGRADE_DOCUMENT_AUTHORITY (Abril 2026)
+- [x] MANDATORY_PHOTOS: Bloquear finalização (lockedAt) se itens REGULAR/RUIM/PESSIMO não tiverem ≥2 fotos
+- [x] WATERMARK_INJECTION: Marca d'água em fotos no PDF com ID do Contrato, Timestamp e Coordenadas GPS
+- [x] GALLERY_STRUCTURE: Seção "Galeria de Patologias" no PDF vinculando foto ao Risk Score (1-10)
+- [x] LEGAL_BLOCK_REFORMA: Cláusula LC 214/2025 (Redutor Social R$600) obrigatória em contratos residenciais
+- [x] LEGAL_BLOCK_VIGENCIA: Cláusula Art. 8º Lei 8.245/91 (Direito de Vigência) obrigatória
+- [x] AUTHENTICITY_SEAL: Cabeçalho do laudo com auditHash SHA-256 em destaque + QR Code de verificação
+- [x] SIGNATURE_COMPLIANCE: Log de assinaturas com IP, Timestamp, Nome Completo e Hash do documento
+- [x] RISK_ENGINE_VISUAL: Risk Score Gauge R1–R5 no laudo (baseado no risk-engine.ts)
+- [x] DIAGNOSIS_CONTENT: LLM deve citar causa provável + sugestão de reparo por patologia
+- [x] CREA_VALIDATION: Selo Eng. Judson Aleixo Sampaio (CREA/MG 142203671-5) em todas as páginas do PDF
+- [x] REFACTOR_STATUS: Status PENDING_VALIDATION antes de gerar contractId final
+- [x] UI_STEPPER: Checklist de Conformidade no Passo 4 bloqueando avanço sem fotos/descrições
+
+## Sprint FREELANCE_PARTNERS + FINANCIAL_INTEGRATION (2026-04-08)
+
+- [x] Migração DB: tabela engineer_partners + campos engineerPartnerId/engineerContractUrl no property_inspections
+- [x] Backend: procedures engineer.list, engineer.create, engineer.update para CRUD de parceiros
+- [x] Backend: procedure vistoria.triggerFreelancePayout ao status concluida + audit_log
+- [x] Frontend: Passo 1 do wizard com select de engenheiro parceiro + cadastro inline de freelancer
+- [x] Frontend: Checklist de Conformidade no Passo 4 (bloqueio visual de itens sem fotos)
+- [x] exportVistoriaPdf.ts: rodapé dinâmico com dados do engenheiro da vistoria específica
+- [x] Dashboard Partner Payout: view Admin para aprovar e liberar pagamentos
+- [x] Landing Page /vistoria-tecnica-blindada: identidade CO2 Dark/Red, SEO BH+Contagem, curadoria técnica

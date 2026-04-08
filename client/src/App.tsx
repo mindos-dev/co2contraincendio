@@ -94,6 +94,8 @@ import PlanejadorManutencao from "./pages/operis/vistorias/PlanejadorManutencao"
 import InspecaoPredial from "./pages/operis/engenharia/InspecaoPredial";
 import VistoriaCautelar from "./pages/operis/engenharia/VistoriaCautelar";
 import LaudoReforma from "./pages/operis/engenharia/LaudoReforma";
+import ParceirosEngenheiros from "./pages/operis/ParceirosEngenheiros";
+import VistoriaTecnicaBlindada from "./pages/VistoriaTecnicaBlindada";
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfService from "./pages/legal/TermsOfService";
@@ -142,6 +144,7 @@ function Router() {
           <Route path="/aplicacoes-especiais" component={AplicacoesEspeciais} />
       <Route path="/projetos" component={Projetos} />
       <Route path="/parceiros" component={Parceiros} />
+      <Route path="/vistoria-tecnica-blindada" component={VistoriaTecnicaBlindada} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
 
@@ -210,6 +213,8 @@ function Router() {
       <Route path="/operis/engenharia/inspecao-predial" component={InspecaoPredial} />
       <Route path="/operis/engenharia/vistoria-cautelar" component={VistoriaCautelar} />
       <Route path="/operis/engenharia/laudo-reforma" component={LaudoReforma} />
+      {/* Engenheiros Parceiros / Payout */}
+      <Route path="/operis/parceiros-engenheiros" component={ParceirosEngenheiros} />
       {/* Legal pages */}
       <Route path="/legal/privacy" component={PrivacyPolicy} />
       <Route path="/legal/terms" component={TermsOfService} />
