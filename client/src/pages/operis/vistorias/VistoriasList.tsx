@@ -1,4 +1,5 @@
 import { useState } from "react";
+import VistoriasPaywallGuard from "@/components/VistoriasPaywallGuard";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export default function VistoriasList() {
   const { data: vistorias = [], isLoading } = trpc.vistoria.list.useQuery({ page, limit: 20 });
 
   return (
+    <VistoriasPaywallGuard>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -172,5 +174,6 @@ export default function VistoriasList() {
         </div>
       )}
     </div>
+    </VistoriasPaywallGuard>
   );
 }

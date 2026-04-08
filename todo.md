@@ -723,3 +723,41 @@
 
 ## Bug /app/os (08/04/2026)
 - [x] BUG: /app/os envia limit > 100 para a procedure — erro Zod "Too big: expected number to be <=100"
+
+## Sprint UI_RESTRUCTURING + BLUETOOTH_PRINTER (08/04/2026)
+- [ ] LOGO_HOME_BUTTON: Logo OPERIS no topo do sidebar como botão de Home (/app/dashboard)
+- [ ] NAV_VISTORIAS_SUBMENU: Sub-menus em "Vistorias de Imóveis": Nova Vistoria, Vistoria Cautelar, Laudo de Reforma/ART, Comparador
+- [ ] NAV_EQUIPAMENTOS_GROUP: Criar grupo "Acompanhamento de Equipamentos" com Checklist, Manutenções, QR Codes
+- [ ] PAYWALL_VISTORIAS: Tela ACESSO RESTRITO específica para módulo Vistorias (add-on independente)
+- [ ] SCAN_EQUIPMENT: Botão "SCAN_EQUIPMENT" com câmera WebRTC para leitura de QR Code
+- [ ] BLUETOOTH_PRINT: Serviço de impressão Bluetooth ESC/POS com 3 perfis (Zebra, Generic 58mm, Epson Mobile)
+- [ ] LABEL_TEMPLATE: Selo impresso: Logo CO2 + QR Code (reportSlug) + Data Vencimento + Hash SHA-256
+- [ ] PRINTER_PERSISTENCE: Salvar deviceId da última impressora pareada no localStorage
+- [ ] FULL_WIDTH_LAYOUT: Layout full-width em todos os novos módulos
+- [ ] LEGAL_FOOTER_ALL_LAUDOS: Rodapé jurídico CREA/MG + SHA-256 em todos os laudos gerados
+
+## Sprint UI_RESTRUCTURING + BLUETOOTH_PRINTER (08/04/2026)
+- [ ] LOGO_HOME_BUTTON: Logo OPERIS no topo do sidebar como botão de Home (/app/dashboard)
+- [ ] NAV_VISTORIAS_SUBMENU: Sub-menus em Vistorias de Imoveis: Nova Vistoria, Vistoria Cautelar, Laudo de Reforma/ART, Comparador
+- [ ] NAV_EQUIPAMENTOS_GROUP: Criar grupo Acompanhamento de Equipamentos com Checklist, Manutencoes, QR Codes
+- [ ] PAYWALL_VISTORIAS: Tela ACESSO RESTRITO especifica para modulo Vistorias (add-on independente)
+- [ ] SCAN_EQUIPMENT: Botao SCAN_EQUIPMENT com camera WebRTC para leitura de QR Code
+- [ ] BLUETOOTH_PRINT: Servico de impressao Bluetooth ESC/POS com 3 perfis (Zebra, Generic 58mm, Epson Mobile)
+- [ ] LABEL_TEMPLATE: Selo impresso: Logo CO2 + QR Code (reportSlug) + Data Vencimento + Hash SHA-256
+- [ ] PRINTER_PERSISTENCE: Salvar deviceId da ultima impressora pareada no localStorage
+- [ ] FULL_WIDTH_LAYOUT: Layout full-width em todos os novos modulos
+- [ ] LEGAL_FOOTER_ALL_LAUDOS: Rodape juridico CREA/MG + SHA-256 em todos os laudos gerados
+
+## Sprint UI_RESTRUCTURING + QR_SCANNER + PAYWALL (2026-04-08)
+
+- [x] Reestruturar SaasDashboardLayout: logo OPERIS como botão Home (link /app/dashboard)
+- [x] Adicionar sub-menus colapsáveis em "Vistorias de Imóveis" (Nova Vistoria, Cautelar, Laudo Reforma, Comparador)
+- [x] Agrupar Checklist, Equipamentos, Manutenções, QR Codes, Alertas, Scanner em grupo "Acompanhamento de Equipamentos"
+- [x] Adicionar "Scanner de Equipamento" no menu lateral e no bottom nav mobile
+- [x] Criar VistoriasPaywallGuard — tela ACESSO RESTRITO para módulo Vistorias sem plano Pro/Industrial
+- [x] Envolver VistoriasList com VistoriasPaywallGuard
+- [x] Criar bluetooth-printer.ts — driver ESC/POS com 3 perfis (Generic 58mm, Epson Mobile, Zebra/Leopardo)
+- [x] Criar ScannerEquipamento.tsx — câmera WebRTC + jsQR + impressão Bluetooth
+- [x] Registrar rota /app/scanner no App.tsx
+- [x] Instalar jsQR e @types/web-bluetooth
+- [x] TypeScript: 0 erros

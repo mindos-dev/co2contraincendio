@@ -46,6 +46,7 @@ import Equipamentos from "./pages/plataforma/Equipamentos";
 import Manutencoes from "./pages/plataforma/Manutencoes";
 import QRCodes from "./pages/plataforma/QRCodes";
 import Alertas from "./pages/plataforma/Alertas";
+import ScannerEquipamento from "./pages/plataforma/ScannerEquipamento";
 import Documentos from "./pages/plataforma/Documentos";
 import ArtOperis from "./pages/plataforma/ArtOperis";
 import ArtDetalheView, { NovaArt } from "./pages/plataforma/ArtDetalhe";
@@ -163,6 +164,7 @@ function Router() {
       <Route path="/app/manutencoes" component={Manutencoes} />
       <Route path="/app/qrcodes" component={QRCodes} />
       <Route path="/app/alertas" component={Alertas} />
+      <Route path="/app/scanner" component={ScannerEquipamento} />
       <Route path="/app/documentos" component={Documentos} />
       <Route path="/app/art" component={ArtOperis} />
       <Route path="/app/art/nova" component={NovaArt} />

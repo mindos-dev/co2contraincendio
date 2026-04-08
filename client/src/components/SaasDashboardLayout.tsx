@@ -9,15 +9,16 @@ import {
   ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
   Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle,
   CreditCard, TrendingUp, ClipboardCheck, HardHat, Landmark, FileSpreadsheet, BarChart3,
-  FileBadge2
+  FileBadge2, Home, ScanLine
 } from "lucide-react";
 
-// ─── Navigation Structure (Procore-style grouped) ─────────────────────────────
+// ─── Navigation Structure ─────────────────────────────────────────────────────
 interface NavItem {
   label: string;
   path: string;
   icon: React.ReactNode;
   adminOnly?: boolean;
+  children?: NavItem[];
 }
 
 interface NavGroup {
@@ -36,23 +37,36 @@ const NAV_GROUPS: NavGroup[] = [
     group: "Operations",
     items: [
       { label: "Work Orders (OS)", path: "/app/os", icon: <ClipboardList size={16} /> },
+      {
+        label: "Vistorias de Imóveis",
+        path: "/operis/vistorias",
+        icon: <ClipboardCheck size={16} />,
+        children: [
+          { label: "Nova Vistoria", path: "/operis/vistorias/nova", icon: <ClipboardCheck size={14} /> },
+          { label: "Vistoria Cautelar", path: "/operis/engenharia/vistoria-cautelar", icon: <Shield size={14} /> },
+          { label: "Laudo de Reforma / ART", path: "/operis/engenharia/laudo-reforma", icon: <FileText size={14} /> },
+          { label: "Comparador Entrada/Saída", path: "/operis/vistorias/comparador", icon: <ClipboardList size={14} /> },
+        ],
+      },
+      { label: "Engenheiros Parceiros", path: "/operis/parceiros-engenheiros", icon: <Users size={16} />, adminOnly: true },
+    ],
+  },
+  {
+    group: "Acompanhamento de Equipamentos",
+    items: [
       { label: "Checklist", path: "/app/checklist", icon: <CheckSquare size={16} /> },
       { label: "Equipamentos", path: "/app/equipamentos", icon: <Package size={16} /> },
       { label: "Manutenções", path: "/app/manutencoes", icon: <Wrench size={16} /> },
       { label: "QR Codes", path: "/app/qrcodes", icon: <QrCode size={16} /> },
       { label: "Alertas", path: "/app/alertas", icon: <AlertTriangle size={16} /> },
-      { label: "Vistorias de Imóveis", path: "/operis/vistorias", icon: <ClipboardCheck size={16} /> },
-      { label: "Comparador Entrada/Saída", path: "/operis/vistorias/comparador", icon: <ClipboardCheck size={16} /> },
-      { label: "Planejador de Manutenção", path: "/operis/vistorias/manutencao", icon: <Wrench size={16} /> },
-      { label: "Engenheiros Parceiros", path: "/operis/parceiros-engenheiros", icon: <Users size={16} />, adminOnly: true },
+      { label: "Scanner de Equipamento", path: "/app/scanner", icon: <ScanLine size={16} /> },
     ],
   },
   {
     group: "Engenharia Diagnóstica",
     items: [
       { label: "Inspeção Predial", path: "/operis/engenharia/inspecao-predial", icon: <Building2 size={16} /> },
-      { label: "Vistoria Cautelar", path: "/operis/engenharia/vistoria-cautelar", icon: <Shield size={16} /> },
-      { label: "Laudo de Reforma", path: "/operis/engenharia/laudo-reforma", icon: <FileText size={16} /> },
+      { label: "Planejador de Manutenção", path: "/operis/vistorias/manutencao", icon: <Wrench size={16} /> },
     ],
   },
   {
@@ -103,17 +117,123 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-// Mobile bottom nav — 5 most important items
+// Mobile bottom nav
 const MOBILE_NAV = [
   { label: "Dashboard", path: "/app/dashboard", icon: <LayoutDashboard size={20} /> },
   { label: "OS", path: "/app/os", icon: <ClipboardList size={20} /> },
-  { label: "Checklist", path: "/app/checklist", icon: <CheckSquare size={20} /> },
+  { label: "Scanner", path: "/app/scanner", icon: <ScanLine size={20} /> },
   { label: "Equip.", path: "/app/equipamentos", icon: <Package size={20} /> },
   { label: "IA", path: "/operis", icon: <Brain size={20} /> },
 ];
 
 const SIDEBAR_W = 240;
 const SIDEBAR_W_COLLAPSED = 56;
+
+// ─── NavItemRow — renders a single item or an item with children ──────────────
+function NavItemRow({
+  item,
+  collapsed,
+  isActive,
+  depth = 0,
+}: {
+  item: NavItem;
+  collapsed: boolean;
+  isActive: (path: string) => boolean;
+  depth?: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const active = isActive(item.path);
+  const hasChildren = item.children && item.children.length > 0;
+  const anyChildActive = item.children?.some(c => isActive(c.path)) ?? false;
+
+  // Auto-open if a child is active
+  useEffect(() => {
+    if (anyChildActive) setOpen(true);
+  }, [anyChildActive]);
+
+  const rowStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.625rem",
+    padding: collapsed ? "0.625rem 0" : `0.5rem 1rem 0.5rem ${depth > 0 ? "2rem" : "1rem"}`,
+    justifyContent: collapsed ? "center" : "flex-start",
+    background: active || anyChildActive ? OPERIS_COLORS.primaryMuted : "transparent",
+    borderLeft: active || anyChildActive ? `2px solid ${OPERIS_COLORS.primary}` : "2px solid transparent",
+    color: active || anyChildActive ? OPERIS_COLORS.primary : OPERIS_COLORS.textSecondary,
+    cursor: "pointer",
+    transition: "all 0.15s",
+    fontSize: depth > 0 ? "0.75rem" : "0.8125rem",
+    fontWeight: active ? 600 : 400,
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+  };
+
+  if (hasChildren && !collapsed) {
+    return (
+      <div>
+        <div
+          style={rowStyle}
+          onClick={() => setOpen(o => !o)}
+          onMouseEnter={(e) => {
+            if (!active && !anyChildActive) {
+              (e.currentTarget as HTMLDivElement).style.background = OPERIS_COLORS.bgHover;
+              (e.currentTarget as HTMLDivElement).style.color = OPERIS_COLORS.textPrimary;
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!active && !anyChildActive) {
+              (e.currentTarget as HTMLDivElement).style.background = "transparent";
+              (e.currentTarget as HTMLDivElement).style.color = OPERIS_COLORS.textSecondary;
+            }
+          }}
+        >
+          <span style={{ flexShrink: 0 }}>{item.icon}</span>
+          <span style={{ flex: 1 }}>{item.label}</span>
+          <span style={{ flexShrink: 0, color: OPERIS_COLORS.textDisabled }}>
+            {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+          </span>
+        </div>
+        {open && (
+          <div>
+            {item.children!.map(child => (
+              <NavItemRow
+                key={child.path}
+                item={child}
+                collapsed={collapsed}
+                isActive={isActive}
+                depth={depth + 1}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <Link href={item.path}>
+      <div
+        title={collapsed ? item.label : undefined}
+        style={rowStyle}
+        onMouseEnter={(e) => {
+          if (!active) {
+            (e.currentTarget as HTMLDivElement).style.background = OPERIS_COLORS.bgHover;
+            (e.currentTarget as HTMLDivElement).style.color = OPERIS_COLORS.textPrimary;
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!active) {
+            (e.currentTarget as HTMLDivElement).style.background = "transparent";
+            (e.currentTarget as HTMLDivElement).style.color = OPERIS_COLORS.textSecondary;
+          }
+        }}
+      >
+        <span style={{ flexShrink: 0 }}>{item.icon}</span>
+        {!collapsed && <span>{item.label}</span>}
+      </div>
+    </Link>
+  );
+}
 
 export default function SaasDashboardLayout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
@@ -123,6 +243,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
     "": true,
     "Operations": true,
+    "Acompanhamento de Equipamentos": true,
     "Engenharia Diagnóstica": false,
     "Engineering": false,
     "Financial": false,
@@ -142,7 +263,8 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
   // Auto-expand group containing current route
   useEffect(() => {
     for (const g of NAV_GROUPS) {
-      if (g.items.some(i => location.startsWith(i.path))) {
+      const allItems = g.items.flatMap(i => [i, ...(i.children ?? [])]);
+      if (allItems.some(i => location.startsWith(i.path))) {
         setExpandedGroups(prev => ({ ...prev, [g.group]: true }));
       }
     }
@@ -161,12 +283,13 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
   };
 
   const isActive = (path: string) => {
-    // Exact match or sub-path match, but avoid /operis matching /operis/parceiros-engenheiros etc.
     if (path === "/operis") return location === "/operis";
     return location === path || location.startsWith(path + "/");
   };
 
-  const currentLabel = visibleGroups.flatMap(g => g.items).find(i => isActive(i.path))?.label ?? "Dashboard";
+  const currentLabel = visibleGroups
+    .flatMap(g => g.items.flatMap(i => [i, ...(i.children ?? [])]))
+    .find(i => isActive(i.path))?.label ?? "Dashboard";
 
   // ─── Sidebar ──────────────────────────────────────────────────────────────
   const Sidebar = () => (
@@ -183,20 +306,67 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
         flexShrink: 0,
       }}
     >
-      {/* Logo */}
-      <div
-        style={{
-          height: 56,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: collapsed ? "center" : "space-between",
-          padding: collapsed ? "0 0.75rem" : "0 0.875rem 0 1rem",
-          borderBottom: `1px solid ${OPERIS_COLORS.border}`,
-          flexShrink: 0,
-        }}
-      >
-        {!collapsed && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+      {/* Logo — Home Button */}
+      <Link href="/app/dashboard">
+        <div
+          style={{
+            height: 56,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: collapsed ? "center" : "space-between",
+            padding: collapsed ? "0 0.75rem" : "0 0.875rem 0 1rem",
+            borderBottom: `1px solid ${OPERIS_COLORS.border}`,
+            flexShrink: 0,
+            cursor: "pointer",
+            textDecoration: "none",
+          }}
+          title="Ir para o Dashboard"
+        >
+          {!collapsed && (
+            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  background: OPERIS_COLORS.primary,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Shield size={15} color="#fff" />
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    fontWeight: 800,
+                    fontSize: "1.0625rem",
+                    letterSpacing: "0.1em",
+                    color: OPERIS_COLORS.textPrimary,
+                    lineHeight: 1,
+                  }}
+                >
+                  OPERIS
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.5625rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    color: OPERIS_COLORS.textMuted,
+                    textTransform: "uppercase",
+                    lineHeight: 1,
+                    marginTop: 2,
+                  }}
+                >
+                  Engineering Intelligence
+                </div>
+              </div>
+            </div>
+          )}
+          {collapsed && (
             <div
               style={{
                 width: 28,
@@ -205,54 +375,23 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                flexShrink: 0,
               }}
             >
-              <Shield size={15} color="#fff" />
+              <Home size={15} color="#fff" />
             </div>
-            <div>
-              <div
-                style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontWeight: 800,
-                  fontSize: "1.0625rem",
-                  letterSpacing: "0.1em",
-                  color: OPERIS_COLORS.textPrimary,
-                  lineHeight: 1,
-                }}
-              >
-                OPERIS
-              </div>
-              <div
-                style={{
-                  fontSize: "0.5625rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.1em",
-                  color: OPERIS_COLORS.textMuted,
-                  textTransform: "uppercase",
-                  lineHeight: 1,
-                  marginTop: 2,
-                }}
-              >
-                Engineering Intelligence
-              </div>
-            </div>
-          </div>
-        )}
-        {collapsed && (
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              background: OPERIS_COLORS.primary,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Shield size={15} color="#fff" />
-          </div>
-        )}
+          )}
+        </div>
+      </Link>
+
+      {/* Collapse toggle */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: collapsed ? "center" : "flex-end",
+          padding: "0.375rem 0.75rem",
+          borderBottom: `1px solid ${OPERIS_COLORS.border}`,
+        }}
+      >
         <button
           onClick={() => setCollapsed(c => !c)}
           style={{
@@ -263,8 +402,8 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
             padding: "0.25rem",
             display: "flex",
             alignItems: "center",
-            flexShrink: 0,
           }}
+          title={collapsed ? "Expandir menu" : "Recolher menu"}
         >
           {collapsed ? <ChevronRight size={14} /> : <Menu size={14} />}
         </button>
@@ -308,48 +447,14 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
 
             {(collapsed || !g.group || expandedGroups[g.group]) && (
               <div>
-                {g.items.map((item) => {
-                  const active = isActive(item.path);
-                  return (
-                    <Link key={item.path} href={item.path}>
-                      <div
-                        title={collapsed ? item.label : undefined}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.625rem",
-                          padding: collapsed ? "0.625rem 0" : "0.5rem 1rem",
-                          justifyContent: collapsed ? "center" : "flex-start",
-                          background: active ? OPERIS_COLORS.primaryMuted : "transparent",
-                          borderLeft: active ? `2px solid ${OPERIS_COLORS.primary}` : "2px solid transparent",
-                          color: active ? OPERIS_COLORS.primary : OPERIS_COLORS.textSecondary,
-                          cursor: "pointer",
-                          transition: "all 0.15s",
-                          textDecoration: "none",
-                          fontSize: "0.8125rem",
-                          fontWeight: active ? 600 : 400,
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!active) {
-                            (e.currentTarget as HTMLDivElement).style.background = OPERIS_COLORS.bgHover;
-                            (e.currentTarget as HTMLDivElement).style.color = OPERIS_COLORS.textPrimary;
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!active) {
-                            (e.currentTarget as HTMLDivElement).style.background = "transparent";
-                            (e.currentTarget as HTMLDivElement).style.color = OPERIS_COLORS.textSecondary;
-                          }
-                        }}
-                      >
-                        <span style={{ flexShrink: 0 }}>{item.icon}</span>
-                        {!collapsed && <span>{item.label}</span>}
-                      </div>
-                    </Link>
-                  );
-                })}
+                {g.items.map((item) => (
+                  <NavItemRow
+                    key={item.path}
+                    item={item}
+                    collapsed={collapsed}
+                    isActive={isActive}
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -499,6 +604,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
                   }}
                   onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.textPrimary)}
                   onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = OPERIS_COLORS.textMuted)}
+                  title="Alertas"
                 >
                   <Bell size={16} />
                 </button>
@@ -552,31 +658,33 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
             zIndex: 50,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <div
-              style={{
-                width: 24,
-                height: 24,
-                background: OPERIS_COLORS.primary,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Shield size={13} color="#fff" />
+          <Link href="/app/dashboard">
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <div
+                style={{
+                  width: 24,
+                  height: 24,
+                  background: OPERIS_COLORS.primary,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Shield size={13} color="#fff" />
+              </div>
+              <span
+                style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontWeight: 800,
+                  fontSize: "1rem",
+                  letterSpacing: "0.1em",
+                  color: OPERIS_COLORS.textPrimary,
+                }}
+              >
+                OPERIS
+              </span>
             </div>
-            <span
-              style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontWeight: 800,
-                fontSize: "1rem",
-                letterSpacing: "0.1em",
-                color: OPERIS_COLORS.textPrimary,
-              }}
-            >
-              OPERIS
-            </span>
-          </div>
+          </Link>
           <button
             onClick={() => setMobileOpen(o => !o)}
             style={{
@@ -621,44 +729,46 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
                   justifyContent: "space-between",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <div
-                    style={{
-                      width: 28,
-                      height: 28,
-                      background: OPERIS_COLORS.primary,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Shield size={15} color="#fff" />
-                  </div>
-                  <div>
+                <Link href="/app/dashboard">
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
                     <div
                       style={{
-                        fontFamily: "'Barlow Condensed', sans-serif",
-                        fontWeight: 800,
-                        fontSize: "1rem",
-                        letterSpacing: "0.1em",
-                        color: OPERIS_COLORS.textPrimary,
-                        lineHeight: 1,
+                        width: 28,
+                        height: 28,
+                        background: OPERIS_COLORS.primary,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      OPERIS
+                      <Shield size={15} color="#fff" />
                     </div>
-                    <div
-                      style={{
-                        fontSize: "0.5625rem",
-                        color: OPERIS_COLORS.textMuted,
-                        letterSpacing: "0.1em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      Engineering Intelligence
+                    <div>
+                      <div
+                        style={{
+                          fontFamily: "'Barlow Condensed', sans-serif",
+                          fontWeight: 800,
+                          fontSize: "1rem",
+                          letterSpacing: "0.1em",
+                          color: OPERIS_COLORS.textPrimary,
+                          lineHeight: 1,
+                        }}
+                      >
+                        OPERIS
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "0.5625rem",
+                          color: OPERIS_COLORS.textMuted,
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Engineering Intelligence
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
                 <button
                   onClick={() => setMobileOpen(false)}
                   style={{ background: "transparent", border: "none", color: OPERIS_COLORS.textMuted, cursor: "pointer" }}
@@ -684,29 +794,14 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
                         {g.group}
                       </div>
                     )}
-                    {g.items.map((item) => {
-                      const active = isActive(item.path);
-                      return (
-                        <Link key={item.path} href={item.path}>
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "0.75rem",
-                              padding: "0.625rem 1rem",
-                              background: active ? OPERIS_COLORS.primaryMuted : "transparent",
-                              borderLeft: active ? `2px solid ${OPERIS_COLORS.primary}` : "2px solid transparent",
-                              color: active ? OPERIS_COLORS.primary : OPERIS_COLORS.textSecondary,
-                              fontSize: "0.875rem",
-                              fontWeight: active ? 600 : 400,
-                            }}
-                          >
-                            {item.icon}
-                            <span>{item.label}</span>
-                          </div>
-                        </Link>
-                      );
-                    })}
+                    {g.items.map((item) => (
+                      <NavItemRow
+                        key={item.path}
+                        item={item}
+                        collapsed={false}
+                        isActive={isActive}
+                      />
+                    ))}
                   </div>
                 ))}
               </nav>
