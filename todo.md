@@ -761,3 +761,7 @@
 - [x] Registrar rota /app/scanner no App.tsx
 - [x] Instalar jsQR e @types/web-bluetooth
 - [x] TypeScript: 0 erros
+
+## Sprint BLUETOOTH_LOADING_STATE (2026-04-08)
+
+- [x] Implementar loading state visual no painel Bluetooth durante impressão do selo (spinner animado, barra de progresso por fase, texto de status, botão desabilitado)

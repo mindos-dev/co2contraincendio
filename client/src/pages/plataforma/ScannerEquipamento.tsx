@@ -19,10 +19,20 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Spinner } from "@/components/ui/spinner";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 type ScanState = "idle" | "scanning" | "found" | "error";
 type PrintState = "idle" | "connecting" | "printing" | "done" | "error";
+
+// Fases da impressão com progresso estimado
+const PRINT_PHASES: Array<{ label: string; progress: number }> = [
+  { label: "Preparando dados do selo...",    progress: 15 },
+  { label: "Enviando para a impressora...",   progress: 45 },
+  { label: "Transmitindo via Bluetooth...",  progress: 75 },
+  { label: "Finalizando impressão...",        progress: 95 },
+];
 
 interface ScannedEquipment {
   id: number;
@@ -61,6 +71,10 @@ export default function ScannerEquipamento() {
   const [connectedPrinterName, setConnectedPrinterName] = useState<string | null>(null);
   const [showPrinterSettings, setShowPrinterSettings] = useState(false);
   const savedPrinter = getSavedPrinter();
+  // Loading state de impressão
+  const [printProgress, setPrintProgress] = useState(0);
+  const [printPhaseLabel, setPrintPhaseLabel] = useState("");
+  const printPhaseTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // tRPC
   const utils = trpc.useUtils();
@@ -186,10 +200,40 @@ export default function ScannerEquipamento() {
   };
 
   // ─── Bluetooth: imprimir ────────────────────────────────────────────────────
+  const startPrintPhaseAnimation = () => {
+    let phaseIdx = 0;
+    setPrintProgress(PRINT_PHASES[0].progress);
+    setPrintPhaseLabel(PRINT_PHASES[0].label);
+    printPhaseTimerRef.current = setInterval(() => {
+      phaseIdx = Math.min(phaseIdx + 1, PRINT_PHASES.length - 1);
+      setPrintProgress(PRINT_PHASES[phaseIdx].progress);
+      setPrintPhaseLabel(PRINT_PHASES[phaseIdx].label);
+      if (phaseIdx === PRINT_PHASES.length - 1 && printPhaseTimerRef.current) {
+        clearInterval(printPhaseTimerRef.current);
+        printPhaseTimerRef.current = null;
+      }
+    }, 800);
+  };
+
+  const stopPrintPhaseAnimation = (success: boolean) => {
+    if (printPhaseTimerRef.current) {
+      clearInterval(printPhaseTimerRef.current);
+      printPhaseTimerRef.current = null;
+    }
+    if (success) {
+      setPrintProgress(100);
+      setPrintPhaseLabel("Selo impresso com sucesso!");
+    } else {
+      setPrintProgress(0);
+      setPrintPhaseLabel("");
+    }
+  };
+
   const printLabel = async () => {
     if (!printerRef.current || !equipment) return;
     setPrintState("printing");
     setPrintError(null);
+    startPrintPhaseAnimation();
     try {
       const labelData: LabelData = {
         equipmentId: String(equipment.id),
@@ -203,9 +247,15 @@ export default function ScannerEquipamento() {
         auditHash: equipment.auditHash ?? undefined,
       };
       await printerRef.current.printLabel(labelData);
+      stopPrintPhaseAnimation(true);
       setPrintState("done");
-      setTimeout(() => setPrintState("idle"), 3000);
+      setTimeout(() => {
+        setPrintState("idle");
+        setPrintProgress(0);
+        setPrintPhaseLabel("");
+      }, 3000);
     } catch (err: unknown) {
+      stopPrintPhaseAnimation(false);
       const msg = err instanceof Error ? err.message : "Erro ao imprimir";
       setPrintError(msg);
       setPrintState("error");
@@ -732,6 +782,93 @@ export default function ScannerEquipamento() {
               </div>
             )}
 
+            {/* Painel de loading de impressão */}
+            {printState === "printing" && (
+              <div
+                style={{
+                  marginBottom: "1rem",
+                  padding: "1rem",
+                  background: "rgba(200,16,46,0.06)",
+                  border: `1px solid ${OPERIS_COLORS.primaryBorder}`,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.625rem",
+                }}
+              >
+                {/* Linha de status com spinner */}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                  <Spinner
+                    className="text-red-500"
+                    style={{ width: 16, height: 16, color: OPERIS_COLORS.primary }}
+                  />
+                  <span
+                    style={{
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: OPERIS_COLORS.textPrimary,
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {printPhaseLabel || "Imprimindo..."}
+                  </span>
+                </div>
+                {/* Barra de progresso */}
+                <Progress
+                  value={printProgress}
+                  className="h-1.5"
+                  style={{
+                    background: "rgba(200,16,46,0.15)",
+                  }}
+                />
+                {/* Percentual */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={{ fontSize: "0.6875rem", color: OPERIS_COLORS.textMuted }}>
+                    Não desligue o Bluetooth durante a impressão
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      fontWeight: 700,
+                      color: OPERIS_COLORS.primary,
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                    }}
+                  >
+                    {printProgress}%
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Painel de sucesso */}
+            {printState === "done" && (
+              <div
+                style={{
+                  marginBottom: "1rem",
+                  padding: "0.875rem",
+                  background: "rgba(34,197,94,0.08)",
+                  border: `1px solid ${OPERIS_COLORS.success}`,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.375rem",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <CheckCircle2 size={15} color={OPERIS_COLORS.success} />
+                  <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: OPERIS_COLORS.success }}>
+                    {printPhaseLabel || "Selo impresso com sucesso!"}
+                  </span>
+                </div>
+                <Progress value={100} className="h-1" />
+              </div>
+            )}
+
             {/* Botões de ação */}
             <div style={{ display: "flex", gap: "0.625rem", flexWrap: "wrap" }}>
               {!isPrinterConnected ? (
@@ -754,19 +891,33 @@ export default function ScannerEquipamento() {
                     opacity: printState === "connecting" ? 0.7 : 1,
                   }}
                 >
-                  <Bluetooth size={15} />
+                  {printState === "connecting" ? (
+                    <Spinner style={{ width: 15, height: 15, color: "#fff" }} />
+                  ) : (
+                    <Bluetooth size={15} />
+                  )}
                   {printState === "connecting" ? "CONECTANDO..." : "CONECTAR IMPRESSORA"}
                 </Button>
               ) : (
                 <>
                   <Button
                     onClick={printLabel}
-                    disabled={!equipment || printState === "printing"}
+                    disabled={!equipment || printState === "printing" || printState === "done"}
                     style={{
                       flex: 1,
-                      background: equipment ? OPERIS_COLORS.primary : "rgba(255,255,255,0.05)",
-                      color: equipment ? "#fff" : OPERIS_COLORS.textDisabled,
-                      border: "none",
+                      background:
+                        printState === "done"
+                          ? "rgba(34,197,94,0.15)"
+                          : equipment
+                          ? OPERIS_COLORS.primary
+                          : "rgba(255,255,255,0.05)",
+                      color:
+                        printState === "done"
+                          ? OPERIS_COLORS.success
+                          : equipment
+                          ? "#fff"
+                          : OPERIS_COLORS.textDisabled,
+                      border: printState === "done" ? `1px solid ${OPERIS_COLORS.success}` : "none",
                       fontFamily: "'Barlow Condensed', sans-serif",
                       fontWeight: 700,
                       letterSpacing: "0.06em",
@@ -775,20 +926,29 @@ export default function ScannerEquipamento() {
                       alignItems: "center",
                       gap: "0.5rem",
                       justifyContent: "center",
+                      transition: "background 0.3s, color 0.3s",
                     }}
                   >
-                    <Printer size={15} />
+                    {printState === "printing" ? (
+                      <Spinner style={{ width: 15, height: 15, color: "#fff" }} />
+                    ) : printState === "done" ? (
+                      <CheckCircle2 size={15} />
+                    ) : (
+                      <Printer size={15} />
+                    )}
                     {printState === "printing"
                       ? "IMPRIMINDO..."
                       : printState === "done"
-                      ? "✓ IMPRESSO"
+                      ? "IMPRESSO"
                       : "IMPRIMIR SELO"}
                   </Button>
                   <Button
                     onClick={disconnectPrinter}
+                    disabled={printState === "printing"}
                     variant="outline"
                     size="icon"
                     title="Desconectar impressora"
+                    style={{ opacity: printState === "printing" ? 0.4 : 1 }}
                   >
                     <BluetoothOff size={15} />
                   </Button>
