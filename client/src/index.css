@@ -66,6 +66,66 @@
   --font-sans:  'Inter', system-ui, sans-serif;
 }
 
+/* ─── OPERIS App — Design System Tokens (Procore/Autodesk style) ─────────── */
+.operis-app {
+  /* Surfaces */
+  --operis-bg:          #0D1117;
+  --operis-sidebar:     #111827;
+  --operis-card:        #1A2332;
+  --operis-elevated:    #1E293B;
+  --operis-border:      #2D3748;
+  --operis-hover:       #243044;
+  --operis-muted:       #374151;
+
+  /* Brand */
+  --operis-blue:        #2563EB;
+  --operis-blue-hover:  #1D4ED8;
+  --operis-blue-dark:   #1B2A4A;
+  --operis-accent:      #0EA5E9;
+
+  /* Text */
+  --operis-text-primary:   #E2E8F0;
+  --operis-text-secondary: #94A3B8;
+  --operis-text-muted:     #475569;
+  --operis-text-disabled:  #334155;
+
+  /* Status */
+  --operis-success:  #22C55E;
+  --operis-warning:  #EAB308;
+  --operis-danger:   #EF4444;
+  --operis-info:     #38BDF8;
+
+  /* Typography */
+  --operis-font-body:    'Inter', 'Segoe UI', sans-serif;
+  --operis-font-label:   'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --operis-font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Radius */
+  --operis-radius-sm:  0.25rem;
+  --operis-radius-md:  0.375rem;
+  --operis-radius-lg:  0.5rem;
+  --operis-radius-xl:  0.75rem;
+
+  /* Shadows */
+  --operis-shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+  --operis-shadow-md:  0 4px 6px -1px rgba(0,0,0,0.4);
+  --operis-shadow-lg:  0 10px 15px -3px rgba(0,0,0,0.5);
+  --operis-shadow-blue: 0 4px 14px rgba(37,99,235,0.35);
+}
+
+/* ─── CO₂ Site — Design Tokens (UL Solutions style) ─────────────────────── */
+.co2-site {
+  --co2-red:        #C8102E;
+  --co2-red-dark:   #9B0B22;
+  --co2-red-hover:  #A50D26;
+  --co2-black:      #0A0A0A;
+  --co2-gray-900:   #111111;
+  --co2-gray-800:   #1E1E1E;
+  --co2-gray-600:   #4A4A4A;
+  --co2-gray-200:   #D8D8D8;
+  --co2-white:      #FFFFFF;
+}
+
 @layer base {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }

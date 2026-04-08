@@ -13,6 +13,7 @@ import { enterpriseRouter } from "./enterprise-router";
 import { artRouter } from "./art-router";
 import { pathologyRouter, maintenanceTaskRouter, comparisonRouter } from "./pathology-router";
 import { engineerRouter } from "./engineer-router";
+import { aiRouter, documentsRouter } from "./ai-router";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -28,6 +29,8 @@ export const appRouter = router({
   maintenanceTask: maintenanceTaskRouter,
   comparison: comparisonRouter,
   engineer: engineerRouter,
+  ai: aiRouter,
+  documents: documentsRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

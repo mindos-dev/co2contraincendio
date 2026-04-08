@@ -781,3 +781,46 @@
 - [ ] Atualizar ScannerEquipamento.tsx: passar equipmentType e lastMaintenanceProvider do equipamento scaneado
 - [ ] Habilitar botão Print Label no módulo de campo mobile (/mobile)
 - [ ] TypeScript: 0 erros
+
+## Sprint ARCH_REFACTOR (2026-04-08)
+
+### Sprint A — Identidade Visual
+- [ ] Criar client/src/lib/co2-tokens.ts (UL Solutions: vermelho #C8102E, branco, cinza #4A4A4A)
+- [ ] Criar client/src/lib/operis-design-system.ts (Procore/Autodesk: azul #1B2A4A, preto #0D1117, cinza técnico)
+- [ ] Refatorar index.css: variáveis CSS separadas para CO2 e OPERIS
+- [ ] Refatorar SaasDashboardLayout: paleta OPERIS profissional, tipografia Inter, sidebar colapsável
+- [ ] Criar OperisButton component: variantes primary/secondary/outline/danger
+- [ ] Criar OperisTable component: cabeçalho destacado, hover em linhas
+- [ ] Criar OperisCard component: cards técnicos com indicadores
+
+### Sprint B — Engine e Módulos
+- [ ] Criar server/core/engine.ts: validação normativa, conformidade, falhas, sugestões
+- [ ] Criar server/modules/equipamentos/index.ts
+- [ ] Criar server/modules/relatorios/index.ts
+- [ ] Criar server/modules/normas/index.ts
+- [ ] Criar server/modules/inspecoes/index.ts
+- [ ] Criar server/services/pdf.service.ts
+- [ ] Criar server/services/ai.service.ts
+- [ ] Criar server/services/lead.service.ts
+- [ ] Criar server/services/storage.service.ts
+
+### Sprint C — Sistema RAG
+- [ ] Adicionar tabelas RAG ao schema Drizzle: ai_documents, ai_chunks, ai_queries_cache
+- [ ] Criar server/ai/embeddings.ts
+- [ ] Criar server/ai/search.ts: busca semantica por similaridade coseno
+- [ ] Criar server/ai/rag.ts: pipeline pergunta contexto prompt resposta
+- [ ] Criar server/ai/prompt-builder.ts
+- [ ] Criar server/ai/cache.ts
+- [ ] Criar server/ai/ingestion.ts
+- [ ] Criar endpoints tRPC: ai.search, ai.ask, documents.upload
+- [ ] Criar pagina /app/busca-inteligente com interface RAG
+
+### Sprint D — Infraestrutura AWS
+- [ ] Criar Dockerfile multi-stage frontend + backend
+- [ ] Criar docker-compose.yml dev + prod
+- [ ] Criar nginx.conf para proxy reverso
+- [ ] Criar infra/aws/cloudfront.json
+- [ ] Criar infra/aws/ec2-userdata.sh
+- [ ] Criar infra/aws/s3-policy.json
+- [ ] Limpeza TypeScript: eliminar any explícitos
+- [ ] Substituir console.log por logger estruturado

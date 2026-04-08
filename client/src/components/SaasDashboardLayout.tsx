@@ -566,7 +566,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
   return (
     <>
       {/* ─── DESKTOP ──────────────────────────────────────────────────────── */}
-      <div className="hidden md:flex" style={{ minHeight: "100vh", background: OPERIS_COLORS.bg }}>
+      <div className="operis-app hidden md:flex" style={{ minHeight: "100vh", background: OPERIS_COLORS.bg }}>
         <Sidebar />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           {/* Top Bar */}

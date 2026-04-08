@@ -1,0 +1,159 @@
+{
+  "_comment": "OPERIS CO₂ — CloudFront Distribution Configuration",
+  "_version": "2.0",
+  "_description": "CDN global para assets estáticos e aceleração de API. Origem: EC2/ECS em sa-east-1 (São Paulo).",
+
+  "DistributionConfig": {
+    "CallerReference": "operis-co2-2026",
+    "Comment": "OPERIS CO2 Contra Incendio — Production CDN",
+    "DefaultRootObject": "index.html",
+    "Enabled": true,
+    "HttpVersion": "http2and3",
+    "IsIPV6Enabled": true,
+    "PriceClass": "PriceClass_100",
+
+    "Origins": {
+      "Quantity": 2,
+      "Items": [
+        {
+          "Id": "operis-app-origin",
+          "DomainName": "co2contraincendio.com.br",
+          "CustomOriginConfig": {
+            "HTTPSPort": 443,
+            "OriginProtocolPolicy": "https-only",
+            "OriginSSLProtocols": {
+              "Quantity": 2,
+              "Items": ["TLSv1.2", "TLSv1.3"]
+            },
+            "OriginReadTimeout": 60,
+            "OriginKeepaliveTimeout": 60
+          },
+          "OriginCustomHeaders": {
+            "Quantity": 1,
+            "Items": [
+              {
+                "HeaderName": "X-Origin-Verify",
+                "HeaderValue": "OPERIS_CLOUDFRONT_SECRET_REPLACE_ME"
+              }
+            ]
+          }
+        },
+        {
+          "Id": "operis-s3-assets",
+          "DomainName": "operis-assets.s3.sa-east-1.amazonaws.com",
+          "S3OriginConfig": {
+            "OriginAccessIdentity": ""
+          }
+        }
+      ]
+    },
+
+    "CacheBehaviors": {
+      "Quantity": 3,
+      "Items": [
+        {
+          "_comment": "Assets Vite — cache imutável 30 dias (hash no nome do arquivo)",
+          "PathPattern": "/assets/*",
+          "TargetOriginId": "operis-app-origin",
+          "ViewerProtocolPolicy": "redirect-to-https",
+          "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+          "Compress": true,
+          "AllowedMethods": {
+            "Quantity": 2,
+            "Items": ["GET", "HEAD"]
+          }
+        },
+        {
+          "_comment": "API tRPC — sem cache, pass-through",
+          "PathPattern": "/api/trpc/*",
+          "TargetOriginId": "operis-app-origin",
+          "ViewerProtocolPolicy": "https-only",
+          "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+          "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
+          "AllowedMethods": {
+            "Quantity": 7,
+            "Items": ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+          }
+        },
+        {
+          "_comment": "Stripe Webhook — sem cache, sem modificação de headers",
+          "PathPattern": "/api/stripe/webhook",
+          "TargetOriginId": "operis-app-origin",
+          "ViewerProtocolPolicy": "https-only",
+          "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+          "AllowedMethods": {
+            "Quantity": 7,
+            "Items": ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+          }
+        }
+      ]
+    },
+
+    "DefaultCacheBehavior": {
+      "_comment": "SPA React — cache curto (5 min) para HTML, longo para assets",
+      "TargetOriginId": "operis-app-origin",
+      "ViewerProtocolPolicy": "redirect-to-https",
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true,
+      "AllowedMethods": {
+        "Quantity": 7,
+        "Items": ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+      },
+      "ForwardedValues": {
+        "QueryString": false,
+        "Cookies": {
+          "Forward": "whitelist",
+          "WhitelistedNames": {
+            "Quantity": 1,
+            "Items": ["session"]
+          }
+        },
+        "Headers": {
+          "Quantity": 3,
+          "Items": ["Authorization", "Origin", "Accept"]
+        }
+      }
+    },
+
+    "CustomErrorResponses": {
+      "Quantity": 2,
+      "Items": [
+        {
+          "ErrorCode": 404,
+          "ResponsePagePath": "/index.html",
+          "ResponseCode": "200",
+          "ErrorCachingMinTTL": 0
+        },
+        {
+          "ErrorCode": 403,
+          "ResponsePagePath": "/index.html",
+          "ResponseCode": "200",
+          "ErrorCachingMinTTL": 0
+        }
+      ]
+    },
+
+    "ViewerCertificate": {
+      "ACMCertificateArn": "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/CERTIFICATE_ID",
+      "SslSupportMethod": "sni-only",
+      "MinimumProtocolVersion": "TLSv1.2_2021"
+    },
+
+    "Aliases": {
+      "Quantity": 2,
+      "Items": [
+        "co2contraincendio.com.br",
+        "www.co2contraincendio.com.br"
+      ]
+    },
+
+    "Logging": {
+      "Enabled": true,
+      "Bucket": "operis-logs.s3.amazonaws.com",
+      "Prefix": "cloudfront/",
+      "IncludeCookies": false
+    },
+
+    "WebACLId": "arn:aws:wafv2:us-east-1:ACCOUNT_ID:global/webacl/operis-waf/WAF_ID"
+  }
+}
