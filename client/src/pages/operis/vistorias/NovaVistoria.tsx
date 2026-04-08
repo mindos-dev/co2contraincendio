@@ -19,6 +19,7 @@ import {
   type SeverityLevel,
   SEVERITY_LABELS,
 } from "@shared/inspection-checklists";
+import { PathologyReport } from "@/components/PathologyReport";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
 type ChecklistState = Record<string, { checked: boolean; severity: SeverityLevel | null }>;
@@ -135,6 +136,8 @@ export default function NovaVistoria() {
 
   // Passo 3 — Checklist
   const [checklistState, setChecklistState] = useState<ChecklistState>({});
+  // ID da vistoria criada em modo draft ao entrar no Passo 3 (permite registrar patologias antes do submit final)
+  const [draftInspectionId, setDraftInspectionId] = useState<number | null>(null);
 
   // ── CEP auto-fill ─────────────────────────────────────────────────────────
   const handleCepChange = useCallback(async (value: string) => {
@@ -183,6 +186,24 @@ export default function NovaVistoria() {
   // ── Mutations ─────────────────────────────────────────────────────────────
   const createMutation = trpc.vistoria.create.useMutation();
   const finalizeMutation = trpc.vistoria.finalizeAndGenerateContract.useMutation();
+  const draftMutation = trpc.vistoria.create.useMutation();
+
+  // Cria vistoria draft ao entrar no Passo 3 para permitir patologias
+  const handleAdvanceToStep3 = async () => {
+    if (draftInspectionId) { setStep(3); return; }
+    if (!landlordName.trim() || !fullAddress.trim()) { setStep(3); return; }
+    try {
+      const draft = await draftMutation.mutateAsync({
+        type: inspectionType,
+        propertyAddress: fullAddress,
+        propertyType: PROPERTY_TYPE_BACKEND_MAP[propertyType] as "apartamento" | "casa" | "sala_comercial" | "galpao" | "outro",
+        landlordName,
+        tenantName: tenantName || "Não informado",
+      });
+      setDraftInspectionId(draft.id);
+    } catch { /* silencioso — pathologies ficam desabilitadas */ }
+    setStep(3);
+  };
 
   const handleSubmit = async () => {
     if (!landlordName.trim()) { toast.error("Informe o nome do locador"); return; }
@@ -607,7 +628,7 @@ export default function NovaVistoria() {
                   )}
                 </h3>
                 {section.items.map(item => (
-                  <div key={item.id} className="space-y-2">
+                  <div key={item.id} className="space-y-2 pb-3 border-b border-gray-700/50 last:border-0">
                     <p className="text-sm font-medium text-gray-300">{item.label}</p>
                     <div className="flex flex-wrap gap-2">
                       {item.checks.map(check => {
@@ -640,6 +661,13 @@ export default function NovaVistoria() {
                         );
                       })}
                     </div>
+                    {/* Botão de patologia por item do checklist */}
+                    {draftInspectionId && (
+                      <PathologyReport
+                        inspectionId={draftInspectionId}
+                        itemLabel={item.label}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -749,10 +777,11 @@ export default function NovaVistoria() {
             <ArrowLeft size={16} /> {step === 1 ? "Cancelar" : "Anterior"}
           </Button>
           {step < 4 && (
-            <Button onClick={() => setStep(s => s + 1)}
-              disabled={step === 1 && !street && !fullAddress}
+            <Button
+              onClick={() => step === 2 ? handleAdvanceToStep3() : setStep(s => s + 1)}
+              disabled={(step === 1 && !street && !fullAddress) || draftMutation.isPending}
               className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
-              Próximo <ArrowRight size={16} />
+              {draftMutation.isPending ? "Preparando..." : "Próximo"} <ArrowRight size={16} />
             </Button>
           )}
         </div>

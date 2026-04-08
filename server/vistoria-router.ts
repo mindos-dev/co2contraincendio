@@ -8,6 +8,7 @@ import {
   propertyInspections,
   inspectionRooms,
   roomItems,
+  inspectionPathologies,
 } from "../drizzle/schema";
 import { invokeLLM } from "./_core/llm";
 import { storagePut } from "./storage";
@@ -443,18 +444,85 @@ Use CSS inline para garantir compatibilidade. Paleta: #0a1628 (azul escuro), #dc
         .select()
         .from(propertyInspections)
         .where(eq(propertyInspections.reportSlug, input.slug));
-      if (!inspection || !inspection.reportHtml) throw new Error("Laudo não encontrado");
+      if (!inspection) throw new Error("Laudo não encontrado");
+      // Buscar cômodos e itens
+      const rooms = await db.select().from(inspectionRooms)
+        .where(eq(inspectionRooms.inspectionId, inspection.id))
+        .orderBy(inspectionRooms.order);
+      const items = await db.select().from(roomItems)
+        .where(eq(roomItems.inspectionId, inspection.id))
+        .orderBy(roomItems.order);
+      // Buscar patologias
+      const pathologies = await db.select().from(inspectionPathologies)
+        .where(eq(inspectionPathologies.inspectionId, inspection.id))
+        .orderBy(desc(inspectionPathologies.createdAt));
+      const totalRiskScore = pathologies.reduce((sum, p) => sum + (p.riskScore ?? 0), 0);
+      const maxRisk = pathologies.length > 0 ? Math.max(...pathologies.map(p => p.riskScore ?? 0)) : 0;
+      // Fotos com timestamp (itens que têm photoUrl)
+      const photos = items.filter(i => i.photoUrl).map(i => ({
+        itemName: i.name,
+        photoUrl: i.photoUrl!,
+        condition: i.condition,
+        createdAt: i.createdAt,
+      }));
       return {
+        id: inspection.id,
         reportHtml: inspection.reportHtml,
         propertyAddress: inspection.propertyAddress,
+        propertyType: inspection.propertyType,
         type: inspection.type,
         landlordName: inspection.landlordName,
+        landlordCpfCnpj: inspection.landlordCpfCnpj,
         tenantName: inspection.tenantName,
+        tenantCpfCnpj: inspection.tenantCpfCnpj,
+        inspectorName: inspection.inspectorName,
+        inspectorCrea: inspection.inspectorCrea,
+        inspectorCompany: inspection.inspectorCompany,
+        contractId: inspection.contractId,
+        contractNumber: inspection.contractNumber,
+        auditHash: inspection.auditHash,
+        lockedAt: inspection.lockedAt,
         inspectedAt: inspection.inspectedAt,
         status: inspection.status,
+        redutorSocial: inspection.redutorSocial,
+        clausulaVigencia: inspection.clausulaVigencia,
+        garantiaType: inspection.garantiaType,
         landlordSignatureUrl: inspection.landlordSignatureUrl,
         tenantSignatureUrl: inspection.tenantSignatureUrl,
         inspectorSignatureUrl: inspection.inspectorSignatureUrl,
+        landlordSignedAt: inspection.landlordSignedAt,
+        tenantSignedAt: inspection.tenantSignedAt,
+        inspectorSignedAt: inspection.inspectorSignedAt,
+        rooms: rooms.map(r => ({
+          id: r.id,
+          name: r.name,
+          type: r.type,
+          notes: r.notes,
+          items: items.filter(i => i.roomId === r.id).map(i => ({
+            id: i.id,
+            name: i.name,
+            category: i.category,
+            condition: i.condition,
+            notes: i.notes,
+            photoUrl: i.photoUrl,
+            createdAt: i.createdAt,
+          })),
+        })),
+        photos,
+        pathologies: pathologies.map(p => ({
+          id: p.id,
+          category: p.category,
+          severity: p.severity,
+          causeAnalysis: p.causeAnalysis,
+          repairSuggestion: p.repairSuggestion,
+          estimatedRepairCost: p.estimatedRepairCost,
+          riskScore: p.riskScore,
+          photoContextUrl: p.photoContextUrl,
+          photoDetailUrl: p.photoDetailUrl,
+          createdAt: p.createdAt,
+        })),
+        totalRiskScore,
+        maxRisk,
       };
     }),
 

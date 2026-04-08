@@ -672,3 +672,9 @@
 - [x] Lead trigger: Maintenance_Due < 30 dias → notificação para equipe CO2
 - [x] Lead trigger: Structural_Issue encontrado → oferta de Consulta de Engenharia (Judson Sampaio)
 - [x] Estimativa de reparo vinculada à severidade da patologia
+
+## Sprint Sugestões + Arquitetura Técnica (Abril 2026)
+- [x] Integrar PathologyReport.tsx ao Passo 3 do stepper (botão "Reportar Patologia" em cada item do checklist)
+- [x] Criar página pública /laudo/:slug com QR Code de autenticidade e rodapé jurídico (sem login)
+- [x] Criar exportVistoriaPdf.ts com Risk Score, fotos com timestamp e patologias reportadas
+- [x] Gerar Documento de Arquitetura Técnica (DER, Dicionário de Dados, Mapa de Endpoints, Triggers)
