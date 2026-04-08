@@ -140,7 +140,6 @@ export default function SaasLogin() {
           .brand-panel-wrapper { display: block !important; }
         }
       `}</style>
-      <BrandPanel />
 
       {/* Painel direito — formulário */}
       <div style={{

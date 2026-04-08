@@ -715,3 +715,8 @@
 - [x] photoUrl2: botão "Foto de Detalhe" no VistoriaDetalhes.tsx + procedure uploadItemPhoto2 no backend
 - [x] ComparadorVistorias.tsx: diff visual entrada vs saída por cômodo com estimativa de depreciação via LLM
 - [x] vistoria.create: persistir engineerPartnerId selecionado no Passo 1 do wizard
+
+## Bugs Identificados na Exploração (08/04/2026)
+
+- [x] BUG: Tela de login renderizando duplicada (layout 2x lado a lado)
+- [x] BUG: Breadcrumb da página /operis/parceiros-engenheiros mostrando "AI Assistant"

@@ -44,6 +44,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Vistorias de Imóveis", path: "/operis/vistorias", icon: <ClipboardCheck size={16} /> },
       { label: "Comparador Entrada/Saída", path: "/operis/vistorias/comparador", icon: <ClipboardCheck size={16} /> },
       { label: "Planejador de Manutenção", path: "/operis/vistorias/manutencao", icon: <Wrench size={16} /> },
+      { label: "Engenheiros Parceiros", path: "/operis/parceiros-engenheiros", icon: <Users size={16} />, adminOnly: true },
     ],
   },
   {
@@ -159,7 +160,11 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
     setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }));
   };
 
-  const isActive = (path: string) => location === path || location.startsWith(path + "/");
+  const isActive = (path: string) => {
+    // Exact match or sub-path match, but avoid /operis matching /operis/parceiros-engenheiros etc.
+    if (path === "/operis") return location === "/operis";
+    return location === path || location.startsWith(path + "/");
+  };
 
   const currentLabel = visibleGroups.flatMap(g => g.items).find(i => isActive(i.path))?.label ?? "Dashboard";
 
