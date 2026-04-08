@@ -115,6 +115,7 @@ const NAV_GROUPS: NavGroup[] = [
         icon: <Cpu size={16} />,
         children: [
           { label: "Painel Principal", path: "/app/operis-eng", icon: <Cpu size={14} /> },
+          { label: "Busca Semântica", path: "/app/operis-eng/busca", icon: <Search size={14} /> },
           { label: "Motor Comercial", path: "/app/operis-eng/comercial", icon: <ShoppingCart size={14} /> },
           { label: "Motor Operacional", path: "/app/operis-eng/operacional", icon: <Globe size={14} /> },
           { label: "Autoaprendizagem", path: "/app/operis-eng/aprendizagem", icon: <Brain size={14} /> },

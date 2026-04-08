@@ -103,6 +103,7 @@ import NovaFireSystem from "./pages/operis/fire-system/NovaFireSystem";
 import FireSystemDetalhes from "./pages/operis/fire-system/FireSystemDetalhes";
 // OPERIS.eng — Agente de Engenharia Autônomo
 import OperisEngHome from "./pages/operis-eng/OperisEngHome";
+import OperisEngSearch from "./pages/operis-eng/OperisEngSearch";
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfService from "./pages/legal/TermsOfService";
@@ -233,6 +234,7 @@ function Router() {
       <Route path="/app/operis-eng/operacional" component={OperisEngHome} />
       <Route path="/app/operis-eng/aprendizagem" component={OperisEngHome} />
       <Route path="/app/operis-eng/governanca" component={OperisEngHome} />
+      <Route path="/app/operis-eng/busca" component={OperisEngSearch} />
       {/* Legal pages */}
       <Route path="/legal/privacy" component={PrivacyPolicy} />
       <Route path="/legal/terms" component={TermsOfService} />

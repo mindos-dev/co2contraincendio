@@ -9,11 +9,12 @@ import { TRPCError } from "@trpc/server";
 import { randomUUID } from "crypto";
 import { getSaasUserByEmail } from "./saas-db";
 import { selfLearningEngine } from "./operis-eng/motors/self-learning";
+import type { ClientProfile, ProposalStyle } from "./operis-eng/motors/self-learning";
 import { commercialEngine } from "./operis-eng/motors/commercial";
 import { operationalEngine } from "./operis-eng/motors/operational";
 import { governanceEngine } from "./operis-eng/motors/governance";
-import type { ClientProfile, ProposalStyle } from "./operis-eng/motors/self-learning";
 import type { AgentRole, PlanTier } from "./operis-eng/motors/governance";
+import { searchEngine, type IngestInput } from "./operis-eng/motors/search-engine";
 import { getSubscriptionByCompany } from "./billing-db";
 import { isSubscriptionActive } from "./billing-plans";
 import { engeRegistry } from "./agents/operis-enge/index";
@@ -488,5 +489,50 @@ export const engeRouter = router({
         input.fileUrl
       );
       return engeRegistry.runTask(task);
+    }),
+
+  // ─── Motor de Busca Semântica ─────────────────────────────────────────────
+
+  /** Busca semântica sobre normas e documentos */
+  search_query: protectedProcedure
+    .input(z.object({
+      query: z.string().min(2).max(500),
+      topK: z.number().int().min(1).max(20).default(5),
+    }))
+    .query(async ({ ctx, input }) => {
+      await assertEngeAccess(ctx);
+      const user = await getSaasUserByEmail(ctx.user.email!);
+      const companyId = user?.companyId ?? undefined;
+      return searchEngine.search(input.query, input.topK, companyId ?? undefined);
+    }),
+
+  /** Ingestão de novo documento no índice semântico */
+  search_ingest: protectedProcedure
+    .input(z.object({
+      source: z.string().min(1).max(255),
+      sourceType: z.enum(["norm", "manual", "inspection", "budget", "custom"]).default("custom"),
+      title: z.string().min(1).max(500),
+      content: z.string().min(10),
+      normCode: z.string().max(50).optional(),
+      section: z.string().max(100).optional(),
+      riskLevel: z.enum(["R1", "R2", "R3", "R4", "R5"]).optional(),
+      tags: z.array(z.string()).max(20).optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await assertEngeAccess(ctx);
+      const user = await getSaasUserByEmail(ctx.user.email!);
+      const ingestInput: IngestInput = {
+        ...input,
+        companyId: user?.companyId ?? undefined,
+      };
+      return searchEngine.ingest(ingestInput);
+    }),
+
+  /** Estatísticas do índice semântico */
+  search_getStats: protectedProcedure
+    .query(async ({ ctx }) => {
+      await assertEngeAccess(ctx);
+      const user = await getSaasUserByEmail(ctx.user.email!);
+      return searchEngine.getStats(user?.companyId ?? undefined);
     }),
 });

@@ -162,6 +162,13 @@
       "when": 1775671887658,
       "tag": "0022_small_tony_stark",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1775678848003,
+      "tag": "0023_soft_shotgun",
+      "breakpoints": true
     }
   ]
 }

@@ -852,3 +852,14 @@
 - [x] Grupo "OPERIS.eng" adicionado ao menu de navegação SaasDashboardLayout
 - [x] Rotas /app/operis-eng/* registradas no App.tsx
 - [x] TypeScript 0 erros em todo o projeto
+
+## OPERIS.eng — Motor de Busca Semântica (Sprint Atual)
+
+- [x] Motor de Busca Semântica (search-engine.ts) — embeddings via LLM + índice vetorial cosine similarity
+- [x] Base de conhecimento de normas NBR/NFPA/ABNT pré-carregada no índice (10 chunks: NBR 12615, 14276, 15808, 17240, NFPA 12, 13, 72)
+- [x] Endpoint tRPC enge.search_query — busca semântica com top-k resultados e score
+- [x] Endpoint tRPC enge.search_ingest — ingestão de novos documentos no índice
+- [x] Endpoint tRPC enge.search_getStats — estatísticas do índice (total de chunks, última atualização)
+- [x] Persistência do índice vetorial no banco de dados (tabela operis_knowledge_chunks)
+- [x] UI de Busca Semântica no painel OPERIS.eng (/app/operis-eng/busca) com design Procore/Autodesk
+- [x] Rota /app/operis-eng/busca registrada no App.tsx e no menu OPERIS.eng

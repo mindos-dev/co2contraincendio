@@ -1134,3 +1134,23 @@ export const fireSystemAuditLogs = mysqlTable("fire_system_audit_logs", {
 });
 export type FireSystemAuditLog = typeof fireSystemAuditLogs.$inferSelect;
 export type InsertFireSystemAuditLog = typeof fireSystemAuditLogs.$inferInsert;
+
+// ─── OPERIS.eng — Motor de Busca Semântica ────────────────────────────────────
+export const operisKnowledgeChunks = mysqlTable("operis_knowledge_chunks", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id"),                              // null = base global
+  source: varchar("source", { length: 255 }).notNull(),      // ex: "NBR 12615", "NFPA 12"
+  sourceType: mysqlEnum("source_type", ["norm", "manual", "inspection", "budget", "custom"]).default("norm").notNull(),
+  title: varchar("title", { length: 500 }).notNull(),
+  content: text("content").notNull(),
+  embedding: text("embedding"),                              // JSON array float32 (384 dims)
+  tags: varchar("tags", { length: 1000 }),                   // JSON array de tags
+  normCode: varchar("norm_code", { length: 50 }),            // ex: "NBR12615"
+  section: varchar("section", { length: 100 }),              // ex: "5.3.2"
+  riskLevel: varchar("risk_level", { length: 5 }),           // R1-R5
+  language: varchar("language", { length: 10 }).default("pt-BR"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type OperisKnowledgeChunk = typeof operisKnowledgeChunks.$inferSelect;
+export type InsertOperisKnowledgeChunk = typeof operisKnowledgeChunks.$inferInsert;
