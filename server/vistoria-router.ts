@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { router, publicProcedure } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 import { saasAuthProcedure } from "./saas-routers";
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "./db";
@@ -182,11 +183,13 @@ export const vistoriaRouter = router({
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("DB unavailable");
+      const companyId = ctx.saasUser.companyId;
+      if (!companyId) throw new TRPCError({ code: "FORBIDDEN", message: "Usuário não está vinculado a nenhuma empresa. Contate o administrador." });
       const { rooms: roomsInput, ...inspectionData } = input;
 
       const [result] = await db.insert(propertyInspections).values({
         ...inspectionData,
-        companyId: (ctx.saasUser.companyId ?? 0),
+        companyId,
         createdByUserId: ctx.saasUser.userId,
         contractStartDate: inspectionData.contractStartDate ? new Date(inspectionData.contractStartDate) : undefined,
         contractEndDate: inspectionData.contractEndDate ? new Date(inspectionData.contractEndDate) : undefined,

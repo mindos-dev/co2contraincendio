@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import QRCode from "qrcode";
 import { z } from "zod";
 import { router, publicProcedure } from "./_core/trpc";
+import { getDb } from "./db";
 import {
   searchOperis,
   getChunksByModule,
@@ -100,7 +101,18 @@ export const saasAuthProcedure = publicProcedure.use(async ({ ctx, next }) => {
   if (!authHeader) throw new TRPCError({ code: "UNAUTHORIZED", message: "Token requerido" });
   const payload = verifyToken(authHeader);
   if (!payload) throw new TRPCError({ code: "UNAUTHORIZED", message: "Token inválido" });
-  return next({ ctx: { ...ctx, saasUser: payload } });
+  // Sempre busca companyId atualizado do banco para evitar tokens stale
+  let freshCompanyId = payload.companyId;
+  if (!freshCompanyId) {
+    const db = await getDb();
+    if (db) {
+      const { saasUsers } = await import("../drizzle/schema");
+      const { eq: drizzleEq } = await import("drizzle-orm");
+      const [freshUser] = await db.select({ companyId: saasUsers.companyId }).from(saasUsers).where(drizzleEq(saasUsers.id, payload.userId));
+      freshCompanyId = freshUser?.companyId ?? null;
+    }
+  }
+  return next({ ctx: { ...ctx, saasUser: { ...payload, companyId: freshCompanyId } } });
 });
 
 export const saasAdminProcedure = saasAuthProcedure.use(async ({ ctx, next }) => {
