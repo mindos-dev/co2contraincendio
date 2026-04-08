@@ -9,7 +9,7 @@ import {
   ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
   Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle,
   CreditCard, TrendingUp, ClipboardCheck, HardHat, Landmark, FileSpreadsheet, BarChart3,
-  FileBadge2, Home, ScanLine, Flame
+  FileBadge2, Home, ScanLine, Flame, Cpu, ShoppingCart, Globe
 } from "lucide-react";
 
 // ─── Navigation Structure ─────────────────────────────────────────────────────
@@ -104,6 +104,23 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "AI Assistant", path: "/operis", icon: <Brain size={16} /> },
       { label: "Busca Inteligente", path: "/app/busca", icon: <Search size={16} />, adminOnly: true },
       { label: "Notificações", path: "/app/notificacoes", icon: <Bell size={16} /> },
+    ],
+  },
+  {
+    group: "OPERIS.eng",
+    items: [
+      {
+        label: "OPERIS.eng",
+        path: "/app/operis-eng",
+        icon: <Cpu size={16} />,
+        children: [
+          { label: "Painel Principal", path: "/app/operis-eng", icon: <Cpu size={14} /> },
+          { label: "Motor Comercial", path: "/app/operis-eng/comercial", icon: <ShoppingCart size={14} /> },
+          { label: "Motor Operacional", path: "/app/operis-eng/operacional", icon: <Globe size={14} /> },
+          { label: "Autoaprendizagem", path: "/app/operis-eng/aprendizagem", icon: <Brain size={14} /> },
+          { label: "Governança", path: "/app/operis-eng/governanca", icon: <Shield size={14} /> },
+        ],
+      },
     ],
   },
   {
@@ -259,6 +276,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
     "Engineering": false,
     "Financial": false,
     "Intelligence": false,
+    "OPERIS.eng": false,
     "Enterprise": false,
     "Settings": false,
   });

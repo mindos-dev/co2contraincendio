@@ -837,3 +837,18 @@
 - [ ] Arquitetura IA centralizada server/ai/
 - [ ] Infra DigitalOcean do-config/
 - [ ] TypeScript: 0 erros
+
+## OPERIS.eng — Agente de Engenharia Autônomo (Sprint Atual)
+
+- [x] Motor de Autoaprendizagem (self-learning.ts) — aprende com orçamentos, sugere itens/margens/estilos
+- [x] Motor Comercial (commercial.ts) — geração de orçamentos, cotações, propostas, follow-up e fornecedores
+- [x] Motor Operacional Assistido (operational.ts) — sessões autenticadas em portais CREA/NF-e/gov.br, gate de confirmação humana
+- [x] Motor de Governança (governance.ts) — logs imutáveis com hash SHA-256, matriz de permissões R1-R5, gate de confirmação humana
+- [x] enge-router.ts reescrito com getSaasUserByEmail (padrão correto do projeto)
+- [x] 20+ endpoints tRPC registrados: learning_*, commercial_*, operational_*, governance_*
+- [x] engeRouter registrado no appRouter principal (server/routers.ts)
+- [x] Página React OperisEngHome.tsx com design Procore/Autodesk (dark navy #0a1628, accent #f97316, Barlow Condensed)
+- [x] Cards de status dos 4 motores com indicadores em tempo real
+- [x] Grupo "OPERIS.eng" adicionado ao menu de navegação SaasDashboardLayout
+- [x] Rotas /app/operis-eng/* registradas no App.tsx
+- [x] TypeScript 0 erros em todo o projeto

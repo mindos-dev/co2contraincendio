@@ -15,6 +15,7 @@ import { pathologyRouter, maintenanceTaskRouter, comparisonRouter } from "./path
 import { engineerRouter } from "./engineer-router";
 import { aiRouter, documentsRouter } from "./ai-router";
 import { fireSystemRouter } from "./fire-system-router";
+import { engeRouter } from "./enge-router";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -33,6 +34,7 @@ export const appRouter = router({
   ai: aiRouter,
   documents: documentsRouter,
   fireSystem: fireSystemRouter,
+  enge: engeRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

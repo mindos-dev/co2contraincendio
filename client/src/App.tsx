@@ -101,6 +101,8 @@ import VistoriaTecnicaBlindada from "./pages/VistoriaTecnicaBlindada";
 import FireSystemList from "./pages/operis/fire-system/FireSystemList";
 import NovaFireSystem from "./pages/operis/fire-system/NovaFireSystem";
 import FireSystemDetalhes from "./pages/operis/fire-system/FireSystemDetalhes";
+// OPERIS.eng — Agente de Engenharia Autônomo
+import OperisEngHome from "./pages/operis-eng/OperisEngHome";
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfService from "./pages/legal/TermsOfService";
@@ -225,6 +227,12 @@ function Router() {
       <Route path="/app/fire-system" component={FireSystemList} />
       <Route path="/app/fire-system/nova" component={NovaFireSystem} />
       <Route path="/app/fire-system/:id" component={FireSystemDetalhes} />
+      {/* OPERIS.eng — Agente de Engenharia Autônomo */}
+      <Route path="/app/operis-eng" component={OperisEngHome} />
+      <Route path="/app/operis-eng/comercial" component={OperisEngHome} />
+      <Route path="/app/operis-eng/operacional" component={OperisEngHome} />
+      <Route path="/app/operis-eng/aprendizagem" component={OperisEngHome} />
+      <Route path="/app/operis-eng/governanca" component={OperisEngHome} />
       {/* Legal pages */}
       <Route path="/legal/privacy" component={PrivacyPolicy} />
       <Route path="/legal/terms" component={TermsOfService} />
