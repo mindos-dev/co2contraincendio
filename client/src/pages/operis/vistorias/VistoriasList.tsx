@@ -4,7 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Home, Eye, FileText, Clock, CheckCircle, AlertCircle, XCircle } from "lucide-react";
+import { Plus, Home, Eye, FileText, Clock, CheckCircle, AlertCircle, XCircle, Shield, Info, TrendingUp, AlertTriangle } from "lucide-react";
 
 const STATUS_CONFIG = {
   rascunho: { label: "Rascunho", color: "bg-gray-500/20 text-gray-300 border-gray-500/30", icon: Clock },
@@ -43,6 +43,44 @@ export default function VistoriasList() {
             Nova Vistoria
           </Button>
         </Link>
+      </div>
+
+      {/* Widget Radar Jurídico 2026 */}
+      <div className="bg-gradient-to-r from-blue-950/50 to-purple-950/30 border border-blue-500/20 rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Shield className="w-5 h-5 text-blue-400" />
+          <h3 className="text-blue-200 font-bold text-sm uppercase tracking-wide">Radar Jurídico 2026</h3>
+          <span className="text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full">LC 214/2025</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+            <div className="flex items-center gap-2 mb-1">
+              <TrendingUp className="w-4 h-4 text-green-400" />
+              <span className="text-gray-300 text-xs font-semibold">Redutor Social</span>
+            </div>
+            <p className="text-white text-sm font-bold">R$ 600,00</p>
+            <p className="text-gray-500 text-xs mt-0.5">Deduzível da base IBS/CBS em contratos residenciais</p>
+          </div>
+          <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+            <div className="flex items-center gap-2 mb-1">
+              <AlertTriangle className="w-4 h-4 text-yellow-400" />
+              <span className="text-gray-300 text-xs font-semibold">Despejo Liminar</span>
+            </div>
+            <p className="text-white text-sm font-bold">15 dias</p>
+            <p className="text-gray-500 text-xs mt-0.5">Prazo para desocupação em contratos sem garantia</p>
+          </div>
+          <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+            <div className="flex items-center gap-2 mb-1">
+              <Info className="w-4 h-4 text-purple-400" />
+              <span className="text-gray-300 text-xs font-semibold">Cláusula de Vigência</span>
+            </div>
+            <p className="text-white text-sm font-bold">Obrigatória</p>
+            <p className="text-gray-500 text-xs mt-0.5">Protege inquilino em venda do imóvel (averbar na matrícula)</p>
+          </div>
+        </div>
+        <p className="text-gray-600 text-xs mt-3">
+          Fonte: Lei 8.245/91 atualizada pela LC 214/2025 (Reforma Tributária). Vigente a partir de 2026.
+        </p>
       </div>
 
       {/* Legenda legal */}

@@ -9,7 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
   ArrowLeft, FileText, CheckCircle, Clock, AlertCircle, Pen,
-  Camera, Wand2, Home, User, Building2, ChevronDown, ChevronUp
+  Camera, Wand2, Home, User, Building2, ChevronDown, ChevronUp,
+  MapPin, Upload, X, Image as ImageIcon, ScrollText
 } from "lucide-react";
 
 const CONDITION_CONFIG = {
@@ -40,6 +41,10 @@ export default function VistoriaDetalhes() {
   const [showSignModal, setShowSignModal] = useState<"landlord" | "tenant" | "inspector" | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [uploadingItem, setUploadingItem] = useState<number | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<Record<number, string>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activePhotoItemId, setActivePhotoItemId] = useState<number | null>(null);
 
   const utils = trpc.useUtils();
   const { data, isLoading } = trpc.vistoria.get.useQuery({ id: Number(id) });
@@ -51,6 +56,18 @@ export default function VistoriaDetalhes() {
     },
   });
 
+  const [contractHtml, setContractHtml] = useState<string | null>(null);
+  const [showContractModal, setShowContractModal] = useState(false);
+
+  const generateContractMutation = trpc.vistoria.generateContract.useMutation({
+    onSuccess: (data) => {
+      setContractHtml(data.contractHtml);
+      setShowContractModal(true);
+      toast.success("Contrato gerado com sucesso!");
+    },
+    onError: (err) => toast.error("Erro ao gerar contrato: " + err.message),
+  });
+
   const generateReportMutation = trpc.vistoria.generateReport.useMutation({
     onSuccess: (data) => {
       toast.success("Laudo gerado com sucesso!");
@@ -58,6 +75,61 @@ export default function VistoriaDetalhes() {
     },
     onError: (err) => toast.error("Erro ao gerar laudo: " + err.message),
   });
+
+  const uploadPhotoMutation = trpc.vistoria.uploadItemPhoto.useMutation({
+    onSuccess: (data, vars) => {
+      toast.success("Foto salva com sucesso!");
+      setPhotoPreview(prev => ({ ...prev, [vars.itemId]: data.url }));
+      setUploadingItem(null);
+      utils.vistoria.get.invalidate({ id: Number(id) });
+    },
+    onError: (err) => {
+      toast.error("Erro ao enviar foto: " + err.message);
+      setUploadingItem(null);
+    },
+  });
+
+  const handlePhotoCapture = (itemId: number) => {
+    setActivePhotoItemId(itemId);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activePhotoItemId) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Foto muito grande. Máximo 5 MB.");
+      return;
+    }
+    setUploadingItem(activePhotoItemId);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result as string;
+      // Tentar obter geolocalização
+      let geoTag = "";
+      try {
+        const pos = await new Promise<GeolocationPosition>((res, rej) =>
+          navigator.geolocation.getCurrentPosition(res, rej, { timeout: 3000 })
+        );
+        geoTag = ` | GPS: ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+      } catch { /* geolocalização negada — continua sem */ }
+      const timestamp = new Date().toLocaleString("pt-BR");
+      const notes = `📷 Foto registrada em ${timestamp}${geoTag}`;
+      uploadPhotoMutation.mutate({
+        itemId: activePhotoItemId,
+        photoBase64: base64,
+        mimeType: file.type,
+      });
+      // Salvar nota de timestamp no item
+      updateItemMutation.mutate({
+        itemId: activePhotoItemId,
+        condition: (items.find(i => i.id === activePhotoItemId)?.condition as any) || "bom",
+        notes,
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
 
   const signMutation = trpc.vistoria.sign.useMutation({
     onSuccess: () => {
@@ -116,10 +188,23 @@ export default function VistoriaDetalhes() {
   if (!data) return <div className="text-red-400 text-center py-12">Vistoria não encontrada</div>;
 
   const { inspection, rooms, items } = data;
+
+  // Input de arquivo oculto para captura de foto
+  const hiddenFileInput = (
+    <input
+      ref={fileInputRef}
+      type="file"
+      accept="image/*"
+      capture="environment"
+      className="hidden"
+      onChange={handleFileChange}
+    />
+  );
   const statusCfg = STATUS_CONFIG[inspection.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.rascunho;
 
   return (
     <div className="space-y-6">
+      {hiddenFileInput}
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
@@ -143,14 +228,25 @@ export default function VistoriaDetalhes() {
             </p>
           </div>
         </div>
-        <Button
-          onClick={() => generateReportMutation.mutate({ inspectionId: Number(id) })}
-          disabled={generateReportMutation.isPending}
-          className="bg-red-600 hover:bg-red-700 text-white gap-2 shrink-0"
-        >
-          <Wand2 className="w-4 h-4" />
-          {generateReportMutation.isPending ? "Gerando..." : "Gerar Laudo IA"}
-        </Button>
+        <div className="flex gap-2 shrink-0">
+          <Button
+            onClick={() => generateContractMutation.mutate({ inspectionId: Number(id) })}
+            disabled={generateContractMutation.isPending}
+            variant="outline"
+            className="border-blue-600 text-blue-400 hover:bg-blue-900/20 gap-2"
+          >
+            <ScrollText className="w-4 h-4" />
+            {generateContractMutation.isPending ? "Gerando..." : "Contrato IA"}
+          </Button>
+          <Button
+            onClick={() => generateReportMutation.mutate({ inspectionId: Number(id) })}
+            disabled={generateReportMutation.isPending}
+            className="bg-red-600 hover:bg-red-700 text-white gap-2"
+          >
+            <Wand2 className="w-4 h-4" />
+            {generateReportMutation.isPending ? "Gerando..." : "Gerar Laudo IA"}
+          </Button>
+        </div>
       </div>
 
       {/* Partes */}
@@ -327,9 +423,22 @@ export default function VistoriaDetalhes() {
                             ) : (
                               <div className="flex items-center gap-2 mt-1">
                                 {item.notes && <p className="text-gray-400 text-xs flex-1">{item.notes}</p>}
-                                <button onClick={() => setEditingItem(item.id)} className="text-gray-500 hover:text-gray-300 text-xs">
-                                  + obs
-                                </button>
+                              <button onClick={() => setEditingItem(item.id)} className="text-gray-500 hover:text-gray-300 text-xs">
+                                + obs
+                              </button>
+                              <button
+                                onClick={() => handlePhotoCapture(item.id)}
+                                disabled={uploadingItem === item.id}
+                                className="text-gray-500 hover:text-blue-400 transition-colors disabled:opacity-50"
+                                title="Adicionar foto"
+                              >
+                                {uploadingItem === item.id
+                                  ? <Upload className="w-3.5 h-3.5 animate-pulse text-blue-400" />
+                                  : (item.photoUrl || photoPreview[item.id])
+                                    ? <ImageIcon className="w-3.5 h-3.5 text-green-400" />
+                                    : <Camera className="w-3.5 h-3.5" />
+                                }
+                              </button>
                               </div>
                             )}
                           </div>
@@ -343,6 +452,41 @@ export default function VistoriaDetalhes() {
           })}
         </div>
       </div>
+
+      {/* Modal de Contrato Inteligente */}
+      {showContractModal && contractHtml && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-gray-900 font-bold text-lg flex items-center gap-2">
+                <ScrollText className="w-5 h-5 text-blue-600" />
+                Contrato de Locação — Lei 8.245/91 + LC 214/2025
+              </h3>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const win = window.open("", "_blank");
+                    if (win) { win.document.write(contractHtml); win.document.close(); win.print(); }
+                  }}
+                  className="border-gray-300 text-gray-700 gap-1 text-xs"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  Imprimir / PDF
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setShowContractModal(false)} className="text-gray-500">
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <div
+              className="flex-1 overflow-y-auto p-6"
+              dangerouslySetInnerHTML={{ __html: contractHtml }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Modal de Assinatura */}
       {showSignModal && (

@@ -549,6 +549,16 @@ export const propertyInspections = mysqlTable("property_inspections", {
   landlordSignedAt: timestamp("landlordSignedAt"),
   tenantSignedAt: timestamp("tenantSignedAt"),
   inspectorSignedAt: timestamp("inspectorSignedAt"),
+  // Reforma Tributária 2026 (LC 214/2025)
+  redutorSocial: boolean("redutorSocial").default(false),
+  clausulaVigencia: boolean("clausulaVigencia").default(false),
+  garantiaType: mysqlEnum("garantiaType", ["caucao", "fiador", "seguro_fianca", "sem_garantia"]).default("seguro_fianca"),
+  // CEP e endereço estruturado
+  propertyCep: varchar("propertyCep", { length: 10 }),
+  propertyStreet: varchar("propertyStreet", { length: 200 }),
+  propertyNeighborhood: varchar("propertyNeighborhood", { length: 100 }),
+  propertyCity: varchar("propertyCity", { length: 100 }),
+  propertyState: varchar("propertyState", { length: 2 }),
   // Observações gerais
   generalNotes: text("generalNotes"),
   inspectedAt: timestamp("inspectedAt").defaultNow().notNull(),

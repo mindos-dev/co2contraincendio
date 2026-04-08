@@ -608,3 +608,13 @@
 - [x] Auditar todas as páginas e componentes em busca de conteúdo duplicado
 - [x] Corrigir todos os problemas de duplicação encontrados (ExtintorPublico.tsx + arquivo .bak residual removido) ("Conformidade que protege. Tecnologia que comprova." aparece duas vezes)
 - [x] Corrigir erro de inserção na tabela property_inspections (/operis/vistorias/nova) — usuário sem companyId vinculado + middleware de refresh de companyId
+
+## Sprint OPERIS Vistorias 2026 (Abril 2026)
+- [x] Layout full-width com stepper (passo a passo) no formulário /operis/vistorias/nova
+- [x] Auto-preenchimento de endereço via ViaCEP (CEP → Rua, Bairro, Cidade)
+- [x] Validação de CPF/CNPJ em tempo real com máscara e indicador visual (verde/vermelho)
+- [x] Upload de fotos por cômodo com timestamp e geolocalização (Drag & Drop + legenda)
+- [x] Backend: procedure vistoria.uploadItemPhoto com storagePut + metadata timestamp/geo- [x] Checklist da Reforma Tributária: Redutor Social R$600 (LC 214/2025) + Cláusula de Vigência
+- [x] Widget "Radar Jurídico" no dashboard de vistorias (alertas da Lei 2026)
+- [x] Geração de contrato inteligente com cláusulas da Lei 8.245/91 atualizada 2026
+- [x] Schema: adicionar campos redutorSocial, clausulaVigencia, garantiaType na tabela property_inspections

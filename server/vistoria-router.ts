@@ -457,6 +457,81 @@ Use CSS inline para garantir compatibilidade. Paleta: #0a1628 (azul escuro), #dc
       };
     }),
 
+  // Gerar contrato inteligente com cláusulas da Lei 2026
+  generateContract: saasAuthProcedure
+    .input(z.object({ inspectionId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      const [inspection] = await db
+        .select()
+        .from(propertyInspections)
+        .where(and(
+          eq(propertyInspections.id, input.inspectionId),
+          eq(propertyInspections.companyId, (ctx.saasUser.companyId ?? 0))
+        ));
+      if (!inspection) throw new Error("Vistoria não encontrada");
+
+      const garantiaMap: Record<string, string> = {
+        seguro_fianca: "Seguro-Fiança",
+        caucao: "Caução (Depósito de 3 alugueis)",
+        fiador: "Fiador / Avalista",
+        sem_garantia: "Sem Garantia",
+      };
+      const garantiaLabel = garantiaMap[(inspection as any).garantiaType || "seguro_fianca"] || "Seguro-Fiança";
+
+      const redutorSocial = (inspection as any).redutorSocial;
+      const clausulaVigencia = (inspection as any).clausulaVigencia;
+      const rentNum = parseFloat((inspection.rentValue || "0").replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
+      const baseCalculo = redutorSocial ? Math.max(0, rentNum - 600) : rentNum;
+
+      const contractStart = inspection.contractStartDate
+        ? new Date(inspection.contractStartDate).toLocaleDateString("pt-BR")
+        : "___/___/______";
+      const contractEnd = inspection.contractEndDate
+        ? new Date(inspection.contractEndDate).toLocaleDateString("pt-BR")
+        : "___/___/______";
+
+      const prompt = `Você é um advogado especialista em direito imobiliário brasileiro. Gere um CONTRATO DE LOCAÇÃO completo e juridicamente válido em HTML, conforme a Lei 8.245/91 atualizada pela LC 214/2025 (Reforma Tributária).
+
+DADOS DO CONTRATO:
+- Imóvel: ${inspection.propertyAddress}
+- Tipo: ${inspection.propertyType}
+- Locador: ${inspection.landlordName} ${inspection.landlordCpfCnpj ? `(CPF/CNPJ: ${inspection.landlordCpfCnpj})` : ""}
+- Locatário: ${inspection.tenantName} ${inspection.tenantCpfCnpj ? `(CPF/CNPJ: ${inspection.tenantCpfCnpj})` : ""}
+- Valor do Aluguel: R$ ${inspection.rentValue || "___"}
+- Vigência: ${contractStart} a ${contractEnd}
+- Modalidade de Garantia: ${garantiaLabel}
+- Número do Contrato: ${inspection.contractNumber || "___"}
+
+CLÁUSULAS OBRIGATÓRIAS (Lei 2026):
+${redutorSocial ? `- CLÁUSULA FISCAL: O locador declara que este imóvel residencial se enquadra no Redutor Social de R$ 600,00 previsto na LC 214/2025. A base de cálculo do IBS/CBS sobre o aluguel será de R$ ${baseCalculo.toFixed(2)} (aluguel menos redutor).` : ""}
+${clausulaVigencia ? `- CLÁUSULA DE VIGÊNCIA: Este contrato deverá ser averbado na matrícula do imóvel. Em caso de alienação do imóvel, o adquirente deverá respeitar o prazo contratual, conforme art. 8º da Lei 8.245/91.` : ""}
+${garantiaLabel === "Sem Garantia" ? `- DESPEJO LIMINAR: Por não haver garantia locaticia, o locador poderá requerer despejo liminar em até 15 dias em caso de inadimplência, conforme alterações da Lei 2026.` : ""}
+- CLÁUSULA DE VISTORIA: O laudo de vistoria de entrada (Vistoria OPERIS #${input.inspectionId}) é parte integrante deste contrato.
+
+Gere o contrato completo em HTML com:
+1. Cabeçalho formal com dados das partes
+2. Cláusulas numeradas (objeto, prazo, valor, reajuste IGPM, garantia, obrigações, rescisão, foro)
+3. Cláusulas específicas da Reforma Tributária 2026 conforme acima
+4. Espaço para assinaturas de locador, locatário e 2 testemunhas
+5. Rodapé com data e local
+
+Use CSS inline. Paleta: branco com bordas cinza, texto preto, cabeçalho azul escuro #0a1628.`;
+
+      const response = await invokeLLM({
+        messages: [
+          { role: "system", content: "Você é um advogado especialista em direito imobiliário. Gere contratos HTML completos, formais e juridicamente corretos." },
+          { role: "user", content: prompt },
+        ],
+      });
+
+      const contractHtml = response.choices[0].message.content as string;
+      const slug = `contrato-${input.inspectionId}-${nanoid(8)}`;
+
+      return { slug, contractHtml };
+    }),
+
   // Atualizar status
   updateStatus: saasAuthProcedure
     .input(z.object({
