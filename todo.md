@@ -765,3 +765,19 @@
 ## Sprint BLUETOOTH_LOADING_STATE (2026-04-08)
 
 - [x] Implementar loading state visual no painel Bluetooth durante impressão do selo (spinner animado, barra de progresso por fase, texto de status, botão desabilitado)
+
+## Sprint DEPLOY_NORMATIVE_THERMAL_LABELS (2026-04-08)
+
+- [ ] Refatorar bluetooth-printer.ts: mapear equipmentType → Layout A/B/C/D
+- [ ] Layout A: Extintor de Pó/CO2 (365 dias — NBR 12962)
+- [ ] Layout B: Extintor Classe K / Agente Saponificante (1825 dias — UL-300)
+- [ ] Layout C: Hidrante / Mangotinho / Sprinkler (1825 dias — NBR 13714)
+- [ ] Layout D: Detector / Alarme / Painel (sem validade normativa — data de inspeção)
+- [ ] Validação normativa: calcular nextMaintenanceDate se não fornecido (365d ou 1825d)
+- [ ] QR Code ESC/POS nativo (GS ( k) obrigatório em todos os layouts
+- [ ] auditHash obrigatório em todos os layouts (não opcional)
+- [ ] Disclaimer "Documentação de Auditoria" se lastMaintenanceProvider != CO2 Contra Incêndio
+- [ ] Atualizar LabelData: adicionar equipmentType, lastMaintenanceProvider, maintenanceDateIso
+- [ ] Atualizar ScannerEquipamento.tsx: passar equipmentType e lastMaintenanceProvider do equipamento scaneado
+- [ ] Habilitar botão Print Label no módulo de campo mobile (/mobile)
+- [ ] TypeScript: 0 erros

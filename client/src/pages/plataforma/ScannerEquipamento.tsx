@@ -9,6 +9,8 @@ import {
   BluetoothPrinter,
   getSavedPrinter,
   clearSavedPrinter,
+  resolveLabelLayout,
+  calcNormativeExpiry,
   type PrinterProfile,
   type LabelData,
 } from "@/lib/bluetooth-printer";
@@ -38,12 +40,22 @@ interface ScannedEquipment {
   id: number;
   code: string;
   category: string | null;
+  subType?: string | null;
+  agentType?: string | null;
+  capacity?: string | null;
+  serialNumber?: string | null;
+  patrimonyTag?: string | null;
+  weightKg?: string | null;
   installationLocation: string | null;
   status: string | null;
+  lastMaintenanceDate?: Date | null;
   nextMaintenanceDate?: Date | null;
   qrCodeUrl?: string | null;
   company?: { name: string } | null;
   auditHash?: string | null;
+  // Responsabilidade
+  lastMaintenanceProvider?: string | null;
+  technicianName?: string | null;
 }
 
 // ─── Componente ───────────────────────────────────────────────────────────────
@@ -235,16 +247,41 @@ export default function ScannerEquipamento() {
     setPrintError(null);
     startPrintPhaseAnimation();
     try {
+      // Determina layout normativo pelo tipo de equipamento
+      const layout = resolveLabelLayout(
+        equipment.category,
+        equipment.agentType,
+        equipment.subType
+      );
+
+      // Calcula vencimento normativo se não fornecido
+      const expirationDate = equipment.nextMaintenanceDate
+        ? new Date(equipment.nextMaintenanceDate).toLocaleDateString("pt-BR")
+        : calcNormativeExpiry(layout, equipment.lastMaintenanceDate ? new Date(equipment.lastMaintenanceDate) : undefined);
+
+      // auditHash obrigatório — gera fallback determinístico se ausente
+      const auditHash = equipment.auditHash ?? `${equipment.code}-${Date.now().toString(16)}`;
+
       const labelData: LabelData = {
         equipmentId: String(equipment.id),
         equipmentCode: equipment.code,
         location: equipment.installationLocation ?? "Não informado",
         company: equipment.company?.name ?? user?.name ?? "CO2 Contra Incêndio",
-        expirationDate: equipment.nextMaintenanceDate
-          ? new Date(equipment.nextMaintenanceDate).toLocaleDateString("pt-BR")
-          : "Verificar",
-        reportSlug: equipment.code,
-        auditHash: equipment.auditHash ?? undefined,
+        agentType: equipment.agentType ?? undefined,
+        capacity: equipment.capacity ?? undefined,
+        serialNumber: equipment.serialNumber ?? undefined,
+        patrimonyTag: equipment.patrimonyTag ?? undefined,
+        weightKg: equipment.weightKg ?? undefined,
+        subType: equipment.subType ?? undefined,
+        lastMaintenanceDate: equipment.lastMaintenanceDate
+          ? new Date(equipment.lastMaintenanceDate).toLocaleDateString("pt-BR")
+          : undefined,
+        expirationDate,
+        reportSlug: equipment.qrCodeUrl ?? equipment.code,
+        auditHash,
+        lastMaintenanceProvider: equipment.lastMaintenanceProvider ?? undefined,
+        technicianName: equipment.technicianName ?? undefined,
+        layout,
       };
       await printerRef.current.printLabel(labelData);
       stopPrintPhaseAnimation(true);
