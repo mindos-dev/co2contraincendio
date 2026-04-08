@@ -6,166 +6,115 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
-  ArrowLeft, ArrowRight, Home, Users, FileText, LayoutGrid,
-  Plus, Trash2, CheckCircle, Search, AlertTriangle, Shield,
-  ShieldCheck, Info
+  ArrowLeft, ArrowRight, Building2, Users, CheckSquare, Eye,
+  Shield, AlertTriangle, CheckCircle, CheckCircle2, Flame, Info,
+  Factory, Wifi, Accessibility, ShieldCheck
 } from "lucide-react";
+import {
+  CHECKLISTS_BY_TYPE,
+  type PropertyType,
+  type SeverityLevel,
+  SEVERITY_LABELS,
+} from "@shared/inspection-checklists";
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
+// ─── TIPOS ────────────────────────────────────────────────────────────────────
+type ChecklistState = Record<string, { checked: boolean; severity: SeverityLevel | null }>;
+
+// ─── CONSTANTES ───────────────────────────────────────────────────────────────
 const STEPS = [
-  { id: 1, title: "Imóvel", icon: Home, desc: "Endereço e tipo de imóvel" },
-  { id: 2, title: "Partes", icon: Users, desc: "Locador, inquilino e vistoriador" },
-  { id: 3, title: "Contrato", icon: FileText, desc: "Dados do contrato e garantias" },
-  { id: 4, title: "Cômodos", icon: LayoutGrid, desc: "Defina os cômodos a vistoriar" },
+  { id: 1, label: "Imóvel", icon: Building2 },
+  { id: 2, label: "Partes", icon: Users },
+  { id: 3, label: "Itens / Fotos", icon: CheckSquare },
+  { id: 4, label: "Revisão e Fechamento", icon: Eye },
 ];
 
-const ROOM_TYPES = [
-  { value: "sala", label: "Sala" },
-  { value: "quarto", label: "Quarto" },
-  { value: "cozinha", label: "Cozinha" },
-  { value: "banheiro", label: "Banheiro" },
-  { value: "area_servico", label: "Área de Serviço" },
-  { value: "garagem", label: "Garagem" },
-  { value: "varanda", label: "Varanda" },
-  { value: "corredor", label: "Corredor" },
-  { value: "outro", label: "Outro" },
-];
+// Mapeamento entre PropertyType (checklist) e tipos aceitos pelo backend
+const PROPERTY_TYPE_BACKEND_MAP: Record<PropertyType, string> = {
+  residencial: "casa",
+  comercial: "sala_comercial",
+  galpao: "galpao",
+  predial: "outro",
+};
 
-const PROPERTY_TYPES = [
-  { value: "apartamento", label: "Apartamento" },
-  { value: "casa", label: "Casa" },
-  { value: "sala_comercial", label: "Sala Comercial" },
-  { value: "galpao", label: "Galpão" },
-  { value: "outro", label: "Outro" },
+const PROPERTY_TYPE_OPTIONS: { value: PropertyType; label: string; icon: React.ReactNode; desc: string }[] = [
+  { value: "residencial", label: "Residencial", icon: <Building2 size={18} />, desc: "Casas, apartamentos" },
+  { value: "comercial", label: "Comercial", icon: <Wifi size={18} />, desc: "Lojas, escritórios" },
+  { value: "galpao", label: "Galpão / Industrial", icon: <Factory size={18} />, desc: "Galpões, armazéns" },
+  { value: "predial", label: "Predial", icon: <Accessibility size={18} />, desc: "Edifícios, condomínios" },
 ];
 
 const INSPECTION_TYPES = [
   { value: "entrada", label: "Vistoria de Entrada" },
   { value: "saida", label: "Vistoria de Saída" },
   { value: "periodica", label: "Vistoria Periódica" },
-  { value: "devolucao", label: "Devolução de Imóvel" },
+  { value: "devolucao", label: "Vistoria de Devolução" },
 ];
 
 const GARANTIA_TYPES = [
-  { value: "seguro_fianca", label: "Seguro-Fiança (Recomendado — Lei 2026)" },
-  { value: "caucao", label: "Caução (Depósito)" },
+  { value: "seguro_fianca", label: "Seguro-Fiança (Recomendado)" },
+  { value: "caucao", label: "Caução (máx. 3 meses)" },
   { value: "fiador", label: "Fiador / Avalista" },
+  { value: "titulo_capitalizacao", label: "Título de Capitalização" },
   { value: "sem_garantia", label: "Sem Garantia ⚠️" },
 ];
 
-// ─── Helpers de validação ──────────────────────────────────────────────────────
+// ─── VALIDAÇÃO CPF/CNPJ ───────────────────────────────────────────────────────
 function formatCpfCnpj(value: string): string {
-  const digits = value.replace(/\D/g, "");
-  if (digits.length <= 11) {
-    return digits
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-  }
-  return digits
-    .replace(/(\d{2})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d)/, "$1/$2")
-    .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+  const d = value.replace(/\D/g, "").slice(0, 14);
+  if (d.length <= 11)
+    return d.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  return d.replace(/(\d{2})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1/$2").replace(/(\d{4})(\d{1,2})$/, "$1-$2");
 }
 
 function validateCpf(cpf: string): boolean {
-  const digits = cpf.replace(/\D/g, "");
-  if (digits.length !== 11 || /^(\d)\1+$/.test(digits)) return false;
-  let sum = 0;
-  for (let i = 0; i < 9; i++) sum += parseInt(digits[i]) * (10 - i);
-  let rest = (sum * 10) % 11;
-  if (rest === 10 || rest === 11) rest = 0;
-  if (rest !== parseInt(digits[9])) return false;
-  sum = 0;
-  for (let i = 0; i < 10; i++) sum += parseInt(digits[i]) * (11 - i);
-  rest = (sum * 10) % 11;
-  if (rest === 10 || rest === 11) rest = 0;
-  return rest === parseInt(digits[10]);
+  const d = cpf.replace(/\D/g, "");
+  if (d.length !== 11 || /^(\d)\1+$/.test(d)) return false;
+  let s = 0; for (let i = 0; i < 9; i++) s += parseInt(d[i]) * (10 - i);
+  let r = (s * 10) % 11; if (r >= 10) r = 0; if (r !== parseInt(d[9])) return false;
+  s = 0; for (let i = 0; i < 10; i++) s += parseInt(d[i]) * (11 - i);
+  r = (s * 10) % 11; if (r >= 10) r = 0; return r === parseInt(d[10]);
 }
 
 function validateCnpj(cnpj: string): boolean {
-  const digits = cnpj.replace(/\D/g, "");
-  if (digits.length !== 14 || /^(\d)\1+$/.test(digits)) return false;
-  const calcDigit = (d: string, weights: number[]) => {
-    const sum = weights.reduce((acc, w, i) => acc + parseInt(d[i]) * w, 0);
-    const rest = sum % 11;
-    return rest < 2 ? 0 : 11 - rest;
-  };
-  const w1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  const w2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  return calcDigit(digits, w1) === parseInt(digits[12]) &&
-    calcDigit(digits, w2) === parseInt(digits[13]);
+  const d = cnpj.replace(/\D/g, "");
+  if (d.length !== 14 || /^(\d)\1+$/.test(d)) return false;
+  const calc = (s: string, w: number[]) => { let sum = 0; for (let i = 0; i < w.length; i++) sum += parseInt(s[i]) * w[i]; const r = sum % 11; return r < 2 ? 0 : 11 - r; };
+  return calc(d, [5,4,3,2,9,8,7,6,5,4,3,2]) === parseInt(d[12]) && calc(d, [6,5,4,3,2,9,8,7,6,5,4,3,2]) === parseInt(d[13]);
 }
 
-function validateCpfCnpj(value: string): "valid" | "invalid" | "empty" {
-  const digits = value.replace(/\D/g, "");
-  if (!digits) return "empty";
-  if (digits.length === 11) return validateCpf(digits) ? "valid" : "invalid";
-  if (digits.length === 14) return validateCnpj(digits) ? "valid" : "invalid";
+function cpfCnpjStatus(v: string): "valid" | "invalid" | "empty" {
+  const d = v.replace(/\D/g, "");
+  if (!d) return "empty";
+  if (d.length === 11) return validateCpf(d) ? "valid" : "invalid";
+  if (d.length === 14) return validateCnpj(d) ? "valid" : "invalid";
   return "invalid";
 }
 
-// ─── Componente de input CPF/CNPJ ─────────────────────────────────────────────
-function CpfCnpjInput({ value, onChange, label, placeholder }: {
-  value: string; onChange: (v: string) => void; label: string; placeholder?: string;
-}) {
-  const status = validateCpfCnpj(value);
-  const borderClass = status === "valid"
-    ? "border-green-500 focus:border-green-400"
-    : status === "invalid" && value.length > 3
-      ? "border-red-500 focus:border-red-400"
-      : "border-gray-600";
-
-  return (
-    <div>
-      <Label className="text-gray-400 text-xs">{label}</Label>
-      <div className="relative mt-1">
-        <Input
-          value={value}
-          onChange={e => onChange(formatCpfCnpj(e.target.value))}
-          placeholder={placeholder || "000.000.000-00 ou 00.000.000/0001-00"}
-          maxLength={18}
-          className={`bg-gray-700 text-white h-9 pr-8 ${borderClass}`}
-        />
-        {status === "valid" && (
-          <CheckCircle className="absolute right-2 top-2 w-4 h-4 text-green-400" />
-        )}
-        {status === "invalid" && value.length > 3 && (
-          <AlertTriangle className="absolute right-2 top-2 w-4 h-4 text-red-400" />
-        )}
-      </div>
-      {status === "invalid" && value.length > 3 && (
-        <p className="text-red-400 text-xs mt-1">CPF/CNPJ inválido</p>
-      )}
-    </div>
-  );
-}
-
-// ─── Componente principal ──────────────────────────────────────────────────────
-type Room = { name: string; type: string };
-
+// ─── COMPONENTE PRINCIPAL ─────────────────────────────────────────────────────
 export default function NovaVistoria() {
   const [, navigate] = useLocation();
   const [step, setStep] = useState(1);
-  const [cepLoading, setCepLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contractResult, setContractResult] = useState<{ id: number; contractId: string } | null>(null);
 
-  // Step 1 — Imóvel
-  const [type, setType] = useState("entrada");
-  const [propertyCep, setPropertyCep] = useState("");
-  const [propertyStreet, setPropertyStreet] = useState("");
-  const [propertyNumber, setPropertyNumber] = useState("");
-  const [propertyComplement, setPropertyComplement] = useState("");
-  const [propertyNeighborhood, setPropertyNeighborhood] = useState("");
-  const [propertyCity, setPropertyCity] = useState("");
-  const [propertyState, setPropertyState] = useState("");
-  const [propertyType, setPropertyType] = useState("apartamento");
+  // Passo 1 — Imóvel
+  const [propertyType, setPropertyType] = useState<PropertyType>("residencial");
+  const [inspectionType, setInspectionType] = useState<"entrada" | "saida" | "periodica" | "devolucao">("entrada");
+  const [cep, setCep] = useState("");
+  const [cepLoading, setCepLoading] = useState(false);
+  const [street, setStreet] = useState("");
+  const [number, setNumber] = useState("");
+  const [complement, setComplement] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [city, setCity] = useState("");
+  const [uf, setUf] = useState("");
   const [propertyArea, setPropertyArea] = useState("");
   const [propertyRegistration, setPropertyRegistration] = useState("");
 
-  // Step 2 — Partes
+  // Passo 2 — Partes
   const [landlordName, setLandlordName] = useState("");
   const [landlordCpf, setLandlordCpf] = useState("");
   const [landlordPhone, setLandlordPhone] = useState("");
@@ -174,551 +123,636 @@ export default function NovaVistoria() {
   const [tenantCpf, setTenantCpf] = useState("");
   const [tenantPhone, setTenantPhone] = useState("");
   const [tenantEmail, setTenantEmail] = useState("");
-  const [inspectorName, setInspectorName] = useState("");
-  const [inspectorCrea, setInspectorCrea] = useState("");
-
-  // Step 3 — Contrato + Reforma Tributária
-  const [contractNumber, setContractNumber] = useState("");
+  const [inspectorName, setInspectorName] = useState("Eng. Judson Aleixo Sampaio");
+  const [inspectorCrea, setInspectorCrea] = useState("CREA/MG 142203671-5");
+  const [rentValue, setRentValue] = useState("");
   const [contractStart, setContractStart] = useState("");
   const [contractEnd, setContractEnd] = useState("");
-  const [rentValue, setRentValue] = useState("");
   const [garantiaType, setGarantiaType] = useState("seguro_fianca");
   const [redutorSocial, setRedutorSocial] = useState(false);
   const [clausulaVigencia, setClausulaVigencia] = useState(false);
   const [generalNotes, setGeneralNotes] = useState("");
 
-  // Step 4 — Cômodos
-  const [rooms, setRooms] = useState<Room[]>([
-    { name: "Sala de Estar", type: "sala" },
-    { name: "Quarto 1", type: "quarto" },
-    { name: "Cozinha", type: "cozinha" },
-    { name: "Banheiro", type: "banheiro" },
-  ]);
+  // Passo 3 — Checklist
+  const [checklistState, setChecklistState] = useState<ChecklistState>({});
 
-  const createMutation = trpc.vistoria.create.useMutation({
-    onSuccess: (data) => {
-      toast.success("Vistoria criada com sucesso!");
-      navigate(`/operis/vistorias/${data.id}`);
-    },
-    onError: (err) => {
-      toast.error("Erro ao criar vistoria: " + err.message);
-    },
-  });
-
-  // ─── CEP auto-fill ────────────────────────────────────────────────────────
-  const fetchCep = useCallback(async (cep: string) => {
-    const digits = cep.replace(/\D/g, "");
-    if (digits.length !== 8) return;
-    setCepLoading(true);
-    try {
-      const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
-      const data = await res.json();
-      if (data.erro) {
-        toast.error("CEP não encontrado");
-      } else {
-        setPropertyStreet(data.logradouro || "");
-        setPropertyNeighborhood(data.bairro || "");
-        setPropertyCity(data.localidade || "");
-        setPropertyState(data.uf || "");
-        toast.success("Endereço preenchido automaticamente");
-      }
-    } catch {
-      toast.error("Erro ao consultar CEP");
-    } finally {
-      setCepLoading(false);
+  // ── CEP auto-fill ─────────────────────────────────────────────────────────
+  const handleCepChange = useCallback(async (value: string) => {
+    const formatted = value.replace(/\D/g, "").replace(/(\d{5})(\d)/, "$1-$2").slice(0, 9);
+    setCep(formatted);
+    if (formatted.replace(/\D/g, "").length === 8) {
+      setCepLoading(true);
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${formatted.replace(/\D/g, "")}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          setStreet(data.logradouro || "");
+          setNeighborhood(data.bairro || "");
+          setCity(data.localidade || "");
+          setUf(data.uf || "");
+          toast.success("Endereço preenchido automaticamente");
+        } else {
+          toast.error("CEP não encontrado");
+        }
+      } catch { toast.error("Erro ao consultar CEP"); }
+      finally { setCepLoading(false); }
     }
   }, []);
 
-  const handleCepChange = (value: string) => {
-    const formatted = value.replace(/\D/g, "").replace(/(\d{5})(\d)/, "$1-$2").substring(0, 9);
-    setPropertyCep(formatted);
-    if (formatted.replace(/\D/g, "").length === 8) fetchCep(formatted);
+  // ── Checklist ─────────────────────────────────────────────────────────────
+  const toggleCheck = (itemId: string, check: string) => {
+    const key = `${itemId}::${check}`;
+    setChecklistState(prev => ({
+      ...prev,
+      [key]: { checked: !prev[key]?.checked, severity: prev[key]?.severity ?? null },
+    }));
   };
 
-  // ─── Helpers de cômodos ────────────────────────────────────────────────────
-  const addRoom = () => setRooms(r => [...r, { name: "", type: "outro" }]);
-  const removeRoom = (i: number) => setRooms(r => r.filter((_, idx) => idx !== i));
-  const updateRoom = (i: number, field: keyof Room, value: string) =>
-    setRooms(r => r.map((room, idx) => idx === i ? { ...room, [field]: value } : room));
+  const setSeverity = (itemId: string, check: string, sev: SeverityLevel) => {
+    const key = `${itemId}::${check}`;
+    setChecklistState(prev => ({ ...prev, [key]: { ...prev[key], severity: sev } }));
+  };
 
-  // ─── Endereço completo montado ─────────────────────────────────────────────
-  const fullAddress = [
-    propertyStreet,
-    propertyNumber,
-    propertyComplement,
-    propertyNeighborhood,
-    propertyCity,
-    propertyState,
-  ].filter(Boolean).join(", ");
+  const sections = CHECKLISTS_BY_TYPE[propertyType] ?? [];
+  const checkedItems = Object.entries(checklistState).filter(([, v]) => v.checked);
+  const highSeverityCount = checkedItems.filter(([, v]) => v.severity === "high").length;
 
-  // ─── Submit ────────────────────────────────────────────────────────────────
-  const handleSubmit = () => {
-    if (!fullAddress.trim() && !propertyStreet.trim()) {
-      toast.error("Informe o endereço do imóvel");
-      return;
-    }
+  // ── Endereço completo ─────────────────────────────────────────────────────
+  const fullAddress = [street, number, complement, neighborhood, city, uf].filter(Boolean).join(", ");
+
+  // ── Mutations ─────────────────────────────────────────────────────────────
+  const createMutation = trpc.vistoria.create.useMutation();
+  const finalizeMutation = trpc.vistoria.finalizeAndGenerateContract.useMutation();
+
+  const handleSubmit = async () => {
     if (!landlordName.trim()) { toast.error("Informe o nome do locador"); return; }
-    if (!tenantName.trim()) { toast.error("Informe o nome do inquilino"); return; }
-    if (garantiaType === "sem_garantia") {
-      if (!confirm("⚠️ Contratos sem garantia permitem despejo liminar em 15 dias (Lei 2026). Deseja prosseguir sem garantia?")) return;
+    if (!fullAddress.trim()) { toast.error("Informe o endereço do imóvel"); return; }
+    setIsSubmitting(true);
+    try {
+      const created = await createMutation.mutateAsync({
+        type: inspectionType,
+        propertyAddress: fullAddress,
+        propertyType: PROPERTY_TYPE_BACKEND_MAP[propertyType] as "apartamento" | "casa" | "sala_comercial" | "galpao" | "outro",
+        propertyArea: propertyArea || undefined,
+        propertyRegistration: propertyRegistration || undefined,
+        landlordName,
+        landlordCpfCnpj: landlordCpf.replace(/\D/g, "") || undefined,
+        landlordPhone: landlordPhone || undefined,
+        landlordEmail: landlordEmail || undefined,
+        tenantName: tenantName || "Não informado",
+        tenantCpfCnpj: tenantCpf.replace(/\D/g, "") || undefined,
+        tenantPhone: tenantPhone || undefined,
+        tenantEmail: tenantEmail || undefined,
+        inspectorName: inspectorName || undefined,
+        inspectorCrea: inspectorCrea || undefined,
+        contractStartDate: contractStart || undefined,
+        contractEndDate: contractEnd || undefined,
+        rentValue: rentValue || undefined,
+        generalNotes: generalNotes || undefined,
+      });
+      const finalized = await finalizeMutation.mutateAsync({ inspectionId: created.id });
+      setContractResult({ id: created.id, contractId: finalized.contractId });
+    } catch (err: any) {
+      toast.error("Erro ao criar vistoria: " + err.message);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    createMutation.mutate({
-      type: type as any,
-      propertyAddress: fullAddress || propertyStreet,
-      propertyType: propertyType as any,
-      propertyArea: propertyArea || undefined,
-      propertyRegistration: propertyRegistration || undefined,
-      landlordName,
-      landlordCpfCnpj: landlordCpf.replace(/\D/g, "") || undefined,
-      landlordPhone: landlordPhone || undefined,
-      landlordEmail: landlordEmail || undefined,
-      tenantName,
-      tenantCpfCnpj: tenantCpf.replace(/\D/g, "") || undefined,
-      tenantPhone: tenantPhone || undefined,
-      tenantEmail: tenantEmail || undefined,
-      contractNumber: contractNumber || undefined,
-      contractStartDate: contractStart || undefined,
-      contractEndDate: contractEnd || undefined,
-      rentValue: rentValue || undefined,
-      inspectorName: inspectorName || undefined,
-      inspectorCrea: inspectorCrea || undefined,
-      generalNotes: generalNotes || undefined,
-      rooms: rooms.filter(r => r.name.trim()) as any,
-    });
   };
 
-  // ─── Alerta de garantia sem garantia ──────────────────────────────────────
-  const showGarantiaWarning = garantiaType === "sem_garantia";
-
-  return (
-    <div className="w-full min-h-screen bg-[#0B0F19]">
-      {/* Header full-width */}
-      <div className="border-b border-gray-800 bg-[#0d1220] px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/operis/vistorias")}
-            className="text-gray-400 hover:text-white shrink-0">
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            Voltar
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold text-white font-['Barlow_Condensed'] tracking-wide uppercase">
-              Nova Vistoria
-            </h1>
-            <p className="text-gray-400 text-xs">Laudo técnico conforme Lei 8.245/91 — Atualizada 2026</p>
+  // ─── TELA DE SUCESSO ──────────────────────────────────────────────────────
+  if (contractResult) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
+        <div className="bg-gray-800 border border-gray-700 rounded-2xl max-w-lg w-full text-center p-10 space-y-6">
+          <div className="flex justify-center">
+            <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center">
+              <CheckCircle2 size={40} className="text-green-400" />
+            </div>
           </div>
-          <div className="text-right text-xs text-gray-500 hidden md:block">
-            <span className="text-red-400 font-semibold">Passo {step}</span> de {STEPS.length}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-2">Vistoria Criada!</h2>
+            <p className="text-gray-400 text-sm">Registro selado. Número do contrato gerado com hash de auditoria.</p>
+          </div>
+          <div className="bg-gray-900 border border-blue-500/30 rounded-xl p-5">
+            <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Número do Contrato</p>
+            <p className="text-3xl font-mono font-bold text-blue-400">{contractResult.contractId}</p>
+            <div className="flex items-center justify-center gap-2 mt-3">
+              <Shield size={13} className="text-green-400" />
+              <span className="text-xs text-green-400">Edição bloqueada — registro imutável</span>
+            </div>
+          </div>
+          {highSeverityCount > 0 && (
+            <div className="bg-red-900/20 border border-red-600/30 rounded-xl p-4 text-left">
+              <p className="text-sm font-semibold text-red-400 mb-1">⚠️ {highSeverityCount} item(ns) de alta severidade</p>
+              <p className="text-xs text-gray-400 mb-3">Recomendamos inspeção presencial por engenheiro especializado.</p>
+              <div className="space-y-2">
+                <Button size="sm" variant="outline" className="w-full border-red-600/30 text-red-400 text-xs"
+                  onClick={() => navigate("/operis/engenharia/inspecao-predial")}>
+                  Solicitar Inspeção Predial — Eng. Judson Sampaio
+                </Button>
+                <Button size="sm" variant="outline" className="w-full border-orange-600/30 text-orange-400 text-xs"
+                  onClick={() => navigate("/operis/engenharia/vistoria-cautelar")}>
+                  Solicitar Vistoria Cautelar de Vizinhança
+                </Button>
+              </div>
+            </div>
+          )}
+          <div className="flex flex-col gap-2">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => navigate(`/operis/vistorias/${contractResult.id}`)}>
+              Ver Detalhes da Vistoria
+            </Button>
+            <Button variant="outline" className="w-full border-gray-600 text-gray-300"
+              onClick={() => navigate("/operis/vistorias")}>
+              Voltar para Listagem
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── RENDER PRINCIPAL ─────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Header */}
+      <div className="border-b border-gray-700 bg-gray-800/80 px-6 py-4">
+        <div className="max-w-5xl mx-auto flex items-center gap-4">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/operis/vistorias")} className="text-gray-400 hover:text-white">
+            <ArrowLeft size={16} className="mr-1" /> Voltar
+          </Button>
+          <div>
+            <h1 className="text-lg font-bold text-white">Nova Vistoria</h1>
+            <p className="text-xs text-gray-500">OPERIS IA — Módulo de Vistorias</p>
           </div>
         </div>
       </div>
 
-      {/* Stepper full-width */}
-      <div className="border-b border-gray-800 bg-[#0d1220]">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="flex">
+      {/* Stepper */}
+      <div className="border-b border-gray-700 bg-gray-800/40 px-6 py-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center">
             {STEPS.map((s, idx) => {
               const Icon = s.icon;
-              const isActive = s.id === step;
-              const isDone = s.id < step;
               return (
-                <button
-                  key={s.id}
-                  onClick={() => isDone && setStep(s.id)}
-                  className={`flex-1 flex items-center gap-3 py-4 px-3 border-b-2 transition-all text-left ${
-                    isActive
-                      ? "border-red-500 text-white"
-                      : isDone
-                        ? "border-green-500/50 text-green-400 cursor-pointer hover:border-green-400"
-                        : "border-transparent text-gray-600"
-                  }`}
-                >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold ${
-                    isActive ? "bg-red-600 text-white" :
-                    isDone ? "bg-green-600/20 text-green-400" :
-                    "bg-gray-800 text-gray-600"
-                  }`}>
-                    {isDone ? <CheckCircle className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
-                  </div>
-                  <div className="hidden sm:block">
-                    <div className="text-xs font-semibold">{s.title}</div>
-                    <div className="text-xs opacity-60">{s.desc}</div>
+                <div key={s.id} className="flex items-center flex-1">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      step > s.id ? "bg-green-500 text-white" :
+                      step === s.id ? "bg-blue-600 text-white ring-2 ring-blue-500/30" :
+                      "bg-gray-700 text-gray-500"
+                    }`}>
+                      {step > s.id ? <CheckCircle size={14} /> : <Icon size={14} />}
+                    </div>
+                    <span className={`text-xs font-medium hidden sm:block ${step === s.id ? "text-white" : "text-gray-500"}`}>
+                      {s.label}
+                    </span>
                   </div>
                   {idx < STEPS.length - 1 && (
-                    <ArrowRight className="w-3 h-3 text-gray-700 ml-auto hidden lg:block" />
+                    <div className={`flex-1 h-px mx-3 transition-colors ${step > s.id ? "bg-green-500/50" : "bg-gray-700"}`} />
                   )}
-                </button>
+                </div>
               );
             })}
           </div>
         </div>
       </div>
 
-      {/* Conteúdo do step */}
+      {/* Conteúdo */}
       <div className="max-w-5xl mx-auto px-6 py-8">
 
-        {/* ── Step 1: Imóvel ── */}
+        {/* ── PASSO 1: IMÓVEL ─────────────────────────────────────────────── */}
         {step === 1 && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-1">
-                <Label className="text-gray-300 text-sm">Tipo de Vistoria *</Label>
-                <Select value={type} onValueChange={setType}>
-                  <SelectTrigger className="bg-gray-800 border-gray-600 text-white mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {INSPECTION_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+            <div>
+              <h2 className="text-xl font-bold text-white mb-1">Dados do Imóvel</h2>
+              <p className="text-sm text-gray-400">O checklist de itens será adaptado automaticamente ao tipo selecionado.</p>
+            </div>
+
+            {/* Smart Filter — Tipo de Imóvel */}
+            <div>
+              <Label className="text-gray-300 text-sm mb-3 block">Tipo de Imóvel</Label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {PROPERTY_TYPE_OPTIONS.map(pt => (
+                  <button key={pt.value} type="button" onClick={() => setPropertyType(pt.value)}
+                    className={`p-4 rounded-xl border text-left transition-all ${
+                      propertyType === pt.value
+                        ? "border-blue-500 bg-blue-500/10 text-white"
+                        : "border-gray-700 bg-gray-800/40 text-gray-400 hover:border-blue-500/40"
+                    }`}>
+                    <div className="mb-2">{pt.icon}</div>
+                    <div className="text-sm font-semibold">{pt.label}</div>
+                    <div className="text-xs text-gray-500 mt-1">{pt.desc}</div>
+                  </button>
+                ))}
               </div>
-              <div className="md:col-span-1">
-                <Label className="text-gray-300 text-sm">Tipo de Imóvel</Label>
-                <Select value={propertyType} onValueChange={setPropertyType}>
-                  <SelectTrigger className="bg-gray-800 border-gray-600 text-white mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PROPERTY_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+              {(propertyType === "galpao") && (
+                <div className="mt-3 flex items-center gap-2 bg-red-900/20 border border-red-600/20 rounded-lg px-4 py-2">
+                  <Flame size={13} className="text-red-400" />
+                  <span className="text-xs text-red-400">Inclui seção obrigatória de <strong>Auditoria de Segurança Contra Incêndio (CO2 Standard)</strong></span>
+                </div>
+              )}
+            </div>
+
+            {/* Tipo de Vistoria */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-gray-300 text-sm mb-2 block">Tipo de Vistoria</Label>
+                <Select value={inspectionType} onValueChange={(v) => setInspectionType(v as "entrada" | "saida" | "periodica" | "devolucao")}>
+                  <SelectTrigger className="bg-gray-800 border-gray-600 text-white"><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    {INSPECTION_TYPES.map(t => <SelectItem key={t.value} value={t.value} className="text-gray-300">{t.label}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label className="text-gray-300 text-sm">Área (m²)</Label>
-                <Input value={propertyArea} onChange={e => setPropertyArea(e.target.value)}
-                  placeholder="Ex: 85"
-                  className="bg-gray-800 border-gray-600 text-white mt-1" />
+                <Label className="text-gray-300 text-sm mb-2 block">Área (m²)</Label>
+                <Input value={propertyArea} onChange={e => setPropertyArea(e.target.value)} type="number"
+                  placeholder="Ex: 120" className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-600" />
               </div>
             </div>
 
-            {/* Endereço com CEP */}
-            <div className="bg-gray-800/40 rounded-xl p-5 space-y-4 border border-gray-700">
-              <h3 className="text-gray-200 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
-                <Home className="w-4 h-4 text-red-400" />
-                Endereço do Imóvel
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="col-span-1">
-                  <Label className="text-gray-400 text-xs">CEP *</Label>
-                  <div className="relative mt-1">
-                    <Input
-                      value={propertyCep}
-                      onChange={e => handleCepChange(e.target.value)}
-                      placeholder="00000-000"
-                      maxLength={9}
-                      className="bg-gray-700 border-gray-600 text-white h-9 pr-8"
-                    />
-                    {cepLoading && (
-                      <Search className="absolute right-2 top-2 w-4 h-4 text-blue-400 animate-pulse" />
-                    )}
-                  </div>
-                </div>
-                <div className="col-span-2 md:col-span-2">
-                  <Label className="text-gray-400 text-xs">Rua / Logradouro *</Label>
-                  <Input value={propertyStreet} onChange={e => setPropertyStreet(e.target.value)}
-                    placeholder="Preenchido automaticamente pelo CEP"
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
-                </div>
-                <div>
-                  <Label className="text-gray-400 text-xs">Número</Label>
-                  <Input value={propertyNumber} onChange={e => setPropertyNumber(e.target.value)}
-                    placeholder="Ex: 843"
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
-                </div>
-                <div>
-                  <Label className="text-gray-400 text-xs">Complemento</Label>
-                  <Input value={propertyComplement} onChange={e => setPropertyComplement(e.target.value)}
-                    placeholder="Apto, Bloco..."
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
-                </div>
-                <div>
-                  <Label className="text-gray-400 text-xs">Bairro</Label>
-                  <Input value={propertyNeighborhood} onChange={e => setPropertyNeighborhood(e.target.value)}
-                    placeholder="Preenchido pelo CEP"
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
-                </div>
-                <div>
-                  <Label className="text-gray-400 text-xs">Cidade</Label>
-                  <Input value={propertyCity} onChange={e => setPropertyCity(e.target.value)}
-                    placeholder="Preenchido pelo CEP"
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
-                </div>
-                <div>
-                  <Label className="text-gray-400 text-xs">UF</Label>
-                  <Input value={propertyState} onChange={e => setPropertyState(e.target.value.toUpperCase())}
-                    placeholder="MG" maxLength={2}
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
-                </div>
+            {/* CEP + Endereço */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <Label className="text-gray-300 text-sm mb-2 block">CEP</Label>
+                <Input value={cep} onChange={e => handleCepChange(e.target.value)}
+                  placeholder="00000-000" className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-600" />
+                {cepLoading && <p className="text-xs text-blue-400 mt-1">Buscando...</p>}
+              </div>
+              <div className="md:col-span-2">
+                <Label className="text-gray-300 text-sm mb-2 block">Logradouro</Label>
+                <Input value={street} onChange={e => setStreet(e.target.value)}
+                  placeholder="Rua, Avenida..." className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-600" />
+              </div>
+              <div>
+                <Label className="text-gray-300 text-sm mb-2 block">Número</Label>
+                <Input value={number} onChange={e => setNumber(e.target.value)}
+                  placeholder="123" className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-600" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <Label className="text-gray-300 text-sm mb-2 block">Complemento</Label>
+                <Input value={complement} onChange={e => setComplement(e.target.value)}
+                  placeholder="Apto, Sala..." className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-600" />
+              </div>
+              <div>
+                <Label className="text-gray-300 text-sm mb-2 block">Bairro</Label>
+                <Input value={neighborhood} onChange={e => setNeighborhood(e.target.value)}
+                  className="bg-gray-800 border-gray-600 text-white" />
+              </div>
+              <div>
+                <Label className="text-gray-300 text-sm mb-2 block">Cidade</Label>
+                <Input value={city} onChange={e => setCity(e.target.value)}
+                  className="bg-gray-800 border-gray-600 text-white" />
+              </div>
+              <div>
+                <Label className="text-gray-300 text-sm mb-2 block">UF</Label>
+                <Input value={uf} onChange={e => setUf(e.target.value.toUpperCase().slice(0, 2))}
+                  placeholder="MG" className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-600" />
               </div>
             </div>
 
             <div>
-              <Label className="text-gray-300 text-sm">Matrícula / Registro no Cartório</Label>
+              <Label className="text-gray-300 text-sm mb-2 block">Matrícula do Imóvel (opcional)</Label>
               <Input value={propertyRegistration} onChange={e => setPropertyRegistration(e.target.value)}
-                placeholder="Número de matrícula"
-                className="bg-gray-800 border-gray-600 text-white mt-1" />
+                placeholder="Número de matrícula no cartório" className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-600 max-w-sm" />
             </div>
           </div>
         )}
 
-        {/* ── Step 2: Partes ── */}
+        {/* ── PASSO 2: PARTES ──────────────────────────────────────────────── */}
         {step === 2 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-xl font-bold text-white mb-1">Partes Envolvidas</h2>
+              <p className="text-sm text-gray-400">Dados do locador, locatário, vistoriador e condições contratuais.</p>
+            </div>
+
             {/* Locador */}
-            <div className="bg-gray-800/40 rounded-xl p-5 space-y-3 border border-gray-700">
+            <div className="bg-gray-800/40 rounded-xl p-5 border border-gray-700 space-y-4">
               <h3 className="text-gray-200 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
-                <Shield className="w-4 h-4 text-blue-400" />
-                Locador (Proprietário)
+                <Users size={14} className="text-blue-400" /> Locador (Proprietário)
               </h3>
-              <div>
-                <Label className="text-gray-400 text-xs">Nome Completo *</Label>
-                <Input value={landlordName} onChange={e => setLandlordName(e.target.value)}
-                  className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
-              </div>
-              <CpfCnpjInput value={landlordCpf} onChange={setLandlordCpf} label="CPF / CNPJ" />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-gray-400 text-xs">Telefone</Label>
-                  <Input value={landlordPhone} onChange={e => setLandlordPhone(e.target.value)}
-                    placeholder="(31) 9 0000-0000"
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
+                  <Label className="text-gray-400 text-xs mb-1 block">Nome Completo *</Label>
+                  <Input value={landlordName} onChange={e => setLandlordName(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-white h-9" />
                 </div>
                 <div>
-                  <Label className="text-gray-400 text-xs">E-mail</Label>
+                  <Label className="text-gray-400 text-xs mb-1 block">CPF / CNPJ</Label>
+                  <div className="relative">
+                    <Input value={landlordCpf} onChange={e => setLandlordCpf(formatCpfCnpj(e.target.value))}
+                      placeholder="000.000.000-00" maxLength={18}
+                      className={`bg-gray-700 text-white h-9 pr-8 ${cpfCnpjStatus(landlordCpf) === "valid" ? "border-green-500" : cpfCnpjStatus(landlordCpf) === "invalid" && landlordCpf.length > 3 ? "border-red-500" : "border-gray-600"}`} />
+                    {cpfCnpjStatus(landlordCpf) === "valid" && <CheckCircle size={14} className="absolute right-2 top-2.5 text-green-400" />}
+                    {cpfCnpjStatus(landlordCpf) === "invalid" && landlordCpf.length > 3 && <AlertTriangle size={14} className="absolute right-2 top-2.5 text-red-400" />}
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">Telefone</Label>
+                  <Input value={landlordPhone} onChange={e => setLandlordPhone(e.target.value)}
+                    placeholder="(31) 9 9999-9999" className="bg-gray-700 border-gray-600 text-white h-9" />
+                </div>
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">E-mail</Label>
                   <Input value={landlordEmail} onChange={e => setLandlordEmail(e.target.value)}
-                    type="email" className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
+                    type="email" className="bg-gray-700 border-gray-600 text-white h-9" />
                 </div>
               </div>
             </div>
 
-            {/* Inquilino */}
-            <div className="bg-gray-800/40 rounded-xl p-5 space-y-3 border border-gray-700">
+            {/* Locatário */}
+            <div className="bg-gray-800/40 rounded-xl p-5 border border-gray-700 space-y-4">
               <h3 className="text-gray-200 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
-                <Users className="w-4 h-4 text-green-400" />
-                Inquilino (Locatário)
+                <Users size={14} className="text-purple-400" /> Locatário (Inquilino)
               </h3>
-              <div>
-                <Label className="text-gray-400 text-xs">Nome Completo *</Label>
-                <Input value={tenantName} onChange={e => setTenantName(e.target.value)}
-                  className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
-              </div>
-              <CpfCnpjInput value={tenantCpf} onChange={setTenantCpf} label="CPF / CNPJ" />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-gray-400 text-xs">Telefone</Label>
-                  <Input value={tenantPhone} onChange={e => setTenantPhone(e.target.value)}
-                    placeholder="(31) 9 0000-0000"
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
+                  <Label className="text-gray-400 text-xs mb-1 block">Nome Completo</Label>
+                  <Input value={tenantName} onChange={e => setTenantName(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-white h-9" />
                 </div>
                 <div>
-                  <Label className="text-gray-400 text-xs">E-mail</Label>
+                  <Label className="text-gray-400 text-xs mb-1 block">CPF / CNPJ</Label>
+                  <div className="relative">
+                    <Input value={tenantCpf} onChange={e => setTenantCpf(formatCpfCnpj(e.target.value))}
+                      placeholder="000.000.000-00" maxLength={18}
+                      className={`bg-gray-700 text-white h-9 pr-8 ${cpfCnpjStatus(tenantCpf) === "valid" ? "border-green-500" : cpfCnpjStatus(tenantCpf) === "invalid" && tenantCpf.length > 3 ? "border-red-500" : "border-gray-600"}`} />
+                    {cpfCnpjStatus(tenantCpf) === "valid" && <CheckCircle size={14} className="absolute right-2 top-2.5 text-green-400" />}
+                    {cpfCnpjStatus(tenantCpf) === "invalid" && tenantCpf.length > 3 && <AlertTriangle size={14} className="absolute right-2 top-2.5 text-red-400" />}
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">Telefone</Label>
+                  <Input value={tenantPhone} onChange={e => setTenantPhone(e.target.value)}
+                    placeholder="(31) 9 9999-9999" className="bg-gray-700 border-gray-600 text-white h-9" />
+                </div>
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">E-mail</Label>
                   <Input value={tenantEmail} onChange={e => setTenantEmail(e.target.value)}
-                    type="email" className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
+                    type="email" className="bg-gray-700 border-gray-600 text-white h-9" />
                 </div>
               </div>
             </div>
 
             {/* Vistoriador */}
-            <div className="bg-gray-800/40 rounded-xl p-5 space-y-3 border border-gray-700 lg:col-span-2">
+            <div className="bg-gray-800/40 rounded-xl p-5 border border-gray-700 space-y-4">
               <h3 className="text-gray-200 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-red-400" />
-                Vistoriador / Responsável Técnico
+                <ShieldCheck size={14} className="text-red-400" /> Vistoriador / Responsável Técnico
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="md:col-span-2">
-                  <Label className="text-gray-400 text-xs">Nome do Vistoriador</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">Nome do Vistoriador</Label>
                   <Input value={inspectorName} onChange={e => setInspectorName(e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
+                    className="bg-gray-700 border-gray-600 text-white h-9" />
                 </div>
                 <div>
-                  <Label className="text-gray-400 text-xs">CREA / CRECI</Label>
+                  <Label className="text-gray-400 text-xs mb-1 block">CREA / CRECI</Label>
                   <Input value={inspectorCrea} onChange={e => setInspectorCrea(e.target.value)}
-                    placeholder="Ex: CREA/MG 142203671-5"
-                    className="bg-gray-700 border-gray-600 text-white mt-1 h-9" />
+                    className="bg-gray-700 border-gray-600 text-white h-9" />
                 </div>
+              </div>
+            </div>
+
+            {/* Condições Contratuais */}
+            <div className="bg-gray-800/40 rounded-xl p-5 border border-gray-700 space-y-4">
+              <h3 className="text-gray-200 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
+                <Shield size={14} className="text-yellow-400" /> Condições Contratuais
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">Valor do Aluguel (R$)</Label>
+                  <Input value={rentValue} onChange={e => setRentValue(e.target.value)}
+                    placeholder="1.500,00" className="bg-gray-700 border-gray-600 text-white h-9" />
+                </div>
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">Início do Contrato</Label>
+                  <Input type="date" value={contractStart} onChange={e => setContractStart(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-white h-9" />
+                </div>
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">Fim do Contrato</Label>
+                  <Input type="date" value={contractEnd} onChange={e => setContractEnd(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-white h-9" />
+                </div>
+              </div>
+              <div>
+                <Label className="text-gray-400 text-xs mb-2 block">Modalidade de Garantia — Lei 8.245/91</Label>
+                <Select value={garantiaType} onValueChange={setGarantiaType}>
+                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white"><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    {GARANTIA_TYPES.map(t => <SelectItem key={t.value} value={t.value} className="text-gray-300">{t.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <p className="text-gray-500 text-xs mt-1">A lei proíbe a cumulatividade de garantias. Apenas uma modalidade por contrato.</p>
+              </div>
+              {/* Checklist Reforma Tributária 2026 */}
+              <div className="bg-blue-900/10 rounded-xl p-4 border border-blue-600/20 space-y-3">
+                <p className="text-blue-300 text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
+                  <Info size={12} /> Reforma Tributária 2026 — LC 214/2025
+                </p>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" checked={redutorSocial} onChange={e => setRedutorSocial(e.target.checked)} className="mt-1 w-4 h-4 accent-blue-500" />
+                  <div>
+                    <span className="text-gray-200 text-sm font-medium">Redutor Social de R$ 600,00 aplicável</span>
+                    <p className="text-gray-500 text-xs mt-0.5">Reduz a base de cálculo do IBS/CBS sobre o aluguel residencial — LC 214/2025, Art. 9º</p>
+                  </div>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" checked={clausulaVigencia} onChange={e => setClausulaVigencia(e.target.checked)} className="mt-1 w-4 h-4 accent-blue-500" />
+                  <div>
+                    <span className="text-gray-200 text-sm font-medium">Incluir Cláusula de Vigência no contrato</span>
+                    <p className="text-gray-500 text-xs mt-0.5">Protege o inquilino em caso de venda do imóvel — Lei 8.245/91, Art. 8º</p>
+                  </div>
+                </label>
+              </div>
+              <div>
+                <Label className="text-gray-400 text-xs mb-1 block">Observações Gerais</Label>
+                <Textarea value={generalNotes} onChange={e => setGeneralNotes(e.target.value)}
+                  placeholder="Condições especiais, ressalvas técnicas..." rows={3}
+                  className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-600" />
               </div>
             </div>
           </div>
         )}
 
-        {/* ── Step 3: Contrato + Reforma Tributária ── */}
+        {/* ── PASSO 3: ITENS / FOTOS ───────────────────────────────────────── */}
         {step === 3 && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center justify-between">
               <div>
-                <Label className="text-gray-300 text-sm">Número do Contrato</Label>
-                <Input value={contractNumber} onChange={e => setContractNumber(e.target.value)}
-                  placeholder="Ex: CONT-2026-001"
-                  className="bg-gray-800 border-gray-600 text-white mt-1" />
+                <h2 className="text-xl font-bold text-white mb-1">Checklist de Itens</h2>
+                <p className="text-sm text-gray-400">Marque os itens com problemas e defina a severidade.</p>
               </div>
-              <div>
-                <Label className="text-gray-300 text-sm">Valor do Aluguel (R$)</Label>
-                <Input value={rentValue} onChange={e => setRentValue(e.target.value)}
-                  placeholder="Ex: 1500,00"
-                  className="bg-gray-800 border-gray-600 text-white mt-1" />
-              </div>
-              <div>
-                <Label className="text-gray-300 text-sm">Início do Contrato</Label>
-                <Input type="date" value={contractStart} onChange={e => setContractStart(e.target.value)}
-                  className="bg-gray-800 border-gray-600 text-white mt-1" />
-              </div>
-              <div>
-                <Label className="text-gray-300 text-sm">Fim do Contrato</Label>
-                <Input type="date" value={contractEnd} onChange={e => setContractEnd(e.target.value)}
-                  className="bg-gray-800 border-gray-600 text-white mt-1" />
+              <div className="flex gap-2">
+                {checkedItems.length > 0 && (
+                  <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">{checkedItems.length} marcado(s)</Badge>
+                )}
+                {highSeverityCount > 0 && (
+                  <Badge className="bg-red-500/20 text-red-400 border-red-500/30">{highSeverityCount} alta severidade</Badge>
+                )}
               </div>
             </div>
 
-            {/* Modalidade de garantia */}
-            <div className="bg-gray-800/40 rounded-xl p-5 border border-gray-700 space-y-3">
-              <h3 className="text-gray-200 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
-                <Shield className="w-4 h-4 text-blue-400" />
-                Modalidade de Garantia — Lei 8.245/91
-              </h3>
-              <Select value={garantiaType} onValueChange={setGarantiaType}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {GARANTIA_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              {showGarantiaWarning && (
-                <div className="flex items-start gap-2 bg-red-900/20 border border-red-600/30 rounded-lg p-3 text-sm text-red-300">
-                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <span><strong>Atenção (Lei 2026):</strong> Contratos sem garantia permitem despejo liminar em até 15 dias em caso de inadimplência. Recomendamos o Seguro-Fiança.</span>
-                </div>
-              )}
-              <p className="text-gray-500 text-xs">
-                A lei proíbe a cumulatividade de garantias. Apenas uma modalidade pode ser exigida por contrato.
-              </p>
-            </div>
-
-            {/* Checklist Reforma Tributária 2026 */}
-            <div className="bg-blue-900/10 rounded-xl p-5 border border-blue-600/20 space-y-4">
-              <h3 className="text-blue-300 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
-                <Info className="w-4 h-4" />
-                Checklist — Reforma Tributária 2026 (LC 214/2025)
-              </h3>
-
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={redutorSocial}
-                  onChange={e => setRedutorSocial(e.target.checked)}
-                  className="mt-1 w-4 h-4 accent-blue-500"
-                />
-                <div>
-                  <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">
-                    Redutor Social de R$ 600,00 aplicável
-                  </span>
-                  <p className="text-gray-500 text-xs mt-0.5">
-                    O imóvel se enquadra no benefício fiscal da LC 214/2025 — reduz a base de cálculo do IBS/CBS sobre o aluguel residencial.
-                  </p>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={clausulaVigencia}
-                  onChange={e => setClausulaVigencia(e.target.checked)}
-                  className="mt-1 w-4 h-4 accent-blue-500"
-                />
-                <div>
-                  <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">
-                    Incluir Cláusula de Vigência no contrato
-                  </span>
-                  <p className="text-gray-500 text-xs mt-0.5">
-                    Protege o inquilino em caso de venda do imóvel — o novo proprietário deve respeitar o contrato vigente (requer averbação na matrícula do imóvel).
-                  </p>
-                </div>
-              </label>
-            </div>
-
-            <div>
-              <Label className="text-gray-300 text-sm">Observações Gerais</Label>
-              <Textarea value={generalNotes} onChange={e => setGeneralNotes(e.target.value)}
-                placeholder="Condições especiais, ressalvas, informações adicionais..."
-                className="bg-gray-800 border-gray-600 text-white mt-1 min-h-[100px]" />
-            </div>
+            {sections.map(section => (
+              <div key={section.id} className={`rounded-xl border p-5 space-y-4 ${section.items.some(i => i.fireSafety) ? "border-red-600/30 bg-red-900/5" : "border-gray-700 bg-gray-800/40"}`}>
+                <h3 className="text-gray-200 font-semibold text-sm flex items-center gap-2">
+                  <span>{section.icon}</span> {section.title}
+                  {section.items.some(i => i.fireSafety) && (
+                    <Badge className="bg-red-500/20 text-red-400 border-red-500/30 text-xs">Obrigatório — CO2 Standard</Badge>
+                  )}
+                </h3>
+                {section.items.map(item => (
+                  <div key={item.id} className="space-y-2">
+                    <p className="text-sm font-medium text-gray-300">{item.label}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {item.checks.map(check => {
+                        const key = `${item.id}::${check}`;
+                        const state = checklistState[key];
+                        const isChecked = state?.checked ?? false;
+                        return (
+                          <div key={check} className="flex flex-col gap-1">
+                            <button type="button" onClick={() => toggleCheck(item.id, check)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                                isChecked ? "bg-red-500/20 border-red-500/50 text-red-300" : "bg-gray-900 border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300"
+                              }`}>
+                              {isChecked ? "✓ " : ""}{check}
+                            </button>
+                            {isChecked && (
+                              <div className="flex gap-1">
+                                {(["low", "medium", "high"] as SeverityLevel[]).map(sev => (
+                                  <button key={sev} type="button" onClick={() => setSeverity(item.id, check, sev)}
+                                    className={`px-2 py-0.5 rounded text-xs transition-all ${
+                                      state?.severity === sev
+                                        ? `${SEVERITY_LABELS[sev].bg} ${SEVERITY_LABELS[sev].color} font-semibold`
+                                        : "bg-gray-900 text-gray-600 border border-gray-700"
+                                    }`}>
+                                    {SEVERITY_LABELS[sev].label}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         )}
 
-        {/* ── Step 4: Cômodos ── */}
+        {/* ── PASSO 4: REVISÃO E FECHAMENTO ───────────────────────────────── */}
         {step === 4 && (
-          <div className="space-y-4">
-            <p className="text-gray-400 text-sm">
-              Defina os cômodos do imóvel. Cada cômodo terá itens de vistoria padrão adicionados automaticamente (piso, parede, teto, porta, janela, instalações elétricas e hidráulicas).
-            </p>
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-xl font-bold text-white mb-1">Revisão e Fechamento</h2>
+              <p className="text-sm text-gray-400">Confirme todos os dados. Após finalizar, o registro será selado e o número do contrato gerado.</p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {rooms.map((room, i) => (
-                <div key={i} className="flex gap-2 items-center bg-gray-800/40 rounded-lg p-3 border border-gray-700">
-                  <Input
-                    value={room.name}
-                    onChange={e => updateRoom(i, "name", e.target.value)}
-                    placeholder="Nome do cômodo"
-                    className="bg-gray-700 border-gray-600 text-white flex-1 h-9"
-                  />
-                  <Select value={room.type} onValueChange={v => updateRoom(i, "type", v)}>
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white w-36 h-9">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ROOM_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <Button variant="ghost" size="sm" onClick={() => removeRoom(i)}
-                    className="text-red-400 hover:text-red-300 hover:bg-red-900/20 shrink-0">
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+            {/* Summary Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-gray-800/40 rounded-xl border border-gray-700 p-5 space-y-2">
+                <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Imóvel</p>
+                {[
+                  ["Tipo", PROPERTY_TYPE_OPTIONS.find(p => p.value === propertyType)?.label],
+                  ["Vistoria", INSPECTION_TYPES.find(t => t.value === inspectionType)?.label],
+                  ["Endereço", fullAddress || "—"],
+                  ["Área", propertyArea ? `${propertyArea} m²` : "—"],
+                ].map(([k, v]) => (
+                  <div key={k} className="flex justify-between text-sm">
+                    <span className="text-gray-500">{k}</span>
+                    <span className="text-white font-medium text-right max-w-[220px] truncate">{v}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-gray-800/40 rounded-xl border border-gray-700 p-5 space-y-2">
+                <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Partes</p>
+                {[
+                  ["Locador", landlordName || "—"],
+                  ["Locatário", tenantName || "—"],
+                  ["Garantia", GARANTIA_TYPES.find(g => g.value === garantiaType)?.label.split(" (")[0]],
+                  ["Aluguel", rentValue ? `R$ ${rentValue}` : "—"],
+                ].map(([k, v]) => (
+                  <div key={k} className="flex justify-between text-sm">
+                    <span className="text-gray-500">{k}</span>
+                    <span className="text-white font-medium">{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Checklist Summary */}
+            <div className="bg-gray-800/40 rounded-xl border border-gray-700 p-5">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Itens do Checklist</p>
+              {checkedItems.length === 0 ? (
+                <p className="text-sm text-green-400 flex items-center gap-2"><CheckCircle2 size={14} /> Nenhum item com problema registrado</p>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-sm text-yellow-400">{checkedItems.length} item(ns) marcado(s){highSeverityCount > 0 ? ` — ${highSeverityCount} de alta severidade` : ""}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {checkedItems.slice(0, 10).map(([key, v]) => {
+                      const [, check] = key.split("::");
+                      return (
+                        <Badge key={key} className={`text-xs ${v.severity === "high" ? "bg-red-500/20 text-red-400 border-red-500/30" : v.severity === "medium" ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" : "bg-gray-500/20 text-gray-400 border-gray-500/30"}`}>
+                          {check}
+                        </Badge>
+                      );
+                    })}
+                    {checkedItems.length > 10 && <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30 text-xs">+{checkedItems.length - 10} mais</Badge>}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Conformidade Legal */}
+            <div className="bg-gray-800/40 rounded-xl border border-gray-700 p-5 space-y-2">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                <Shield size={12} className="text-green-400" /> Conformidade Legal 2026
+              </p>
+              {[
+                { label: "Redutor Social LC 214/2025", active: redutorSocial },
+                { label: "Cláusula de Vigência incluída", active: clausulaVigencia },
+                { label: "Bloqueio de dupla garantia ativo", active: true },
+              ].map(item => (
+                <div key={item.label} className="flex items-center gap-2 text-sm">
+                  {item.active ? <CheckCircle2 size={14} className="text-green-400" /> : <div className="w-3.5 h-3.5 rounded-full border border-gray-600" />}
+                  <span className={item.active ? "text-green-400" : "text-gray-500"}>{item.label}</span>
                 </div>
               ))}
             </div>
 
-            <Button variant="outline" size="sm" onClick={addRoom}
-              className="border-dashed border-gray-600 text-gray-400 hover:text-white gap-2">
-              <Plus className="w-4 h-4" />
-              Adicionar Cômodo
-            </Button>
-
-            {/* Resumo final */}
-            <div className="bg-gray-800/40 rounded-xl p-5 border border-gray-700 space-y-2 mt-4">
-              <h3 className="text-gray-200 font-semibold text-sm uppercase tracking-wide">Resumo da Vistoria</h3>
-              <div className="grid grid-cols-2 gap-2 text-xs text-gray-400">
-                <span>Tipo:</span><span className="text-white">{INSPECTION_TYPES.find(t => t.value === type)?.label}</span>
-                <span>Endereço:</span><span className="text-white truncate">{fullAddress || "—"}</span>
-                <span>Locador:</span><span className="text-white">{landlordName || "—"}</span>
-                <span>Inquilino:</span><span className="text-white">{tenantName || "—"}</span>
-                <span>Garantia:</span><span className="text-white">{GARANTIA_TYPES.find(t => t.value === garantiaType)?.label.split(" (")[0]}</span>
-                <span>Cômodos:</span><span className="text-white">{rooms.filter(r => r.name.trim()).length}</span>
-                {redutorSocial && <><span>Redutor Social:</span><span className="text-blue-400">Sim — R$ 600,00</span></>}
-                {clausulaVigencia && <><span>Cláusula de Vigência:</span><span className="text-blue-400">Incluída</span></>}
-              </div>
+            {/* Rodapé de resguardo jurídico */}
+            <div className="bg-gray-900 border border-gray-700 rounded-xl p-4">
+              <p className="text-xs text-gray-500 leading-relaxed">
+                <strong className="text-gray-400">Resguardo Jurídico:</strong> Este laudo foi elaborado com base nas condições verificadas in loco na data de emissão, por profissional habilitado (CREA/MG 142203671-5), em conformidade com a Lei 8.245/91, NBR 15575 e demais normas técnicas aplicáveis. A OPERIS IA não se responsabiliza por alterações nas condições do imóvel após a data de emissão, nem por informações prestadas incorretamente pelas partes. O número de contrato gerado possui hash de auditoria imutável para fins de validade legal.
+              </p>
             </div>
+
+            <Button onClick={handleSubmit} disabled={isSubmitting || !landlordName || !fullAddress}
+              className="w-full bg-green-600 hover:bg-green-700 text-white h-12 text-base font-semibold gap-2">
+              <CheckCircle size={18} />
+              {isSubmitting ? "Gerando contrato..." : "Finalizar e Gerar Contrato"}
+            </Button>
           </div>
         )}
 
-        {/* Navegação */}
+        {/* ── NAVEGAÇÃO ────────────────────────────────────────────────────── */}
         <div className="flex justify-between mt-8 pt-6 border-t border-gray-800">
-          <Button variant="outline"
-            onClick={() => step > 1 ? setStep(s => s - 1) : navigate("/operis/vistorias")}
+          <Button variant="outline" onClick={() => step > 1 ? setStep(s => s - 1) : navigate("/operis/vistorias")}
             className="border-gray-600 text-gray-300 hover:bg-gray-700 gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            {step === 1 ? "Cancelar" : "Anterior"}
+            <ArrowLeft size={16} /> {step === 1 ? "Cancelar" : "Anterior"}
           </Button>
-
-          {step < 4 ? (
-            <Button onClick={() => setStep(s => s + 1)} className="bg-red-600 hover:bg-red-700 text-white gap-2">
-              Próximo
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button onClick={handleSubmit} disabled={createMutation.isPending}
-              className="bg-green-600 hover:bg-green-700 text-white gap-2">
-              <CheckCircle className="w-4 h-4" />
-              {createMutation.isPending ? "Criando..." : "Criar Vistoria"}
+          {step < 4 && (
+            <Button onClick={() => setStep(s => s + 1)}
+              disabled={step === 1 && !street && !fullAddress}
+              className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
+              Próximo <ArrowRight size={16} />
             </Button>
           )}
         </div>

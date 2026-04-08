@@ -11,6 +11,7 @@ import { billingRouter } from "./billing-router";
 import { vistoriaRouter } from "./vistoria-router";
 import { enterpriseRouter } from "./enterprise-router";
 import { artRouter } from "./art-router";
+import { pathologyRouter, maintenanceTaskRouter, comparisonRouter } from "./pathology-router";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -22,6 +23,9 @@ export const appRouter = router({
   vistoria: vistoriaRouter,
   enterprise: enterpriseRouter,
   art: artRouter,
+  pathology: pathologyRouter,
+  maintenanceTask: maintenanceTaskRouter,
+  comparison: comparisonRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

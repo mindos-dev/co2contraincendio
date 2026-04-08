@@ -514,7 +514,12 @@ export const propertyInspections = mysqlTable("property_inspections", {
   createdByUserId: int("createdByUserId").references(() => saasUsers.id).notNull(),
   // Tipo de vistoria
   type: mysqlEnum("type", ["entrada", "saida", "periodica", "devolucao"]).notNull().default("entrada"),
-  status: mysqlEnum("status", ["rascunho", "em_andamento", "aguardando_assinatura", "concluida", "cancelada"]).notNull().default("rascunho"),
+  status: mysqlEnum("status", ["rascunho", "em_andamento", "pending_validation", "aguardando_assinatura", "concluida", "cancelada"]).notNull().default("rascunho"),
+  // Contrato gerado sequencialmente no Passo 4
+  contractId: varchar("contractId", { length: 30 }).unique(), // ex: CONT-2026-0001
+  auditHash: varchar("auditHash", { length: 64 }), // SHA-256 do payload no momento do fechamento
+  lockedAt: timestamp("lockedAt"), // timestamp do LOCK_EDITION
+  lockedByUserId: int("lockedByUserId"), // quem fechou o registro
   // Dados do imóvel
   propertyAddress: text("propertyAddress").notNull(),
   propertyType: mysqlEnum("propertyType", ["apartamento", "casa", "sala_comercial", "galpao", "outro"]).notNull().default("apartamento"),
@@ -923,3 +928,59 @@ export const artApprovals = mysqlTable("art_approvals", {
 }));
 export type ArtApproval = typeof artApprovals.$inferSelect;
 export type InsertArtApproval = typeof artApprovals.$inferInsert;
+
+// ─── MÓDULO DIAGNÓSTICO DE PATOLOGIAS ───────────────────────────────────────
+export const inspectionPathologies = mysqlTable("inspection_pathologies", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  inspectionId: int("inspection_id").notNull(),
+  roomItemId: int("room_item_id"),
+  category: varchar("category", { length: 50 }).notNull(), // fissura | infiltracao | corrosao | destacamento | outro
+  severity: varchar("severity", { length: 20 }).notNull(), // low | medium | high
+  causeAnalysis: text("cause_analysis"),
+  repairSuggestion: text("repair_suggestion"),
+  estimatedRepairCost: decimal("estimated_repair_cost", { precision: 10, scale: 2 }),
+  photoContextUrl: varchar("photo_context_url", { length: 500 }),
+  photoDetailUrl: varchar("photo_detail_url", { length: 500 }),
+  riskScore: int("risk_score").default(0), // 1-10
+  notifiedOwner: boolean("notified_owner").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  createdByUserId: int("created_by_user_id").notNull(),
+});
+
+// ─── COMPARAÇÃO ENTRADA vs. SAÍDA ────────────────────────────────────────────
+export const inspectionComparisons = mysqlTable("inspection_comparisons", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  entryInspectionId: int("entry_inspection_id").notNull(),
+  exitInspectionId: int("exit_inspection_id"),
+  propertyAddress: varchar("property_address", { length: 500 }),
+  contractNumber: varchar("contract_number", { length: 100 }),
+  diffSummary: text("diff_summary"), // JSON com diferenças por cômodo
+  overallConditionEntry: varchar("overall_condition_entry", { length: 20 }), // otimo | bom | regular | ruim
+  overallConditionExit: varchar("overall_condition_exit", { length: 20 }),
+  depreciationEstimate: decimal("depreciation_estimate", { precision: 10, scale: 2 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  createdByUserId: int("created_by_user_id").notNull(),
+});
+
+// ─── PLANEJADOR DE MANUTENÇÃO ─────────────────────────────────────────────────
+export const inspectionMaintenanceTasks = mysqlTable("inspection_maintenance_tasks", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  inspectionId: int("inspection_id").notNull(),
+  pathologyId: int("pathology_id"),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  priority: varchar("priority", { length: 20 }).notNull().default("medium"), // low | medium | high | critical
+  status: varchar("status", { length: 30 }).notNull().default("pendente"), // pendente | em_andamento | concluida | cancelada
+  dueDate: date("due_date"),
+  estimatedCost: decimal("estimated_cost", { precision: 10, scale: 2 }),
+  assignedTo: varchar("assigned_to", { length: 255 }),
+  isFireSafetyRelated: boolean("is_fire_safety_related").default(false),
+  co2ServiceOffered: boolean("co2_service_offered").default(false),
+  notifiedOwner: boolean("notified_owner").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+  createdByUserId: int("created_by_user_id").notNull(),
+});

@@ -42,6 +42,16 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "QR Codes", path: "/app/qrcodes", icon: <QrCode size={16} /> },
       { label: "Alertas", path: "/app/alertas", icon: <AlertTriangle size={16} /> },
       { label: "Vistorias de Imóveis", path: "/operis/vistorias", icon: <ClipboardCheck size={16} /> },
+      { label: "Comparador Entrada/Saída", path: "/operis/vistorias/comparador", icon: <ClipboardCheck size={16} /> },
+      { label: "Planejador de Manutenção", path: "/operis/vistorias/manutencao", icon: <Wrench size={16} /> },
+    ],
+  },
+  {
+    group: "Engenharia Diagnóstica",
+    items: [
+      { label: "Inspeção Predial", path: "/operis/engenharia/inspecao-predial", icon: <Building2 size={16} /> },
+      { label: "Vistoria Cautelar", path: "/operis/engenharia/vistoria-cautelar", icon: <Shield size={16} /> },
+      { label: "Laudo de Reforma", path: "/operis/engenharia/laudo-reforma", icon: <FileText size={16} /> },
     ],
   },
   {
@@ -112,6 +122,7 @@ export default function SaasDashboardLayout({ children }: { children: React.Reac
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
     "": true,
     "Operations": true,
+    "Engenharia Diagnóstica": false,
     "Engineering": false,
     "Financial": false,
     "Intelligence": false,

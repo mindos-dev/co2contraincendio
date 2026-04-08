@@ -12,6 +12,7 @@ import {
 import { invokeLLM } from "./_core/llm";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
+import { createHash } from "crypto";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -530,6 +531,65 @@ Use CSS inline. Paleta: branco com bordas cinza, texto preto, cabeçalho azul es
       const slug = `contrato-${input.inspectionId}-${nanoid(8)}`;
 
       return { slug, contractHtml };
+    }),
+
+  // Passo 4: Finalizar vistoria — gerar CONT-YYYY-XXXX + audit hash + lock
+  finalizeAndGenerateContract: saasAuthProcedure
+    .input(z.object({ inspectionId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+
+      const companyId = ctx.saasUser.companyId;
+      if (!companyId) throw new TRPCError({ code: "FORBIDDEN", message: "Usuário não está vinculado a nenhuma empresa." });
+
+      const [inspection] = await db
+        .select()
+        .from(propertyInspections)
+        .where(and(
+          eq(propertyInspections.id, input.inspectionId),
+          eq(propertyInspections.companyId, companyId)
+        ));
+      if (!inspection) throw new TRPCError({ code: "NOT_FOUND", message: "Vistoria não encontrada." });
+      if (inspection.lockedAt) throw new TRPCError({ code: "FORBIDDEN", message: "Esta vistoria já foi finalizada e não pode ser editada." });
+
+      // Validar campos obrigatórios antes de gerar o contrato
+      if (!inspection.landlordName || !inspection.tenantName || !inspection.propertyAddress) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Preencha todos os campos obrigatórios antes de finalizar." });
+      }
+
+      // Gerar número sequencial CONT-YYYY-XXXX
+      const year = new Date().getFullYear();
+      const [countRow] = await db.execute(
+        `SELECT COUNT(*) as cnt FROM property_inspections WHERE contractId LIKE 'CONT-${year}-%'`
+      ) as any;
+      const count = Number((countRow as any)[0]?.cnt ?? 0) + 1;
+      const contractId = `CONT-${year}-${String(count).padStart(4, "0")}`;
+
+      // Gerar audit hash SHA-256 do payload
+      const payload = JSON.stringify({
+        inspectionId: inspection.id,
+        contractId,
+        landlordName: inspection.landlordName,
+        tenantName: inspection.tenantName,
+        propertyAddress: inspection.propertyAddress,
+        rentValue: inspection.rentValue,
+        lockedByUserId: ctx.saasUser.userId,
+        lockedAt: new Date().toISOString(),
+      });
+      const auditHash = createHash("sha256").update(payload).digest("hex");
+      const now = new Date();
+
+      await db.update(propertyInspections).set({
+        contractId,
+        contractNumber: contractId,
+        auditHash,
+        lockedAt: now,
+        lockedByUserId: ctx.saasUser.userId,
+        status: "pending_validation",
+      }).where(eq(propertyInspections.id, input.inspectionId));
+
+      return { contractId, auditHash, lockedAt: now };
     }),
 
   // Atualizar status

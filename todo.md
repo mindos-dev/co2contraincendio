@@ -618,3 +618,57 @@
 - [x] Widget "Radar Jurídico" no dashboard de vistorias (alertas da Lei 2026)
 - [x] Geração de contrato inteligente com cláusulas da Lei 8.245/91 atualizada 2026
 - [x] Schema: adicionar campos redutorSocial, clausulaVigencia, garantiaType na tabela property_inspections
+
+## ORCHESTRATION_OPERIS_UPGRADE_2026 (Abril 2026)
+
+### Stepper Logic Update
+- [x] Refatorar stepper para 4 passos: Imóvel → Partes → Itens/Fotos → Revisão e Fechamento
+- [x] Ocultar campo "Número do Contrato" nos passos 1-3 (gerado automaticamente no Passo 4)
+- [x] Schema DB: adicionar status "pending_validation" e campo contractId gerado sequencialmente
+- [x] Backend: procedure vistoria.finalizeAndGenerateContract (gera CONT-YYYY-XXXX + sela o registro)
+
+### Step 4 — Revisão e Fechamento
+- [x] Summary Widget: grid read-only com todos os dados capturados
+- [x] Legal Compliance Badge: ícone "Lei 2026 Conforme" (LC 214/2025)
+- [x] Media Audit Preview: miniaturas das fotos com tag "Timestamp Verificado"
+- [x] Botão "Finalizar e Gerar Contrato" com validação de campos obrigatórios
+- [x] Modal de confirmação com número do contrato gerado (CONT-2026-XXXX)
+- [x] Bloqueio de edição pós-finalização (LOCK_EDITION)
+- [x] Rodapé jurídico obrigatório em todos os PDFs (texto de resguardo)
+- [x] Upsell de serviços de engenharia diagnóstica na tela de conclusão
+
+### Service Expansion — Engenharia Diagnóstica
+- [x] Página /operis/engenharia/inspecao-predial (Inspeção Predial com Checklist Normativo)
+- [x] Página /operis/engenharia/vistoria-cautelar (Vistoria Cautelar de Vizinhança com laudo fotográfico)
+- [x] Página /operis/engenharia/laudo-reforma (Laudo de Reforma com integração ART/RRT)
+- [x] Integrar os 3 serviços no menu lateral do SaasDashboardLayout (grupo "Engenharia Diagnóstica")
+- [x] Adicionar os 3 serviços como add-ons na tela de conclusão de vistoria
+
+## DEPLOY_DYNAMIC_CHECKLISTS_BY_TYPE (Abril 2026)
+- [x] Criar shared/inspection-checklists.ts com 4 conjuntos de validação (Residencial, Comercial, Galpão, Predial)
+- [x] Adicionar campo severityLevel (low/medium/high) no schema roomItems
+- [x] Criar componente DynamicChecklist.tsx com Smart Filters por tipo de imóvel
+- [x] Seção obrigatória "Fire Safety Audit" para tipo galpão/industrial (CO2 Fire Protection Standard)
+- [x] Seção obrigatória "Acessibilidade e Rede" para tipo comercial
+- [x] Seção "Acabamento e Estética" para tipo residencial
+- [x] Upload de foto vinculado a cada item do checklist
+- [x] Integrar DynamicChecklist no Passo 3 do NovaVistoria.tsx
+
+## DEPLOY_ENGINEERING_DIAGNOSIS_MODULE (Abril 2026)
+- [x] Schema DB: tabela inspection_pathologies (categoria, severidade, causa, sugestão, fotos, riskScore)
+- [x] Migration SQL para inspection_pathologies
+- [x] Procedure pathology.create / pathology.list / pathology.delete
+- [x] Componente PathologyReport.tsx com botão "Reportar Patologia" em cada item do checklist
+- [x] Upload de 2 fotos por patologia (Contexto + Detalhe) via storagePut
+- [x] Cálculo automático de Total Risk Score (soma ponderada de severidades)
+- [x] Trigger de notificação ao owner quando severidade == High (lead CO2 presencial)
+- [x] Exibir Risk Score no VistoriaDetalhes e no PDF do laudo
+
+## FINAL_POLISH_SERVICE_CONSOLIDATION (Abril 2026)
+- [x] Schema DB: inspection_comparisons (entryId → exitId) para histórico comparativo
+- [x] Schema DB: maintenance_tasks (vistoria → tarefa → prazo → status)
+- [x] Página ComparadorVistorias.tsx (side-by-side Entrada vs. Saída)
+- [x] Página PlanejadorManutencao.tsx (calendário gerado a partir dos achados)
+- [x] Lead trigger: Maintenance_Due < 30 dias → notificação para equipe CO2
+- [x] Lead trigger: Structural_Issue encontrado → oferta de Consulta de Engenharia (Judson Sampaio)
+- [x] Estimativa de reparo vinculada à severidade da patologia

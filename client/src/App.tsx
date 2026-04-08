@@ -89,6 +89,11 @@ import VistoriasList from "./pages/operis/vistorias/VistoriasList";
 import NovaVistoriaImovel from "./pages/operis/vistorias/NovaVistoria";
 import VistoriaDetalhes from "./pages/operis/vistorias/VistoriaDetalhes";
 import LaudoVistoriaPublico from "./pages/operis/vistorias/LaudoPublico";
+import ComparadorVistorias from "./pages/operis/vistorias/ComparadorVistorias";
+import PlanejadorManutencao from "./pages/operis/vistorias/PlanejadorManutencao";
+import InspecaoPredial from "./pages/operis/engenharia/InspecaoPredial";
+import VistoriaCautelar from "./pages/operis/engenharia/VistoriaCautelar";
+import LaudoReforma from "./pages/operis/engenharia/LaudoReforma";
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfService from "./pages/legal/TermsOfService";
@@ -198,7 +203,13 @@ function Router() {
       <Route path="/operis/vistorias" component={VistoriasList} />
       <Route path="/operis/vistorias/nova" component={NovaVistoriaImovel} />
       <Route path="/operis/vistorias/laudo/:slug" component={LaudoVistoriaPublico} />
+      <Route path="/operis/vistorias/comparador" component={ComparadorVistorias} />
+      <Route path="/operis/vistorias/manutencao" component={PlanejadorManutencao} />
       <Route path="/operis/vistorias/:id" component={VistoriaDetalhes} />
+      {/* Engenharia Diagnóstica */}
+      <Route path="/operis/engenharia/inspecao-predial" component={InspecaoPredial} />
+      <Route path="/operis/engenharia/vistoria-cautelar" component={VistoriaCautelar} />
+      <Route path="/operis/engenharia/laudo-reforma" component={LaudoReforma} />
       {/* Legal pages */}
       <Route path="/legal/privacy" component={PrivacyPolicy} />
       <Route path="/legal/terms" component={TermsOfService} />

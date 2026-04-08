@@ -127,6 +127,20 @@
       "when": 1775631321678,
       "tag": "0017_small_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1775634235520,
+      "tag": "0018_dear_star_brand",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1775634854581,
+      "tag": "0019_narrow_blink",
+      "breakpoints": true
     }
   ]
 }
