@@ -167,9 +167,50 @@ function riskLabel(score: number): string {
   return "Risco Crítico";
 }
 
+// ─── Marca d'água em fotos (canvas overlay) ──────────────────────────────────
+
+async function addWatermarkedImage(
+  pdf: jsPDF,
+  imageUrl: string,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  watermarkLines: string[]
+): Promise<void> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth || 800;
+      canvas.height = img.naturalHeight || 600;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(); return; }
+      ctx.drawImage(img, 0, 0);
+      // Faixa escura semi-transparente no rodapé
+      const barH = Math.max(40, canvas.height * 0.12);
+      ctx.fillStyle = "rgba(10, 22, 40, 0.78)";
+      ctx.fillRect(0, canvas.height - barH, canvas.width, barH);
+      // Texto da marca d'água
+      const fontSize = Math.max(14, canvas.width * 0.022);
+      ctx.font = `bold ${fontSize}px monospace`;
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      watermarkLines.forEach((line, i) => {
+        ctx.fillText(line, 12, canvas.height - barH + fontSize * (i + 1) + 4);
+      });
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+      pdf.addImage(dataUrl, "JPEG", x, y, w, h);
+      resolve();
+    };
+    img.onerror = () => resolve(); // skip on error
+    img.src = imageUrl;
+  });
+}
+
 // ─── Exportação principal ─────────────────────────────────────────────────────
 
-export function exportVistoriaPdf(data: VistoriaPdfData): void {
+export async function exportVistoriaPdf(data: VistoriaPdfData): Promise<void> {
   const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const pageWidth  = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
@@ -391,11 +432,43 @@ export function exportVistoriaPdf(data: VistoriaPdfData): void {
     }
   }
 
-  // ── Patologias ────────────────────────────────────────────────────────────────
+  // ── Galeria de Fotos com Marca d'água ────────────────────────────────────────────────────────────────
+  const photoItems = (data.rooms ?? []).flatMap(r =>
+    r.items.filter(i => i.photoUrl).map(i => ({ ...i, roomName: r.name }))
+  );
+  if (photoItems.length > 0) {
+    pdf.addPage();
+    y = margin;
+    y = sectionTitle(pdf, `GALERIA DE FOTOS (${photoItems.length} registros)`, y, margin, pageWidth);
+    const imgW = (contentWidth - 4) / 2;
+    const imgH = imgW * 0.65;
+    let col = 0;
+    for (const item of photoItems) {
+      if (col === 0) y = addPageIfNeeded(pdf, y + (col === 0 ? 0 : imgH + 6), margin);
+      const xPos = margin + col * (imgW + 4);
+      const contractLabel = data.contractId ?? `ID-${data.id}`;
+      const tsLabel = item.photoUrl ? new Date().toLocaleString("pt-BR") : "";
+      const wm = [`${contractLabel}`, tsLabel];
+      // Adicionar foto com marca d'água via canvas
+      await addWatermarkedImage(pdf, item.photoUrl!, xPos, y, imgW, imgH, wm);
+      // Caption
+      pdf.setFontSize(7);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor(...GRAY);
+      const caption = `${(item as any).roomName ?? ""} — ${item.name}`;
+      pdf.text(caption.substring(0, 45), xPos, y + imgH + 3.5);
+      col++;
+      if (col === 2) { col = 0; y += imgH + 8; }
+    }
+    if (col === 1) y += imgH + 8;
+    drawHRule(pdf, y, margin, pageWidth);
+    y += 5;
+  }
+
+  // ── Patologias ────────────────────────────────────────────────────────────────────────────────────────
   if (pathCount > 0) {
     y = addPageIfNeeded(pdf, y, margin);
     y = sectionTitle(pdf, `PATOLOGIAS IDENTIFICADAS (${pathCount})`, y, margin, pageWidth);
-
     for (let i = 0; i < data.pathologies!.length; i++) {
       const p = data.pathologies![i];
       y = addPageIfNeeded(pdf, y, margin);

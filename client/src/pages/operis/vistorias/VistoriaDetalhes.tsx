@@ -10,8 +10,9 @@ import { toast } from "sonner";
 import {
   ArrowLeft, FileText, CheckCircle, Clock, AlertCircle, Pen,
   Camera, Wand2, Home, User, Building2, ChevronDown, ChevronUp,
-  MapPin, Upload, X, Image as ImageIcon, ScrollText
+  MapPin, Upload, X, Image as ImageIcon, ScrollText, Download
 } from "lucide-react";
+import { exportVistoriaPdf, type VistoriaPdfData } from "@/lib/exportVistoriaPdf";
 
 const CONDITION_CONFIG = {
   otimo: { label: "Ótimo", color: "bg-green-500/20 text-green-300 border-green-500/30" },
@@ -184,6 +185,64 @@ export default function VistoriaDetalhes() {
     });
   };
 
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+
+  const handleExportPdf = async () => {
+    if (!data) return;
+    setIsExportingPdf(true);
+    try {
+      const { inspection, rooms, items } = data;
+      const pdfData: VistoriaPdfData = {
+        id: inspection.id,
+        type: inspection.type,
+        propertyAddress: inspection.propertyAddress,
+        propertyType: inspection.propertyType,
+        contractId: inspection.contractId,
+        contractNumber: inspection.contractNumber,
+        auditHash: inspection.auditHash,
+        inspectedAt: inspection.inspectedAt,
+        lockedAt: inspection.lockedAt,
+        status: inspection.status,
+        landlordName: inspection.landlordName,
+        landlordCpfCnpj: inspection.landlordCpfCnpj,
+        tenantName: inspection.tenantName,
+        tenantCpfCnpj: inspection.tenantCpfCnpj,
+        inspectorName: inspection.inspectorName,
+        inspectorCrea: inspection.inspectorCrea,
+        inspectorCompany: inspection.inspectorCompany,
+        landlordSignedAt: inspection.landlordSignedAt,
+        tenantSignedAt: inspection.tenantSignedAt,
+        inspectorSignedAt: inspection.inspectorSignedAt,
+        redutorSocial: inspection.redutorSocial,
+        clausulaVigencia: inspection.clausulaVigencia,
+        garantiaType: inspection.garantiaType,
+        rooms: rooms.map(r => ({
+          id: r.id,
+          name: r.name,
+          type: r.type,
+          notes: r.notes,
+          items: items
+            .filter(i => i.roomId === r.id)
+            .map(i => ({
+              id: i.id,
+              name: i.name,
+              category: i.category,
+              condition: i.condition,
+              notes: i.notes,
+              photoUrl: i.photoUrl,
+            })),
+        })),
+      };
+      await exportVistoriaPdf(pdfData);
+      toast.success("PDF exportado com sucesso!");
+    } catch (err) {
+      toast.error("Erro ao exportar PDF");
+      console.error(err);
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
+
   if (isLoading) return <div className="text-gray-400 text-center py-12">Carregando vistoria...</div>;
   if (!data) return <div className="text-red-400 text-center py-12">Vistoria não encontrada</div>;
 
@@ -229,6 +288,15 @@ export default function VistoriaDetalhes() {
           </div>
         </div>
         <div className="flex gap-2 shrink-0">
+          <Button
+            onClick={handleExportPdf}
+            disabled={isExportingPdf}
+            variant="outline"
+            className="border-green-600 text-green-400 hover:bg-green-900/20 gap-2"
+          >
+            <Download className="w-4 h-4" />
+            {isExportingPdf ? "Exportando..." : "Exportar PDF"}
+          </Button>
           <Button
             onClick={() => generateContractMutation.mutate({ inspectionId: Number(id) })}
             disabled={generateContractMutation.isPending}

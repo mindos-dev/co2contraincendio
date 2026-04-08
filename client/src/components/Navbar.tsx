@@ -11,6 +11,7 @@ const servicesMain = [
   { label: "Alarme de Incêndio", href: "/alarme-incendio" },
   { label: "Detector de Gás GLP/GN", href: "/detector-gas" },
   { label: "Vistoria e Laudo com ART", href: "/vistoria-laudo-art" },
+  { label: "⚡ Vistoria Técnica Blindada 2026", href: "/vistoria-tecnica-blindada" },
 ];
 
 const servicesContratos = [

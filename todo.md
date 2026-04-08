@@ -703,3 +703,9 @@
 - [x] exportVistoriaPdf.ts: rodapé dinâmico com dados do engenheiro da vistoria específica
 - [x] Dashboard Partner Payout: view Admin para aprovar e liberar pagamentos
 - [x] Landing Page /vistoria-tecnica-blindada: identidade CO2 Dark/Red, SEO BH+Contagem, curadoria técnica
+
+## Sprint SKILL_CREATOR + SUGESTOES_IMPLEMENTADAS (2026-04-08)
+- [x] Criar skill operis-vistorias-blindadas com skill-creator (SKILL.md + references + templates)
+- [x] Adicionar link "Vistoria Blindada" no menu de Serviços da navbar
+- [x] Implementar marca d'água real nas fotos do exportVistoriaPdf.ts (canvas overlay GPS/timestamp/contractId)
+- [x] Conectar botão "Exportar PDF" no VistoriaDetalhes.tsx chamando exportVistoriaPdf
