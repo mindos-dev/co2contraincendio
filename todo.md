@@ -720,3 +720,6 @@
 
 - [x] BUG: Tela de login renderizando duplicada (layout 2x lado a lado)
 - [x] BUG: Breadcrumb da página /operis/parceiros-engenheiros mostrando "AI Assistant"
+
+## Bug /app/os (08/04/2026)
+- [x] BUG: /app/os envia limit > 100 para a procedure — erro Zod "Too big: expected number to be <=100"

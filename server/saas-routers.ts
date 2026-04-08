@@ -354,7 +354,7 @@ export const saasRouter = router({
         category: z.string().optional(),
         status: z.string().optional(),
         page: z.number().min(1).optional(),
-        limit: z.number().min(1).max(100).optional(),
+        limit: z.number().min(1).max(1000).optional(),
       }))
       .query(({ input }) => getEquipmentFiltered(input)),
 
