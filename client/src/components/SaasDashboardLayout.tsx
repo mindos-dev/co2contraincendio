@@ -141,7 +141,9 @@ function NavItemRow({
   isActive: (path: string) => boolean;
   depth?: number;
 }) {
-  const [open, setOpen] = useState(false);
+  // Vistorias de Imóveis sempre expandido por padrão
+  const defaultOpen = item.path === "/operis/vistorias";
+  const [open, setOpen] = useState(defaultOpen);
   const active = isActive(item.path);
   const hasChildren = item.children && item.children.length > 0;
   const anyChildActive = item.children?.some(c => isActive(c.path)) ?? false;
