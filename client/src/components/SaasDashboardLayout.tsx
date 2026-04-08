@@ -9,7 +9,7 @@ import {
   ChevronDown, ChevronRight, LogOut, Menu, X, Bell, Search,
   Wrench, QrCode, AlertTriangle, FolderOpen, Building2, Shield, UserCircle,
   CreditCard, TrendingUp, ClipboardCheck, HardHat, Landmark, FileSpreadsheet, BarChart3,
-  FileBadge2, Home, ScanLine
+  FileBadge2, Home, ScanLine, Flame
 } from "lucide-react";
 
 // ─── Navigation Structure ─────────────────────────────────────────────────────
@@ -46,6 +46,15 @@ const NAV_GROUPS: NavGroup[] = [
           { label: "Vistoria Cautelar", path: "/operis/engenharia/vistoria-cautelar", icon: <Shield size={14} /> },
           { label: "Laudo de Reforma / ART", path: "/operis/engenharia/laudo-reforma", icon: <FileText size={14} /> },
           { label: "Comparador Entrada/Saída", path: "/operis/vistorias/comparador", icon: <ClipboardList size={14} /> },
+        ],
+      },
+      {
+        label: "Sistemas Fixos de Incêndio",
+        path: "/app/fire-system",
+        icon: <Flame size={16} />,
+        children: [
+          { label: "Nova Vistoria NBR 14518", path: "/app/fire-system/nova", icon: <ClipboardCheck size={14} /> },
+          { label: "Todas as Vistorias", path: "/app/fire-system", icon: <ClipboardList size={14} /> },
         ],
       },
       { label: "Engenheiros Parceiros", path: "/operis/parceiros-engenheiros", icon: <Users size={16} />, adminOnly: true },

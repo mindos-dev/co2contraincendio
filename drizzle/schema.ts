@@ -1046,3 +1046,91 @@ export const freelancePayouts = mysqlTable("freelance_payouts", {
 });
 export type FreelancePayout = typeof freelancePayouts.$inferSelect;
 export type InsertFreelancePayout = typeof freelancePayouts.$inferInsert;
+
+// ─── VISTORIA DE SISTEMAS FIXOS DE INCÊNDIO ──────────────────────────────────
+// Módulo add-on: requer plano Prêmio ou Industrial
+// Normas: NBR 14518:2019, NBR 13714, NBR 17240, NBR 10897, IT CBMMG
+
+export const fireSystemInspections = mysqlTable("fire_system_inspections", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  inspectionNumber: varchar("inspection_number", { length: 50 }).notNull(),
+  status: mysqlEnum("status", ["draft", "in_progress", "completed", "approved", "rejected"]).default("draft").notNull(),
+  approvalStatus: mysqlEnum("approval_status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  enterpriseName: varchar("enterprise_name", { length: 255 }).notNull(),
+  shoppingName: varchar("shopping_name", { length: 255 }),
+  storeName: varchar("store_name", { length: 255 }),
+  address: text("address"),
+  city: varchar("city", { length: 100 }),
+  state: varchar("state", { length: 2 }),
+  responsibleLocal: varchar("responsible_local", { length: 255 }),
+  inspectorName: varchar("inspector_name", { length: 255 }).notNull(),
+  engineerName: varchar("engineer_name", { length: 255 }),
+  engineerCrea: varchar("engineer_crea", { length: 50 }),
+  artNumber: varchar("art_number", { length: 50 }),
+  inspectionDate: timestamp("inspection_date").defaultNow(),
+  operationType: varchar("operation_type", { length: 100 }),
+  fuelType: varchar("fuel_type", { length: 100 }),
+  cookingClassification: varchar("cooking_classification", { length: 100 }),
+  systemClassification: varchar("system_classification", { length: 100 }),
+  generalNotes: text("general_notes"),
+  scoreTotal: decimal("score_total", { precision: 5, scale: 2 }).default("0.00"),
+  riskClassification: mysqlEnum("risk_classification", ["R1", "R2", "R3", "R4", "R5"]).default("R1").notNull(),
+  auditHash: varchar("audit_hash", { length: 64 }),
+  reportSlug: varchar("report_slug", { length: 100 }),
+  reportUrl: text("report_url"),
+  lastMaintenanceProvider: varchar("last_maintenance_provider", { length: 255 }),
+  createdByUserId: int("created_by_user_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type FireSystemInspection = typeof fireSystemInspections.$inferSelect;
+export type InsertFireSystemInspection = typeof fireSystemInspections.$inferInsert;
+
+export const fireSystemItems = mysqlTable("fire_system_items", {
+  id: int("id").primaryKey().autoincrement(),
+  inspectionId: int("inspection_id").notNull(),
+  sectionCode: varchar("section_code", { length: 10 }).notNull(),
+  sectionName: varchar("section_name", { length: 255 }).notNull(),
+  itemCode: varchar("item_code", { length: 10 }).notNull(),
+  title: varchar("title", { length: 500 }).notNull(),
+  normRef: varchar("norm_ref", { length: 50 }),
+  status: mysqlEnum("status", ["pending", "conforming", "non_conforming", "not_applicable", "critical"]).default("pending").notNull(),
+  riskLevel: int("risk_level").default(1),
+  riskCode: varchar("risk_code", { length: 5 }).default("R1"),
+  weight: decimal("weight", { precision: 4, scale: 1 }).default("1.0"),
+  score: decimal("score", { precision: 4, scale: 2 }).default("0.00"),
+  measurementType: varchar("measurement_type", { length: 50 }),
+  measurementValueText: text("measurement_value_text"),
+  measurementValueNumeric: decimal("measurement_value_numeric", { precision: 10, scale: 3 }),
+  measurementUnit: varchar("measurement_unit", { length: 30 }),
+  expectedMin: decimal("expected_min", { precision: 10, scale: 3 }),
+  expectedMax: decimal("expected_max", { precision: 10, scale: 3 }),
+  manualComment: text("manual_comment"),
+  shortComment: text("short_comment"),
+  aiComment: text("ai_comment"),
+  recommendedAction: text("recommended_action"),
+  photoUrls: text("photo_urls"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type FireSystemItem = typeof fireSystemItems.$inferSelect;
+export type InsertFireSystemItem = typeof fireSystemItems.$inferInsert;
+
+export const fireSystemAuditLogs = mysqlTable("fire_system_audit_logs", {
+  id: int("id").primaryKey().autoincrement(),
+  inspectionId: int("inspection_id").notNull(),
+  userId: int("user_id").notNull(),
+  userName: varchar("user_name", { length: 255 }).notNull(),
+  action: varchar("action", { length: 100 }).notNull(),
+  entityType: varchar("entity_type", { length: 50 }).default("inspection"),
+  entityId: varchar("entity_id", { length: 50 }),
+  previousValue: text("previous_value"),
+  newValue: text("new_value"),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: varchar("user_agent", { length: 500 }),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+export type FireSystemAuditLog = typeof fireSystemAuditLogs.$inferSelect;
+export type InsertFireSystemAuditLog = typeof fireSystemAuditLogs.$inferInsert;

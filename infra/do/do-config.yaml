@@ -1,0 +1,60 @@
+# ============================================================
+# OPERIS IA — DigitalOcean App Platform Configuration
+# Alternativa ao Droplet para deploy gerenciado
+# ============================================================
+name: operis-ia
+region: nyc
+services:
+  - name: operis-backend
+    source_dir: /
+    github:
+      repo: rebecadwg/co2-contra-incendio
+      branch: main
+      deploy_on_push: true
+    build_command: pnpm install && pnpm build
+    run_command: node dist/server/index.js
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: professional-xs
+    http_port: 3000
+    health_check:
+      http_path: /api/health
+      initial_delay_seconds: 30
+      period_seconds: 30
+      timeout_seconds: 10
+      success_threshold: 1
+      failure_threshold: 3
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: ANTHROPIC_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_WEBHOOK_SECRET
+        scope: RUN_TIME
+        type: SECRET
+    routes:
+      - path: /api
+      - path: /
+
+databases:
+  - name: operis-db
+    engine: MYSQL
+    version: "8"
+    size: db-s-1vcpu-1gb
+    num_nodes: 1
+
+domains:
+  - domain: operis.co2contraincendio.com.br
+    type: PRIMARY
+  - domain: www.operis.co2contraincendio.com.br
+    type: ALIAS

@@ -824,3 +824,16 @@
 - [ ] Criar infra/aws/s3-policy.json
 - [ ] Limpeza TypeScript: eliminar any explícitos
 - [ ] Substituir console.log por logger estruturado
+
+## Sprint FIRE_SYSTEM_INSPECTIONS (2026-04-08)
+
+- [ ] Schema Drizzle: fire_system_inspections, fire_system_items, fire_system_audit_logs
+- [ ] Migration SQL aplicada
+- [ ] tRPC router fire-system-router.ts
+- [ ] Seed 16 secoes / 53 itens checklist
+- [ ] Paywall FireSystemPaywallGuard
+- [ ] Paginas React: List, Nova, Detalhes, Laudo
+- [ ] Menu OPERIS e rotas App.tsx
+- [ ] Arquitetura IA centralizada server/ai/
+- [ ] Infra DigitalOcean do-config/
+- [ ] TypeScript: 0 erros

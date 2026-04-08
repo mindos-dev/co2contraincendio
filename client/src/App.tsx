@@ -97,6 +97,10 @@ import VistoriaCautelar from "./pages/operis/engenharia/VistoriaCautelar";
 import LaudoReforma from "./pages/operis/engenharia/LaudoReforma";
 import ParceirosEngenheiros from "./pages/operis/ParceirosEngenheiros";
 import VistoriaTecnicaBlindada from "./pages/VistoriaTecnicaBlindada";
+// Vistoria de Sistemas Fixos de Incêndio (OPERIS)
+import FireSystemList from "./pages/operis/fire-system/FireSystemList";
+import NovaFireSystem from "./pages/operis/fire-system/NovaFireSystem";
+import FireSystemDetalhes from "./pages/operis/fire-system/FireSystemDetalhes";
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfService from "./pages/legal/TermsOfService";
@@ -217,6 +221,10 @@ function Router() {
       <Route path="/operis/engenharia/laudo-reforma" component={LaudoReforma} />
       {/* Engenheiros Parceiros / Payout */}
       <Route path="/operis/parceiros-engenheiros" component={ParceirosEngenheiros} />
+      {/* Vistoria de Sistemas Fixos de Incêndio */}
+      <Route path="/app/fire-system" component={FireSystemList} />
+      <Route path="/app/fire-system/nova" component={NovaFireSystem} />
+      <Route path="/app/fire-system/:id" component={FireSystemDetalhes} />
       {/* Legal pages */}
       <Route path="/legal/privacy" component={PrivacyPolicy} />
       <Route path="/legal/terms" component={TermsOfService} />
