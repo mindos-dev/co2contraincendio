@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPERIS.ENG — Motor de Análise Técnica</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a1628;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    header {
+      background: #0d1f3c;
+      border-bottom: 2px solid #f97316;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header .logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #f97316;
+    }
+    header .sub {
+      font-size: 12px;
+      color: #94a3b8;
+      letter-spacing: 1px;
+    }
+    header .badge {
+      margin-left: auto;
+      background: #16a34a;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    .card {
+      background: #0d1f3c;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .card h2 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #f97316;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e3a5f;
+    }
+    .upload-zone {
+      border: 2px dashed #1e3a5f;
+      border-radius: 6px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      margin-bottom: 16px;
+    }
+    .upload-zone:hover { border-color: #f97316; }
+    .upload-zone input { display: none; }
+    .upload-zone .icon { font-size: 36px; margin-bottom: 8px; }
+    .upload-zone p { color: #94a3b8; font-size: 14px; }
+    .upload-zone .filename { color: #f97316; font-weight: 600; margin-top: 8px; font-size: 13px; }
+    .btn {
+      background: #f97316;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.2s;
+      width: 100%;
+    }
+    .btn:hover { background: #ea6c0a; }
+    .btn:disabled { background: #374151; cursor: not-allowed; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #f97316;
+      color: #f97316;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .btn-secondary:hover { background: #f97316; color: white; }
+    textarea {
+      width: 100%;
+      background: #0a1628;
+      border: 1px solid #1e3a5f;
+      border-radius: 6px;
+      color: #e2e8f0;
+      padding: 12px;
+      font-size: 13px;
+      resize: vertical;
+      min-height: 100px;
+      font-family: inherit;
+      margin-bottom: 12px;
+    }
+    textarea:focus { outline: none; border-color: #f97316; }
+    .result-box {
+      background: #0a1628;
+      border: 1px solid #1e3a5f;
+      border-radius: 6px;
+      padding: 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #86efac;
+      white-space: pre-wrap;
+      min-height: 80px;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+    }
+    .result-box.visible { display: block; }
+    .status-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .status-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #0a1628;
+      border: 1px solid #1e3a5f;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .status-chip .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #16a34a;
+    }
+    .loading { color: #f97316; font-size: 12px; margin-top: 8px; display: none; }
+    .loading.visible { display: block; }
+    .endpoints {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .endpoint {
+      background: #0a1628;
+      border: 1px solid #1e3a5f;
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+    }
+    .endpoint .method {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+    .method.post { background: #1d4ed8; color: white; }
+    .method.get { background: #16a34a; color: white; }
+    .endpoint .path { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+    .endpoint .desc { font-size: 11px; color: #64748b; margin-top: 4px; }
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #374151;
+      font-size: 12px;
+      border-top: 1px solid #0d1f3c;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">OPERIS.ENG</div>
+      <div class="sub">MOTOR DE ANÁLISE TÉCNICA — FastAPI + PyMuPDF + ezdxf + ReportLab</div>
+    </div>
+    <div class="badge">● ONLINE</div>
+  </header>
+
+  <div class="container">
+    <div class="status-row">
+      <div class="status-chip"><span class="dot"></span> API Ativa</div>
+      <div class="status-chip"><span class="dot"></span> PyMuPDF 1.27</div>
+      <div class="status-chip"><span class="dot"></span> ezdxf 1.4</div>
+      <div class="status-chip"><span class="dot"></span> ReportLab 4.4</div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="card">
+      <h2>📄 Upload de Arquivo (PDF / DWG)</h2>
+      <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+        <div class="icon">📁</div>
+        <p>Clique para selecionar ou arraste um arquivo PDF ou DWG</p>
+        <div class="filename" id="fileName">Nenhum arquivo selecionado</div>
+        <input type="file" id="fileInput" accept=".pdf,.dwg,.dxf" onchange="onFileSelect(this)">
+      </div>
+      <button class="btn" id="btnUpload" onclick="upload()" disabled>ENVIAR ARQUIVO</button>
+      <div class="loading" id="loadingUpload">⏳ Processando arquivo...</div>
+      <div class="result-box" id="resultUpload"></div>
+    </div>
+
+    <!-- ANÁLISE -->
+    <div class="card">
+      <h2>🧠 Análise Técnica (RASS + ReportLab)</h2>
+      <textarea id="textoAnalise" placeholder="Cole o texto técnico para análise...
+Ex: Sistema de supressão CO2 — NBR 12615. Hidrante NBR 13714. Pressão de trabalho 150 bar.">teste técnico hidrante NBR 13714. Sistema de supressão CO2. Pressão de trabalho 150 bar. Válvula de segurança. Extintor portátil.</textarea>
+      <button class="btn" onclick="analisar()">ANALISAR E GERAR LAUDO</button>
+      <button class="btn-secondary" onclick="analisarComIA()">🤖 ANALISAR COM IA (OPERIS.ENG)</button>
+      <button class="btn-secondary" onclick="window.open('/docs','_blank')">VER DOCUMENTAÇÃO API</button>
+      <div class="loading" id="loadingAnalise">⏳ Analisando e gerando laudo PDF...</div>
+      <div class="result-box" id="resultAnalise"></div>
+    </div>
+
+    <!-- ENDPOINTS -->
+    <div class="card">
+      <h2>🔌 Endpoints Disponíveis</h2>
+      <div class="endpoints">
+        <div class="endpoint">
+          <div class="method post">POST</div>
+          <div class="path">/upload</div>
+          <div class="desc">Extrai texto de PDF ou DWG</div>
+        </div>
+        <div class="endpoint">
+          <div class="method post">POST</div>
+          <div class="path">/analisar</div>
+          <div class="desc">RASS + geração de laudo PDF</div>
+        </div>
+        <div class="endpoint">
+          <div class="method post">POST</div>
+          <div class="path">/engenharia/analisar</div>
+          <div class="desc">Motor OPERIS.ENG (OperisBrain)</div>
+        </div>
+        <div class="endpoint">
+          <div class="method get">GET</div>
+          <div class="path">/health</div>
+          <div class="desc">Status da API</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>OPERIS.ENG v1.0 — CO₂ Contra Incêndio — Eng. Judson Aleixo Sampaio · CREA/MG 142203671-5</footer>
+
+  <script>
+    const BASE = window.location.origin;
+
+    function onFileSelect(input) {
+      const file = input.files[0];
+      if (file) {
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('btnUpload').disabled = false;
+      }
+    }
+
+    async function upload() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return;
+      const loading = document.getElementById('loadingUpload');
+      const result = document.getElementById('resultUpload');
+      loading.classList.add('visible');
+      result.classList.remove('visible');
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch(`${BASE}/upload`, { method: 'POST', body: fd });
+        const data = await res.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        result.classList.add('visible');
+      } catch (e) {
+        result.textContent = 'Erro: ' + e.message;
+        result.classList.add('visible');
+      } finally {
+        loading.classList.remove('visible');
+      }
+    }
+
+    async function analisarComIA() {
+      const texto = document.getElementById('textoAnalise').value;
+      const loading = document.getElementById('loadingAnalise');
+      const result = document.getElementById('resultAnalise');
+      loading.classList.add('visible');
+      result.classList.remove('visible');
+      try {
+        const res = await fetch(`${BASE}/engenharia/analisar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texto })
+        });
+        const data = await res.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        result.classList.add('visible');
+      } catch (e) {
+        result.textContent = 'Erro: ' + e.message;
+        result.classList.add('visible');
+      } finally {
+        loading.classList.remove('visible');
+      }
+    }
+
+    async function analisar() {
+      const texto = document.getElementById('textoAnalise').value;
+      const loading = document.getElementById('loadingAnalise');
+      const result = document.getElementById('resultAnalise');
+      loading.classList.add('visible');
+      result.classList.remove('visible');
+      try {
+        const res = await fetch(`${BASE}/analisar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texto })
+        });
+        const data = await res.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        result.classList.add('visible');
+      } catch (e) {
+        result.textContent = 'Erro: ' + e.message;
+        result.classList.add('visible');
+      } finally {
+        loading.classList.remove('visible');
+      }
+    }
+  </script>
+</body>
+</html>
