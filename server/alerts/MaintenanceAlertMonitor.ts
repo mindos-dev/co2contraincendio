@@ -1,7 +1,7 @@
 /**
  * MaintenanceAlertMonitor
  * Verifica equipamentos com manutenção próxima do vencimento (30, 15, 7 dias)
- * ou já vencida, e envia alertas por e-mail + notificação Manus Forge.
+ * ou já vencida, e envia alertas por e-mail.
  *
  * Debounce: 1 alerta por equipamento por tipo por dia (evita spam).
  */
@@ -145,7 +145,7 @@ export class MaintenanceAlertMonitor {
       }
     }
 
-    // Sempre notificar o owner via Manus Forge como fallback
+    // Sempre notificar o owner via e-mail como fallback
     try {
       await notifyOwner({
         title: `[OPERIS] Alerta de Manutenção — ${urgency}`,

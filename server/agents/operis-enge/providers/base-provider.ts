@@ -131,7 +131,7 @@ export abstract class BaseProvider implements AgentProvider {
   ): Promise<ProviderResponse>;
 }
 
-// ─── Provider Nativo OPERIS (usa invokeLLM do Manus) ─────────────────────────
+// ─── Provider Nativo OPERIS (usa Ollama local) ─────────────────────────
 // Este é o único provider pré-instalado — usa a IA nativa do Manus sem custo adicional.
 // Todos os outros providers precisam ser configurados com chave de API.
 
@@ -141,8 +141,8 @@ export class OperisNativeProvider extends BaseProvider {
   constructor() {
     super({
       id: "operis-native",
-      name: "OPERIS Native (Manus AI)",
-      description: "Provider nativo do OPERIS usando a IA integrada do Manus. Sem custo adicional, sem configuração.",
+      name: "OPERIS Native (IA Local)",
+      description: "Provider nativo do OPERIS usando IA local (Ollama). Sem custo adicional, sem configuração.",
       provider: "manus",
       model: "built-in",
       capabilities: [

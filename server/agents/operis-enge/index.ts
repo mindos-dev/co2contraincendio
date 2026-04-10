@@ -2,7 +2,7 @@
  * OPERIS.enge — Entry Point
  *
  * Este arquivo inicializa o framework de agentes.
- * Por padrão, apenas o provider nativo do Manus é registrado.
+ * Por padrão, apenas o provider nativo do OPERIS é registrado.
  *
  * PARA ADICIONAR NOVOS PROVIDERS:
  * ─────────────────────────────────

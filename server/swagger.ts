@@ -20,7 +20,7 @@ const spec = {
 
 Esta documentação cobre todos os endpoints da plataforma **OPERIS.eng**:
 
-- **Autenticação**: OAuth 2.0 via Manus + JWT cookie
+- **Autenticação: JWT cookie (HS256, 7 dias)
 - **Equipamentos**: CRUD completo com QR Code
 - **Manutenções**: Ordens de serviço e histórico
 - **Vistorias**: Laudos técnicos com IA generativa
@@ -183,7 +183,7 @@ Consulte \`/legal/privacy\` para a Política de Privacidade completa.
       get: {
         tags: ["Auth"],
         summary: "Iniciar fluxo OAuth",
-        description: "Redireciona para o portal de login Manus OAuth. Após autenticação, redireciona para /api/oauth/callback.",
+        description: "Redireciona para o portal de login OPERIS. Após autenticação, redireciona para /api/oauth/callback.",
         security: [],
         parameters: [
           { name: "returnPath", in: "query", schema: { type: "string" }, description: "Caminho de retorno após login", example: "/app/dashboard" },
@@ -197,7 +197,7 @@ Consulte \`/legal/privacy\` para a Política de Privacidade completa.
       get: {
         tags: ["Auth"],
         summary: "Callback OAuth",
-        description: "Endpoint de callback do Manus OAuth. Cria sessão e redireciona para o app.",
+        description: "Endpoint de callback de autenticação OPERIS. Cria sessão e redireciona para o app.",
         security: [],
         parameters: [
           { name: "code", in: "query", required: true, schema: { type: "string" } },

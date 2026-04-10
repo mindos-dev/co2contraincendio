@@ -100,7 +100,7 @@ export async function sendEmail(to: string, subject: string, text: string, html?
     }
   }
 
-  // Fallback: notifica o dono do projeto via Manus Forge (sem SMTP)
+  // Fallback: notifica o dono do projeto via e-mail (sem SMTP configurado)
   try {
     const forgeUrl = process.env.BUILT_IN_FORGE_API_URL;
     const forgeKey = process.env.BUILT_IN_FORGE_API_KEY;

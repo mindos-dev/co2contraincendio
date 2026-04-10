@@ -1,0 +1,52 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# OPERIS Command Center — .dockerignore
+# Exclui arquivos desnecessários do contexto de build Docker
+# Reduz o tamanho do contexto e evita vazar credenciais na imagem
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ── Credenciais (NUNCA devem entrar na imagem) ────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+.git
+.gitignore
+.gitkeep
+
+# ── Dependências (reinstaladas no build) ──────────────────────────────────────
+node_modules
+**/node_modules
+
+# ── Artefatos de build (gerados dentro do Docker) ─────────────────────────────
+dist
+build
+.turbo
+
+# ── Logs e debug ──────────────────────────────────────────────────────────────
+*.log
+.manus-logs
+.manus/db
+
+# ── Desenvolvimento ───────────────────────────────────────────────────────────
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Testes ────────────────────────────────────────────────────────────────────
+**/*.test.ts
+**/*.spec.ts
+**/*.test.tsx
+**/*.spec.tsx
+coverage
+
+# ── Documentação e scripts de CI ──────────────────────────────────────────────
+*.md
+infra/aws
+infra/do
