@@ -45,6 +45,16 @@ const slides = [
     bg: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/slide-kitchen-install_2169cc97.jpg",
     badge: "CREA/MG 142203671-5 · ART",
   },
+  {
+    id: 5, label: "OPERIS.eng — Plataforma SaaS de Engenharia",
+    title: "Gestão Inteligente\nde Inspeções e\nLaudos Técnicos",
+    sub: "OPERIS.eng é a plataforma SaaS que digitaliza inspeções, gera laudos com IA generativa, controla equipamentos e automatiza conformidade NBR/NFPA. Do campo ao relatório em minutos.",
+    cta1: { label: "Acessar OPERIS.eng", href: "/app/login" },
+    cta2: { label: "Conhecer a Plataforma", href: "/planos" },
+    bg: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029941110/TyJduRRrx582jr9b7ycCdJ/operis-banner-bg-X9xf844jLRZBjSckVPN2xZ.webp",
+    badge: "OPERIS.eng · IA Generativa · NBR/NFPA",
+    isOperis: true,
+  },
 ];
 
 const services = [
@@ -143,7 +153,7 @@ export default function Home() {
         <div className="container" style={{ position: "relative", zIndex: 3, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <div style={{ maxWidth: "660px" }}>
             {slide.badge && (
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "var(--red)", color: "#fff", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.75rem", marginBottom: "1rem" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: (slide as any).isOperis ? "#1e40af" : "var(--red)", color: "#fff", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.75rem", marginBottom: "1rem" }}>
                 <Shield size={10} />{slide.badge}
               </div>
             )}
@@ -151,7 +161,7 @@ export default function Home() {
             <h1 className="text-display" style={{ color: "#fff", marginBottom: "1.25rem", whiteSpace: "pre-line" }}>{slide.title}</h1>
             <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", lineHeight: 1.75, marginBottom: "2rem", maxWidth: "520px" }}>{slide.sub}</p>
             <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-              <Link href={slide.cta1.href} className="btn-primary">{slide.cta1.label} <ArrowRight size={14} /></Link>
+              <Link href={slide.cta1.href} className={(slide as any).isOperis ? "btn-operis-primary" : "btn-primary"} style={(slide as any).isOperis ? { background: "#1e40af", color: "#fff", padding: "0.75rem 1.5rem", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" } : {}}>{slide.cta1.label} <ArrowRight size={14} /></Link>
               <Link href={slide.cta2.href} className="btn-outline-white">{slide.cta2.label}</Link>
             </div>
           </div>

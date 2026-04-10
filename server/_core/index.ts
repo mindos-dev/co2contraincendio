@@ -12,6 +12,7 @@ import { runDailyAlertJob } from "../saas-routers";
 import { createContext } from "./context";
 import { registerStripeWebhook } from "../billing-webhook";
 import { serveStatic, setupVite } from "./vite";
+import { setupSwagger } from "../swagger";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -108,6 +109,14 @@ async function startServer() {
   // Body parser — 10mb for regular JSON, 20mb for file uploads (base64 encoded)
   app.use(express.json({ limit: "20mb" }));
   app.use(express.urlencoded({ limit: "20mb", extended: true }));
+
+  // Health check endpoint
+  app.get("/api/health", (_req, res) => {
+    res.json({ status: "ok", version: "2.0.0", timestamp: new Date().toISOString() });
+  });
+
+  // Swagger / OpenAPI documentation
+  setupSwagger(app);
 
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);

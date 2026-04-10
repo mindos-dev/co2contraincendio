@@ -8,6 +8,7 @@ import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
 import { SaasAuthProvider } from "./contexts/SaasAuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import { getSaasToken } from "./hooks/useSaasToken";
 import "./index.css";
 
@@ -87,7 +88,9 @@ createRoot(document.getElementById("root")!).render(
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <SaasAuthProvider>
-          <App />
+          <LanguageProvider>
+            <App />
+          </LanguageProvider>
         </SaasAuthProvider>
       </QueryClientProvider>
     </trpc.Provider>

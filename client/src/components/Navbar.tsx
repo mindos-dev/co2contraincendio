@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X, ChevronDown, Phone } from "lucide-react";
 import OperisLogo from "./OperisLogo";
+import { LanguageSelector } from "../contexts/LanguageContext";
 
 const servicesMain = [
   { label: "Sistema de Supressão por CO₂", href: "/sistema-supressao-co2" },
@@ -238,6 +239,7 @@ export default function Navbar() {
             >
               <OperisLogo size="xs" dark={false} />
             </Link>
+            <LanguageSelector compact />
             <Link href="/contato" className="btn-primary" style={{ marginLeft: "0.5rem", height: "40px", padding: "0 1.5rem" }}>
               Solicitar Orçamento
             </Link>

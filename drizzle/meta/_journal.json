@@ -169,6 +169,13 @@
       "when": 1775678848003,
       "tag": "0023_soft_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1775783721636,
+      "tag": "0024_classy_ogun",
+      "breakpoints": true
     }
   ]
 }

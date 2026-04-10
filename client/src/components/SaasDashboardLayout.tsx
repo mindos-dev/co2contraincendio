@@ -36,6 +36,16 @@ const NAV_GROUPS: NavGroup[] = [
   {
     group: "Operations",
     items: [
+      {
+        label: "Projetos",
+        path: "/app/projetos",
+        icon: <FolderOpen size={16} />,
+        children: [
+          { label: "Inspeções", path: "/app/projetos", icon: <Building2 size={14} /> },
+          { label: "Sistemas de Incêndio", path: "/app/projetos", icon: <Flame size={14} /> },
+          { label: "Ordens de Serviço", path: "/app/projetos", icon: <ClipboardList size={14} /> },
+        ],
+      },
       { label: "Work Orders (OS)", path: "/app/os", icon: <ClipboardList size={16} /> },
       {
         label: "Vistorias de Imóveis",

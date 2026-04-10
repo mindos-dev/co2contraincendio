@@ -16,6 +16,7 @@ import { engineerRouter } from "./engineer-router";
 import { aiRouter, documentsRouter } from "./ai-router";
 import { fireSystemRouter } from "./fire-system-router";
 import { engeRouter } from "./enge-router";
+import { projectRouter } from "./project-router";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -35,6 +36,7 @@ export const appRouter = router({
   documents: documentsRouter,
   fireSystem: fireSystemRouter,
   enge: engeRouter,
+  project: projectRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

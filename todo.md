@@ -863,3 +863,70 @@
 - [x] Persistência do índice vetorial no banco de dados (tabela operis_knowledge_chunks)
 - [x] UI de Busca Semântica no painel OPERIS.eng (/app/operis-eng/busca) com design Procore/Autodesk
 - [x] Rota /app/operis-eng/busca registrada no App.tsx e no menu OPERIS.eng
+
+## Auditoria Completa Big Tech — Sprint 2026-04-08
+
+### [1] OPERIS Visibilidade
+- [x] OPERIS no Navbar (top bar + menu mobile) — já existe
+- [ ] Slide OPERIS.eng no carousel da homepage (posição 5)
+
+### [2] Banner OPERIS Homepage
+- [ ] Adicionar slide OPERIS.eng ao carousel com copy Procore/Autodesk
+
+### [3] Logos
+- [x] CO2 logo no Navbar — já existe
+- [x] OPERIS logo no Navbar — já existe (OperisLogo.tsx)
+
+### [4] Imagens duplicadas
+- [ ] Auditar e remover slides duplicados na homepage
+
+### [5] Identidade visual
+- [x] CO2: Vermelho/Branco/Cinza — já padronizado
+- [x] OPERIS: Azul/Preto/Cinza escuro — já padronizado
+
+### [6] Idioma PT-BR
+- [ ] Corrigir textos em inglês nas páginas da plataforma (Dashboard, Settings, etc.)
+
+### [7] Multi-idioma PT/EN
+- [ ] Criar LanguageContext (client/src/contexts/LanguageContext.tsx)
+- [ ] Criar traduções PT/EN (client/src/i18n/pt.ts e en.ts)
+- [ ] Adicionar seletor de idioma com bandeiras no Navbar (site CO2)
+- [ ] Adicionar seletor de idioma com bandeiras no SaasDashboardLayout (OPERIS)
+
+### [8] UX/Navegação
+- [ ] Verificar ícones faltando no menu
+- [ ] Consistência de navegação entre páginas
+
+### [9] Arquitetura API
+- [ ] Criar server/api/ com routes, controllers, middlewares, validators
+- [ ] Documentação Swagger/OpenAPI em /api/docs
+
+### [10] Documentação API
+- [ ] Instalar swagger-ui-express e swagger-jsdoc
+- [ ] Gerar spec OpenAPI completo com todos os endpoints
+
+### [11] LGPD
+- [x] PrivacyPolicy.tsx — já existe
+- [x] TermsOfService.tsx — já existe
+- [x] CookieBanner.tsx — já existe
+- [ ] Verificar se rotas /privacidade e /termos estão no App.tsx
+
+### [12] Billing/Pagamentos
+- [x] billing-router.ts, billing-db.ts, billing-plans.ts, billing-webhook.ts — já existem (Stripe)
+- [ ] Criar server/billing/providers/mercadopago.ts (estrutura plug-and-play)
+- [ ] Criar server/billing/providers/stripe.ts (wrapper do existente)
+
+## Refatoração PROJECT-CENTERED ARCHITECTURE (14 Blocos)
+
+- [x] Tabela `projects` no schema com tipo (inspection|fire|work_order), status, responsável, financeiro
+- [x] Tabela `project_financial_items` para custos e pagamentos por projeto
+- [x] Tabela `project_checklist_items` para checklist por projeto
+- [x] Router tRPC `project-router.ts` com CRUD completo de projetos (create, list, getById, update, delete, addChecklistItem, updateChecklistItem, addFinancialItem, deleteFinancialItem, aiAnalyze, generateReport, getStats)
+- [x] Vincular fieldInspections, fireSystemInspections, workOrders à tabela projects via project_id (schema preparado)
+- [x] Tela unificada `/app/projetos` — listagem de projetos com filtro por tipo e status, KPIs e modal de criação
+- [x] Tela de detalhe `/app/projetos/:id` — tudo em uma tela: checklist, financeiro, relatório, IA
+- [x] Item "Projetos" adicionado ao menu Operations do SaasDashboardLayout
+- [x] Botão [GERAR RELATÓRIO] dentro da tela de projeto (via IA)
+- [x] Assistente IA dentro da tela de projeto (análise de inspeção + sugestões via enge.aiAnalyze)
+- [x] LGPD, CookieBanner e páginas legais intactas (Bloco 12)
+- [x] TypeScript 0 erros após refatoração (Bloco 14)

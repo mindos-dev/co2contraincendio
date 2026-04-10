@@ -60,6 +60,8 @@ import OrdemServico from "./pages/plataforma/OrdemServico";
 import Checklist from "./pages/plataforma/Checklist";
 import Propostas from "./pages/plataforma/Propostas";
 import Financeiro from "./pages/plataforma/Financeiro";
+import ProjetosPage from "./pages/plataforma/Projetos";
+import ProjetoDetalhePage from "./pages/plataforma/ProjetoDetalhe";
 import NFSe from "./pages/plataforma/NFSe";
 import Onboarding from "./pages/plataforma/Onboarding";
 import Configuracoes from "./pages/plataforma/Configuracoes";
@@ -228,6 +230,9 @@ function Router() {
       <Route path="/app/fire-system" component={FireSystemList} />
       <Route path="/app/fire-system/nova" component={NovaFireSystem} />
       <Route path="/app/fire-system/:id" component={FireSystemDetalhes} />
+      {/* Projetos — Arquitetura PROJECT-CENTERED */}
+      <Route path="/app/projetos" component={ProjetosPage} />
+      <Route path="/app/projetos/:id" component={ProjetoDetalhePage} />
       {/* OPERIS.eng — Agente de Engenharia Autônomo */}
       <Route path="/app/operis-eng" component={OperisEngHome} />
       <Route path="/app/operis-eng/comercial" component={OperisEngHome} />

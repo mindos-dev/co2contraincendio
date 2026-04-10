@@ -1154,3 +1154,68 @@ export const operisKnowledgeChunks = mysqlTable("operis_knowledge_chunks", {
 });
 export type OperisKnowledgeChunk = typeof operisKnowledgeChunks.$inferSelect;
 export type InsertOperisKnowledgeChunk = typeof operisKnowledgeChunks.$inferInsert;
+
+// ─── PROJECT-CENTERED ARCHITECTURE ───────────────────────────────────────────
+// Entidade central: PROJECT — unifica Inspeção, Fire System e OS
+export const projects = mysqlTable("projects", {
+  id: int("id").primaryKey().autoincrement(),
+  companyId: int("company_id").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  type: mysqlEnum("type", ["inspection", "fire", "work_order"]).notNull(),
+  status: mysqlEnum("status", ["draft", "in_progress", "completed", "cancelled"]).default("draft").notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  responsibleId: int("responsible_id"),
+  clientName: varchar("client_name", { length: 255 }),
+  clientContact: varchar("client_contact", { length: 255 }),
+  address: text("address"),
+  description: text("description"),
+  inspectionId: int("inspection_id"),
+  fireSystemId: int("fire_system_id"),
+  workOrderId: int("work_order_id"),
+  totalCost: int("total_cost").default(0),
+  totalPaid: int("total_paid").default(0),
+  reportGenerated: int("report_generated").default(0),
+  reportUrl: varchar("report_url", { length: 1000 }),
+  tags: varchar("tags", { length: 500 }),
+  notes: text("notes"),
+  startDate: timestamp("start_date"),
+  dueDate: timestamp("due_date"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type Project = typeof projects.$inferSelect;
+export type InsertProject = typeof projects.$inferInsert;
+
+// Itens financeiros por projeto (custos, pagamentos, anexos)
+export const projectFinancialItems = mysqlTable("project_financial_items", {
+  id: int("id").primaryKey().autoincrement(),
+  projectId: int("project_id").notNull(),
+  companyId: int("company_id").notNull(),
+  type: mysqlEnum("type", ["cost", "payment", "invoice"]).notNull(),
+  description: varchar("description", { length: 500 }).notNull(),
+  amount: int("amount").notNull(),
+  paidAt: timestamp("paid_at"),
+  attachmentUrl: varchar("attachment_url", { length: 1000 }),
+  attachmentType: varchar("attachment_type", { length: 50 }),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+export type ProjectFinancialItem = typeof projectFinancialItems.$inferSelect;
+export type InsertProjectFinancialItem = typeof projectFinancialItems.$inferInsert;
+
+// Checklist simplificado por projeto (máx 5 itens — Bloco 3)
+export const projectChecklistItems = mysqlTable("project_checklist_items", {
+  id: int("id").primaryKey().autoincrement(),
+  projectId: int("project_id").notNull(),
+  companyId: int("company_id").notNull(),
+  label: varchar("label", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["ok", "warning", "critical", "pending"]).default("pending").notNull(),
+  notes: text("notes"),
+  photoUrl: varchar("photo_url", { length: 1000 }),
+  sortOrder: int("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+export type ProjectChecklistItem = typeof projectChecklistItems.$inferSelect;
+export type InsertProjectChecklistItem = typeof projectChecklistItems.$inferInsert;
