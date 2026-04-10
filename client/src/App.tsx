@@ -115,6 +115,7 @@ import CookiePolicy from "./pages/legal/CookiePolicy";
 import Security from "./pages/legal/Security";
 import Compliance from "./pages/legal/Compliance";
 import CookieBanner from "./components/legal/CookieBanner";
+import { SyncStatus } from "./components/SyncStatus";
 function TitleManager() {
   const [location] = useLocation();
   useEffect(() => {
@@ -260,14 +261,16 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <TitleManager />
-          <Router />
-          <CookieBanner />
-        </TooltipProvider>
-      </ThemeProvider>
+      <SyncStatus>
+        <ThemeProvider defaultTheme="light">
+          <TooltipProvider>
+            <Toaster />
+            <TitleManager />
+            <Router />
+            <CookieBanner />
+          </TooltipProvider>
+        </ThemeProvider>
+      </SyncStatus>
     </ErrorBoundary>
   );
 }

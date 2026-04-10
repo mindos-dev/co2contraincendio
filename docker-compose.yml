@@ -1,46 +1,74 @@
-version: "3.9"
-
 # ═══════════════════════════════════════════════════════════════════════════════
-# OPERIS Command Center — Docker Compose
+# OPERIS Command Center — Docker Compose (Modelo Modular Diamond)
 # Projeto: CO₂ Contra Incêndio SaaS | D.G.O. — Dashboard de Governança
 # Responsável: Aleixo (Technical Manager) | JULY AOG — Project Diamond
 #
-# PERMISSÕES ESPECIAIS DO D.G.O.:
-#   /var/run/docker.sock         → leitura de containers em tempo real
-#   /media/aleixo/BACKUP_CO2     → monitoramento do HD 1TB (WDC WD10PURX)
-#   /sys/class/thermal           → temperatura do hardware
-#   /proc                        → CPU, RAM, processos do host
-#   host-gateway:11434           → Ollama rodando no host Linux Mint
+# ARQUITETURA MODULAR DIAMOND:
+#   ┌─────────────────────────────────────────────────────────────────┐
+#   │  Host Linux Mint (Samsung / HD 1TB WDC WD10PURX)               │
+#   │                                                                 │
+#   │  ┌──────────┐    ┌────────────────────────────────────────────┐ │
+#   │  │  Nginx   │───▶│  operis-app (Node.js + tRPC)              │ │
+#   │  │  :80     │    │  :3000 ← DETENTOR EXCLUSIVO               │ │
+#   │  └──────────┘    │  Boot Orchestrator:                        │ │
+#   │                  │    1. Wait MySQL :3306                     │ │
+#   │                  │    2. Git Import (GitHub → /app/git-import)│ │
+#   │                  │    3. drizzle-kit push (54 tabelas)        │ │
+#   │                  │    4. node dist/index.js                   │ │
+#   │                  └────────────────────────────────────────────┘ │
+#   │                                                                 │
+#   │  ┌──────────────────────────────────────────────────────────┐   │
+#   │  │  operis-db (MySQL 8.0) — Módulo Independente             │   │
+#   │  │  Volume: /media/aleixo/BACKUP_CO2/operis-db-data/        │   │
+#   │  │  Persistência Soberana no HD de 1TB                      │   │
+#   │  └──────────────────────────────────────────────────────────┘   │
+#   └─────────────────────────────────────────────────────────────────┘
 #
-# Uso local (Samsung / Linux Mint):
-#   docker compose --profile dev up -d
-#
-# Uso produção (DigitalOcean):
-#   docker compose up -d
+# REGRAS DE OURO:
+#   ✅ operis-app é o DETENTOR EXCLUSIVO da porta 3000
+#   ✅ operis-dev REMOVIDO — conflito de portas eliminado
+#   ✅ Volume MySQL no HD de 1TB (bind mount soberano)
+#   ✅ Reiniciar containers NÃO apaga dados
+#   ✅ Status "Sincronizando Banco" exposto via /api/health
 #
 # Pré-requisito: arquivo .env na raiz (cp .env.example .env)
+# Criar diretório de dados: mkdir -p /media/aleixo/BACKUP_CO2/operis-db-data
 # GID do grupo docker: stat -c "%g" /var/run/docker.sock
 # ═══════════════════════════════════════════════════════════════════════════════
 
 services:
 
-  # ── Banco de Dados MySQL ─────────────────────────────────────────────────────
+  # ── Banco de Dados MySQL 8.0 (Módulo Independente e Estável) ────────────────
+  # Sobe de forma autônoma. O app aguarda este serviço estar "healthy"
+  # antes de iniciar o Boot Orchestrator.
   db:
     image: mysql:8.0
     container_name: operis-db
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_operis_2025}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-operis_db}
       MYSQL_USER: ${MYSQL_USER:-operis_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-operis_senha_forte_2025}
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max-connections=200
+      --innodb-buffer-pool-size=256M
     volumes:
+      # ── PERSISTÊNCIA SOBERANA: HD de 1TB WDC WD10PURX ──────────────────────
+      # Dados do MySQL mapeados diretamente para o HD de backup de 1TB
+      # IMPORTANTE: Crie o diretório antes de subir:
+      #   mkdir -p /media/aleixo/BACKUP_CO2/operis-db-data
       - operis-db-data:/var/lib/mysql
+    ports:
+      # Expõe localmente para acesso via DBeaver/TablePlus (opcional)
+      - "3306:3306"
     networks:
       - operis-network
-    ports:
-      # Expõe localmente para acesso via DBeaver/TablePlus (remova em produção)
-      - "3306:3306"
     healthcheck:
       test:
         - CMD
@@ -53,10 +81,16 @@ services:
         - --password=${MYSQL_ROOT_PASSWORD:-root_operis_2025}
       interval: 10s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 12
+      start_period: 45s
 
-  # ── Aplicação Principal (Produção) ───────────────────────────────────────────
+  # ── Aplicação Principal — DETENTOR EXCLUSIVO da porta 3000 ──────────────────
+  # Módulo independente que sobe após o banco estar saudável.
+  # O Boot Orchestrator (wait-for-db.sh) executa:
+  #   1. Aguarda MySQL
+  #   2. Git Import do GitHub
+  #   3. drizzle-kit push (54 tabelas)
+  #   4. node dist/index.js
   app:
     build:
       context: .
@@ -65,38 +99,43 @@ services:
     image: co2-operis:latest
     container_name: operis-app
     restart: unless-stopped
+    # ── PORTA 3000: DETENTOR EXCLUSIVO ──────────────────────────────────────
+    # Nenhum outro serviço usa esta porta. operis-dev foi REMOVIDO.
     ports:
-      - "${PORT:-3000}:3000"
+      - "3000:3000"
     env_file:
       - .env
     environment:
-      # Sobrescreve o DATABASE_URL para garantir que aponta para o container 'db'
+      NODE_ENV: production
+      PORT: "3000"
+      # DATABASE_URL aponta SEMPRE para o container 'db' (não para localhost)
       DATABASE_URL: mysql://${MYSQL_USER:-operis_user}:${MYSQL_PASSWORD:-operis_senha_forte_2025}@db:3306/${MYSQL_DATABASE:-operis_db}
       DB_HOST: db
       DB_PORT: "3306"
+      # Repositório GitHub para Git Import no boot
+      OPERIS_GITHUB_REPO: https://github.com/mindos-dev/co2contraincendio.git
     volumes:
-      # ── D.G.O.: Docker Socket (leitura de containers) ──
+      # ── D.G.O.: Docker Socket (leitura interativa de containers) ────────────
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # ── D.G.O.: HD 1TB de Backup (WDC WD10PURX) ──
+      # ── D.G.O.: HD 1TB de Backup (WDC WD10PURX) — Disk Monitor ────────────
       - /media/aleixo/BACKUP_CO2:/host/backup:ro
-      # ── D.G.O.: Sistema (CPU/RAM/processos) ──
+      # ── D.G.O.: Sistema do Host (CPU/RAM/processos) ─────────────────────────
       - /proc:/host/proc:ro
-      # ── D.G.O.: Temperatura do hardware ──
+      # ── D.G.O.: Temperatura do hardware ─────────────────────────────────────
       - /sys/class/thermal:/host/sys/class/thermal:ro
-      # ── D.G.O.: Script de sincronização ──
+      # ── D.G.O.: Script de sincronização ─────────────────────────────────────
       - /home/aleixo/sync_operis.sh:/host/scripts/sync_operis.sh:ro
-    # ── Aguarda o banco estar saudável antes de iniciar ──
+      # ── Git Import: cache do repositório (persiste entre reinicializações) ───
+      - operis-git-cache:/app/git-import
     depends_on:
       db:
         condition: service_healthy
-      nginx:
-        condition: service_started
     networks:
       - operis-network
-    # ── D.G.O.: Acesso ao host via gateway (Ollama em localhost) ──
+    # ── Acesso ao host via gateway (Ollama em localhost:11434) ──────────────
     extra_hosts:
       - "host-gateway:host-gateway"
-    # ── D.G.O.: Grupo docker para acesso ao socket ──
+    # ── Grupo docker para acesso ao socket sem root ─────────────────────────
     group_add:
       - "${DOCKER_GROUP_ID:-127}"
     healthcheck:
@@ -104,20 +143,22 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 60s
+      start_period: 120s
 
-  # ── Nginx Reverse Proxy ──────────────────────────────────────────────────────
+  # ── Nginx Reverse Proxy (porta 80 → app:3000) ───────────────────────────────
+  # Proxy reverso simples: todo tráfego da porta 80 vai para o app na 3000
   nginx:
     image: nginx:alpine
     container_name: operis-nginx
     restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./infra/nginx/ssl:/etc/nginx/ssl:ro
       - nginx-cache:/var/cache/nginx
+    depends_on:
+      app:
+        condition: service_started
     networks:
       - operis-network
     healthcheck:
@@ -126,54 +167,11 @@ services:
       timeout: 5s
       retries: 3
 
-  # ── Dev Server (apenas profile dev — Samsung / Linux Mint) ──────────────────
-  app-dev:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: builder
-    container_name: operis-dev
-    profiles: ["dev"]
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: mysql://${MYSQL_USER:-operis_user}:${MYSQL_PASSWORD:-operis_senha_forte_2025}@db:3306/${MYSQL_DATABASE:-operis_db}
-      DB_HOST: db
-      DB_PORT: "3306"
-    volumes:
-      # ── Código fonte (hot-reload) ──
-      - .:/app
-      - /app/node_modules
-      - /app/client/node_modules
-      # ── D.G.O.: Docker Socket ──
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      # ── D.G.O.: HD 1TB de Backup ──
-      - /media/aleixo/BACKUP_CO2:/host/backup:ro
-      # ── D.G.O.: Sistema (CPU/RAM/processos) ──
-      - /proc:/host/proc:ro
-      # ── D.G.O.: Temperatura ──
-      - /sys/class/thermal:/host/sys/class/thermal:ro
-      # ── D.G.O.: Script de sync ──
-      - /home/aleixo/sync_operis.sh:/host/scripts/sync_operis.sh:ro
-    depends_on:
-      db:
-        condition: service_healthy
-    extra_hosts:
-      - "host-gateway:host-gateway"
-    group_add:
-      - "${DOCKER_GROUP_ID:-127}"
-    command: sh -c "scripts/wait-for-db.sh pnpm dev"
-    networks:
-      - operis-network
-
-  # ── Ollama IA Local (descomente se quiser rodar em container) ───────────────
+  # ── Ollama IA Local (descomente para rodar em container) ────────────────────
+  # Por padrão, o Ollama roda no HOST Linux Mint (acessado via host-gateway)
   # ollama:
   #   image: ollama/ollama:latest
   #   container_name: operis-ai-local
-  #   profiles: ["with-ollama"]
   #   ports:
   #     - "11434:11434"
   #   volumes:
@@ -181,13 +179,38 @@ services:
   #   networks:
   #     - operis-network
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# VOLUMES — Persistência Soberana
+# ═══════════════════════════════════════════════════════════════════════════════
 volumes:
+  # ── Dados do MySQL: bind mount no HD de 1TB ──────────────────────────────────
+  # Localização física: /media/aleixo/BACKUP_CO2/operis-db-data/
+  # IMPORTANTE: Execute antes do primeiro up:
+  #   mkdir -p /media/aleixo/BACKUP_CO2/operis-db-data
   operis-db-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /media/aleixo/BACKUP_CO2/operis-db-data
+
+  # ── Cache do Git Import: repositório clonado persiste entre reinicializações ─
+  operis-git-cache:
+    driver: local
+
+  # ── Cache do Nginx ───────────────────────────────────────────────────────────
   nginx-cache:
     driver: local
+
+  # ── Modelos Ollama (se rodar em container) ───────────────────────────────────
   # ollama-models:
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# NETWORKS
+# ═══════════════════════════════════════════════════════════════════════════════
 networks:
   operis-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -110,9 +110,44 @@ async function startServer() {
   app.use(express.json({ limit: "20mb" }));
   app.use(express.urlencoded({ limit: "20mb", extended: true }));
 
-  // Health check endpoint
+  // Health check endpoint — Modelo Modular Diamond
+  // Retorna o status do Boot Orchestrator (wait-for-db.sh) para o frontend
+  // O componente SyncStatus faz polling neste endpoint durante o boot
   app.get("/api/health", (_req, res) => {
-    res.json({ status: "ok", version: "2.0.0", timestamp: new Date().toISOString() });
+    try {
+      const fs = require("fs") as typeof import("fs");
+      const bootStatusPath = "/tmp/operis-boot-status.json";
+      if (fs.existsSync(bootStatusPath)) {
+        const raw = fs.readFileSync(bootStatusPath, "utf-8");
+        const bootStatus = JSON.parse(raw) as {
+          phase: string;
+          message: string;
+          progress: number;
+          ready: boolean;
+          timestamp: string;
+        };
+        return res.json({
+          status: bootStatus.ready ? "ok" : "booting",
+          version: "2.0.0",
+          timestamp: new Date().toISOString(),
+          boot: bootStatus,
+        });
+      }
+    } catch (_e) {
+      // Se não conseguir ler o arquivo de status, assume que está pronto
+    }
+    // Padrão: sistema pronto (sem arquivo de status = já inicializou)
+    return res.json({
+      status: "ok",
+      version: "2.0.0",
+      timestamp: new Date().toISOString(),
+      boot: {
+        phase: "ready",
+        message: "OPERIS Command Center operacional",
+        progress: 100,
+        ready: true,
+      },
+    });
   });
 
   // Swagger / OpenAPI documentation
