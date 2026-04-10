@@ -1,21 +1,62 @@
 version: "3.9"
 
-# ─── OPERIS CO₂ Contra Incêndio — Docker Compose ────────────────────────────────────────────
-# Ambientes: dev (local) | staging | production
-# D.G.O. — Dashboard de Governança e Operação (JULY AOG)
+# ═══════════════════════════════════════════════════════════════════════════════
+# OPERIS Command Center — Docker Compose
+# Projeto: CO₂ Contra Incêndio SaaS | D.G.O. — Dashboard de Governança
+# Responsável: Aleixo (Technical Manager) | JULY AOG — Project Diamond
 #
-# PERMISSÕES ESPECIAIS PARA O D.G.O.:
+# PERMISSÕES ESPECIAIS DO D.G.O.:
 #   /var/run/docker.sock         → leitura de containers em tempo real
 #   /media/aleixo/BACKUP_CO2     → monitoramento do HD 1TB (WDC WD10PURX)
 #   /sys/class/thermal           → temperatura do hardware
 #   /proc                        → CPU, RAM, processos do host
-#   host-gateway:11434           → Ollama rodando no host
+#   host-gateway:11434           → Ollama rodando no host Linux Mint
 #
-# Uso: docker compose --profile dev up
-# Para obter o GID do grupo docker: stat -c '%g' /var/run/docker.sock
+# Uso local (Samsung / Linux Mint):
+#   docker compose --profile dev up -d
+#
+# Uso produção (DigitalOcean):
+#   docker compose up -d
+#
+# Pré-requisito: arquivo .env na raiz (cp .env.example .env)
+# GID do grupo docker: stat -c "%g" /var/run/docker.sock
+# ═══════════════════════════════════════════════════════════════════════════════
 
 services:
-  # ── Aplicação Principal ──────────────────────────────────────────────────
+
+  # ── Banco de Dados MySQL ─────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: operis-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_operis_2025}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-operis_db}
+      MYSQL_USER: ${MYSQL_USER:-operis_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-operis_senha_forte_2025}
+    volumes:
+      - operis-db-data:/var/lib/mysql
+    networks:
+      - operis-network
+    ports:
+      # Expõe localmente para acesso via DBeaver/TablePlus (remova em produção)
+      - "3306:3306"
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - -h
+        - localhost
+        - -u
+        - root
+        - --password=${MYSQL_ROOT_PASSWORD:-root_operis_2025}
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Aplicação Principal (Produção) ───────────────────────────────────────────
   app:
     build:
       context: .
@@ -26,31 +67,13 @@ services:
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - VITE_APP_ID=${VITE_APP_ID}
-      - OAUTH_SERVER_URL=${OAUTH_SERVER_URL}
-      - BUILT_IN_FORGE_API_URL=${BUILT_IN_FORGE_API_URL}
-      - BUILT_IN_FORGE_API_KEY=${BUILT_IN_FORGE_API_KEY}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      # ── D.G.O. — Segurança ──
-      - DGO_JWT_SECRET=${DGO_JWT_SECRET:-dgo-super-secret-change-in-production}
-      - DGO_ADMIN_USER=${DGO_ADMIN_USER:-admin}
-      - DGO_ADMIN_PASS=${DGO_ADMIN_PASS:-operis2025}
-      # ── D.G.O. — IA Local ──
-      - OLLAMA_HOST=${OLLAMA_HOST:-http://host-gateway:11434}
-      # ── D.G.O. — Busca Web ──
-      - BRAVE_SEARCH_API_KEY=${BRAVE_SEARCH_API_KEY:-}
-      - SERPER_API_KEY=${SERPER_API_KEY:-}
-      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
-      # ── D.G.O. — Caminhos do Host ──
-      - HOST_BACKUP_PATH=/host/backup
-      - HOST_PROC_PATH=/host/proc
-      - HOST_SYS_PATH=/host/sys
+      # Sobrescreve o DATABASE_URL para garantir que aponta para o container 'db'
+      DATABASE_URL: mysql://${MYSQL_USER:-operis_user}:${MYSQL_PASSWORD:-operis_senha_forte_2025}@db:3306/${MYSQL_DATABASE:-operis_db}
+      DB_HOST: db
+      DB_PORT: "3306"
     volumes:
       # ── D.G.O.: Docker Socket (leitura de containers) ──
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -62,24 +85,28 @@ services:
       - /sys/class/thermal:/host/sys/class/thermal:ro
       # ── D.G.O.: Script de sincronização ──
       - /home/aleixo/sync_operis.sh:/host/scripts/sync_operis.sh:ro
+    # ── Aguarda o banco estar saudável antes de iniciar ──
+    depends_on:
+      db:
+        condition: service_healthy
+      nginx:
+        condition: service_started
+    networks:
+      - operis-network
     # ── D.G.O.: Acesso ao host via gateway (Ollama em localhost) ──
     extra_hosts:
       - "host-gateway:host-gateway"
     # ── D.G.O.: Grupo docker para acesso ao socket ──
     group_add:
-      - "${DOCKER_GROUP_ID:-999}"
-    depends_on:
-      - nginx
-    networks:
-      - operis-network
+      - "${DOCKER_GROUP_ID:-127}"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 30s
+      retries: 5
+      start_period: 60s
 
-  # ── Nginx Reverse Proxy ──────────────────────────────────────────────────
+  # ── Nginx Reverse Proxy ──────────────────────────────────────────────────────
   nginx:
     image: nginx:alpine
     container_name: operis-nginx
@@ -99,7 +126,7 @@ services:
       timeout: 5s
       retries: 3
 
-  # ── Dev Server (apenas profile dev) ─────────────────────────────────────
+  # ── Dev Server (apenas profile dev — Samsung / Linux Mint) ──────────────────
   app-dev:
     build:
       context: .
@@ -109,7 +136,15 @@ services:
     profiles: ["dev"]
     ports:
       - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: mysql://${MYSQL_USER:-operis_user}:${MYSQL_PASSWORD:-operis_senha_forte_2025}@db:3306/${MYSQL_DATABASE:-operis_db}
+      DB_HOST: db
+      DB_PORT: "3306"
     volumes:
+      # ── Código fonte (hot-reload) ──
       - .:/app
       - /app/node_modules
       - /app/client/node_modules
@@ -123,30 +158,35 @@ services:
       - /sys/class/thermal:/host/sys/class/thermal:ro
       # ── D.G.O.: Script de sync ──
       - /home/aleixo/sync_operis.sh:/host/scripts/sync_operis.sh:ro
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET:-dev-secret-change-in-production}
-      - DGO_JWT_SECRET=${DGO_JWT_SECRET:-dgo-dev-secret}
-      - DGO_ADMIN_USER=${DGO_ADMIN_USER:-admin}
-      - DGO_ADMIN_PASS=${DGO_ADMIN_PASS:-operis2025}
-      - OLLAMA_HOST=${OLLAMA_HOST:-http://host-gateway:11434}
-      - BRAVE_SEARCH_API_KEY=${BRAVE_SEARCH_API_KEY:-}
-      - SERPER_API_KEY=${SERPER_API_KEY:-}
-      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
-      - HOST_BACKUP_PATH=/host/backup
-      - HOST_PROC_PATH=/host/proc
-      - HOST_SYS_PATH=/host/sys
+    depends_on:
+      db:
+        condition: service_healthy
     extra_hosts:
       - "host-gateway:host-gateway"
     group_add:
-      - "${DOCKER_GROUP_ID:-999}"
-    command: pnpm dev
+      - "${DOCKER_GROUP_ID:-127}"
+    command: sh -c "scripts/wait-for-db.sh pnpm dev"
     networks:
       - operis-network
 
+  # ── Ollama IA Local (descomente se quiser rodar em container) ───────────────
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: operis-ai-local
+  #   profiles: ["with-ollama"]
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama-models:/root/.ollama
+  #   networks:
+  #     - operis-network
+
 volumes:
+  operis-db-data:
+    driver: local
   nginx-cache:
+    driver: local
+  # ollama-models:
 
 networks:
   operis-network:

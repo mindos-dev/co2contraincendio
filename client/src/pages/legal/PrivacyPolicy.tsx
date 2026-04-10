@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
       <LegalSection title="4. Compartilhamento de dados">
         <p>Os seus dados <strong>não são vendidos</strong> a terceiros. O compartilhamento ocorre apenas nas seguintes situações:</p>
         <ul style={{ paddingLeft: 20, marginTop: 8 }}>
-          <li style={{ marginBottom: 8 }}><strong>Prestadores de infraestrutura:</strong> servidores em nuvem (Manus Platform) com cláusulas contratuais de proteção de dados;</li>
+          <li style={{ marginBottom: 8 }}><strong>Prestadores de infraestrutura:</strong> servidores em nuvem (OPERIS Command Center — CO₂ Contra Incêndio SaaS) com cláusulas contratuais de proteção de dados;</li>
           <li style={{ marginBottom: 8 }}><strong>Serviço de e-mail:</strong> para envio de alertas e notificações operacionais;</li>
           <li style={{ marginBottom: 8 }}><strong>Autoridades competentes:</strong> quando exigido por lei, ordem judicial ou solicitação do Corpo de Bombeiros;</li>
           <li style={{ marginBottom: 8 }}><strong>Empresa contratante:</strong> dados de inspeções são compartilhados com o cliente que contratou o serviço técnico.</li>
