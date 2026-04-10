@@ -103,6 +103,8 @@ import VistoriaTecnicaBlindada from "./pages/VistoriaTecnicaBlindada";
 import FireSystemList from "./pages/operis/fire-system/FireSystemList";
 import NovaFireSystem from "./pages/operis/fire-system/NovaFireSystem";
 import FireSystemDetalhes from "./pages/operis/fire-system/FireSystemDetalhes";
+// D.G.O. — Dashboard de Governança e Operação (Command Center)
+import DGO from "./pages/dgo/DGO";
 // OPERIS.eng — Agente de Engenharia Autônomo
 import OperisEngHome from "./pages/operis-eng/OperisEngHome";
 import OperisEngSearch from "./pages/operis-eng/OperisEngSearch";
@@ -240,6 +242,9 @@ function Router() {
       <Route path="/app/operis-eng/aprendizagem" component={OperisEngHome} />
       <Route path="/app/operis-eng/governanca" component={OperisEngHome} />
       <Route path="/app/operis-eng/busca" component={OperisEngSearch} />
+      {/* D.G.O. — Command Center (acesso restrito) */}
+      <Route path="/dgo" component={DGO} />
+      <Route path="/dgo/:panel" component={DGO} />
       {/* Legal pages */}
       <Route path="/legal/privacy" component={PrivacyPolicy} />
       <Route path="/legal/terms" component={TermsOfService} />

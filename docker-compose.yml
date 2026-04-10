@@ -1,8 +1,18 @@
 version: "3.9"
 
-# ─── OPERIS CO₂ Contra Incêndio — Docker Compose ────────────────────────────
+# ─── OPERIS CO₂ Contra Incêndio — Docker Compose ────────────────────────────────────────────
 # Ambientes: dev (local) | staging | production
-# Uso: docker-compose --profile dev up
+# D.G.O. — Dashboard de Governança e Operação (JULY AOG)
+#
+# PERMISSÕES ESPECIAIS PARA O D.G.O.:
+#   /var/run/docker.sock         → leitura de containers em tempo real
+#   /media/aleixo/BACKUP_CO2     → monitoramento do HD 1TB (WDC WD10PURX)
+#   /sys/class/thermal           → temperatura do hardware
+#   /proc                        → CPU, RAM, processos do host
+#   host-gateway:11434           → Ollama rodando no host
+#
+# Uso: docker compose --profile dev up
+# Para obter o GID do grupo docker: stat -c '%g' /var/run/docker.sock
 
 services:
   # ── Aplicação Principal ──────────────────────────────────────────────────
@@ -27,6 +37,37 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      # ── D.G.O. — Segurança ──
+      - DGO_JWT_SECRET=${DGO_JWT_SECRET:-dgo-super-secret-change-in-production}
+      - DGO_ADMIN_USER=${DGO_ADMIN_USER:-admin}
+      - DGO_ADMIN_PASS=${DGO_ADMIN_PASS:-operis2025}
+      # ── D.G.O. — IA Local ──
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://host-gateway:11434}
+      # ── D.G.O. — Busca Web ──
+      - BRAVE_SEARCH_API_KEY=${BRAVE_SEARCH_API_KEY:-}
+      - SERPER_API_KEY=${SERPER_API_KEY:-}
+      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
+      # ── D.G.O. — Caminhos do Host ──
+      - HOST_BACKUP_PATH=/host/backup
+      - HOST_PROC_PATH=/host/proc
+      - HOST_SYS_PATH=/host/sys
+    volumes:
+      # ── D.G.O.: Docker Socket (leitura de containers) ──
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # ── D.G.O.: HD 1TB de Backup (WDC WD10PURX) ──
+      - /media/aleixo/BACKUP_CO2:/host/backup:ro
+      # ── D.G.O.: Sistema (CPU/RAM/processos) ──
+      - /proc:/host/proc:ro
+      # ── D.G.O.: Temperatura do hardware ──
+      - /sys/class/thermal:/host/sys/class/thermal:ro
+      # ── D.G.O.: Script de sincronização ──
+      - /home/aleixo/sync_operis.sh:/host/scripts/sync_operis.sh:ro
+    # ── D.G.O.: Acesso ao host via gateway (Ollama em localhost) ──
+    extra_hosts:
+      - "host-gateway:host-gateway"
+    # ── D.G.O.: Grupo docker para acesso ao socket ──
+    group_add:
+      - "${DOCKER_GROUP_ID:-999}"
     depends_on:
       - nginx
     networks:
@@ -72,10 +113,34 @@ services:
       - .:/app
       - /app/node_modules
       - /app/client/node_modules
+      # ── D.G.O.: Docker Socket ──
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # ── D.G.O.: HD 1TB de Backup ──
+      - /media/aleixo/BACKUP_CO2:/host/backup:ro
+      # ── D.G.O.: Sistema (CPU/RAM/processos) ──
+      - /proc:/host/proc:ro
+      # ── D.G.O.: Temperatura ──
+      - /sys/class/thermal:/host/sys/class/thermal:ro
+      # ── D.G.O.: Script de sync ──
+      - /home/aleixo/sync_operis.sh:/host/scripts/sync_operis.sh:ro
     environment:
       - NODE_ENV=development
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET:-dev-secret-change-in-production}
+      - DGO_JWT_SECRET=${DGO_JWT_SECRET:-dgo-dev-secret}
+      - DGO_ADMIN_USER=${DGO_ADMIN_USER:-admin}
+      - DGO_ADMIN_PASS=${DGO_ADMIN_PASS:-operis2025}
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://host-gateway:11434}
+      - BRAVE_SEARCH_API_KEY=${BRAVE_SEARCH_API_KEY:-}
+      - SERPER_API_KEY=${SERPER_API_KEY:-}
+      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
+      - HOST_BACKUP_PATH=/host/backup
+      - HOST_PROC_PATH=/host/proc
+      - HOST_SYS_PATH=/host/sys
+    extra_hosts:
+      - "host-gateway:host-gateway"
+    group_add:
+      - "${DOCKER_GROUP_ID:-999}"
     command: pnpm dev
     networks:
       - operis-network

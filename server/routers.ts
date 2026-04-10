@@ -17,6 +17,8 @@ import { aiRouter, documentsRouter } from "./ai-router";
 import { fireSystemRouter } from "./fire-system-router";
 import { engeRouter } from "./enge-router";
 import { projectRouter } from "./project-router";
+import { dgoRouter } from "./dgo";
+import { dgoAuthRouter } from "./dgo/dgo-auth";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -37,6 +39,8 @@ export const appRouter = router({
   fireSystem: fireSystemRouter,
   enge: engeRouter,
   project: projectRouter,
+  dgo: dgoRouter,
+  dgoAuth: dgoAuthRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
