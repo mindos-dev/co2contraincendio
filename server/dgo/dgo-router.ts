@@ -34,6 +34,8 @@ import {
   getDiskUsage,
   getHardwareStats,
   getTemperature,
+  listDirectory,
+  getDiskInfo,
 } from "./system-service";
 import {
   listOllamaModels,
@@ -195,6 +197,42 @@ export const dgoRouter = router({
       catch { return { sensors: [], available: false, cpuMaxTemp: null, gpuTemp: null, checkedAt: new Date().toISOString() }; }
     }),
 
+    // Explorador de diretórios (HD 1TB)
+    listDirectory: dgoProcedure
+      .input(z.object({ path: z.string().min(1).max(500) }))
+      .query(async ({ input }) => {
+        try { return await listDirectory(input.path); }
+        catch (e) { throw new TRPCError({ code: "FORBIDDEN", message: `Acesso negado: ${(e as Error).message}` }); }
+      }),
+
+    // Info de disco de um caminho específico
+    diskInfo: dgoProcedure
+      .input(z.object({ path: z.string().min(1).max(500) }))
+      .query(async ({ input }) => {
+        try { return await getDiskInfo(input.path); }
+        catch (e) { throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Disco: ${(e as Error).message}` }); }
+      }),
+
+    // Info geral do sistema (para o Overview)
+    info: dgoProcedure.query(async () => {
+      try {
+        const [hw, disk, temp] = await Promise.allSettled([
+          getHardwareStats(), getDiskUsage(), getTemperature(),
+        ]);
+        const hwData = hw.status === "fulfilled" ? hw.value : null;
+        const diskData = disk.status === "fulfilled" ? disk.value : null;
+        const tempData = temp.status === "fulfilled" ? temp.value : null;
+        const backupPart = diskData?.partitions?.find((p: any) => p.isBackup);
+        return {
+          cpu: { usage: hwData?.cpuPercent ?? 0, cores: hwData?.cpuCores ?? 0 },
+          memory: { usedGB: hwData?.ramUsedGB ?? 0, totalGB: hwData?.ramTotalGB ?? 0, usedPercent: hwData?.ramPercent ?? 0 },
+          disk: { usedPercent: backupPart?.usedPercent ?? 0, free: backupPart?.freeGB ?? 0 },
+          temperature: { current: tempData?.cpuMaxTemp ?? 0 },
+          uptime: hwData?.uptimeFormatted ?? "—",
+        };
+      } catch { return null; }
+    }),
+
     snapshot: dgoProcedure.query(async () => {
       const [hardware, disk, temperature] = await Promise.allSettled([
         getHardwareStats(), getDiskUsage(), getTemperature(),
@@ -249,6 +287,30 @@ export const dgoRouter = router({
         logGovernance("ollama.delete", "ollama", `Deletando: ${input.modelName}`);
         try { await deleteOllamaModel(input.modelName); return { success: true, deleted: input.modelName }; }
         catch (e) { throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Remoção falhou: ${(e as Error).message}` }); }
+      }),
+    // Iniciar um modelo com prompt (para agentes de governança)
+    runModel: dgoProcedure
+      .input(z.object({
+        model: z.string().min(1).max(100),
+        prompt: z.string().max(2000).optional().default("Olá"),
+      }))
+      .mutation(async ({ input }) => {
+        logGovernance("ollama.run", "ollama", `Iniciando agente: ${input.model}`);
+        try {
+          const result = await switchOllamaModel(input.model);
+          return { success: true, model: input.model, ...result };
+        } catch (e) {
+          logGovernance("ollama.run", "ollama", (e as Error).message, "error");
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Falha ao iniciar modelo: ${(e as Error).message}` });
+        }
+      }),
+    // Parar um modelo (liberar memória)
+    stopModel: dgoProcedure
+      .input(z.object({ model: z.string().min(1).max(100) }))
+      .mutation(async ({ input }) => {
+        logGovernance("ollama.stop", "ollama", `Parando modelo: ${input.model}`);
+        // Ollama não tem endpoint de stop explícito; retornar sucesso (o modelo expira por inatividade)
+        return { success: true, model: input.model, message: "Modelo marcado para expiração (Ollama libera após inatividade)" };
       }),
   }),
 

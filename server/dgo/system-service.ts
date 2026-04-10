@@ -324,3 +324,102 @@ function formatThermalLabel(type: string): string {
   };
   return map[type] ?? type.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 }
+
+// ─── Explorador de Diretórios (HD 1TB) ───────────────────────────────────────
+export interface DirectoryEntry {
+  name: string;
+  path: string;
+  isDirectory: boolean;
+  size: number;
+  modified: string;
+  extension: string;
+}
+
+export async function listDirectory(dirPath: string): Promise<DirectoryEntry[]> {
+  // Restringir ao HD de backup por segurança
+  const ALLOWED_ROOTS = [
+    "/media/aleixo/BACKUP_CO2",
+    "/media/aleixo",
+    "/app",
+    "/tmp",
+  ];
+  const isAllowed = ALLOWED_ROOTS.some(root => dirPath.startsWith(root));
+  if (!isAllowed) {
+    throw new Error(`Acesso negado: caminho fora da whitelist — ${dirPath}`);
+  }
+
+  const entries = await fs.readdir(dirPath, { withFileTypes: true }).catch(() => []);
+  const result: DirectoryEntry[] = [];
+
+  for (const entry of entries) {
+    // Ignorar arquivos ocultos e de sistema
+    if (entry.name.startsWith(".")) continue;
+
+    const fullPath = `${dirPath}/${entry.name}`;
+    let size = 0;
+    let modified = "";
+
+    try {
+      const stat = await fs.stat(fullPath);
+      size = stat.size;
+      modified = stat.mtime.toISOString();
+    } catch {}
+
+    const ext = entry.isFile() ? (entry.name.split(".").pop() ?? "") : "";
+
+    result.push({
+      name: entry.name,
+      path: fullPath,
+      isDirectory: entry.isDirectory(),
+      size,
+      modified,
+      extension: ext.toLowerCase(),
+    });
+  }
+
+  return result;
+}
+
+// ─── Info de disco de um caminho específico ───────────────────────────────────
+export interface DiskPathInfo {
+  path: string;
+  total: number;
+  used: number;
+  free: number;
+  usedPercent: number;
+  available: boolean;
+}
+
+export async function getDiskInfo(mountPath: string): Promise<DiskPathInfo> {
+  try {
+    const { stdout } = await execAsync(
+      `df -B1 "${mountPath}" 2>/dev/null | tail -1`,
+      { timeout: 8_000 }
+    );
+    const parts = stdout.trim().split(/\s+/);
+    if (parts.length < 5) throw new Error("df output inválido");
+
+    const total = parseInt(parts[1]) || 0;
+    const used  = parseInt(parts[2]) || 0;
+    const free  = parseInt(parts[3]) || 0;
+    const pct   = total > 0 ? (used / total) * 100 : 0;
+
+    return {
+      path: mountPath,
+      total,
+      used,
+      free,
+      usedPercent: Math.round(pct * 10) / 10,
+      available: true,
+    };
+  } catch {
+    return {
+      path: mountPath,
+      total: 0,
+      used: 0,
+      free: 0,
+      usedPercent: 0,
+      available: false,
+    };
+  }
+}

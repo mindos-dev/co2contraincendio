@@ -23,6 +23,9 @@ import ServiceManagerPanel from "./panels/ServiceManagerPanel";
 import HardwarePanel from "./panels/HardwarePanel";
 import KanbanPanel from "./panels/KanbanPanel";
 import WebSearchPanel from "./panels/WebSearchPanel";
+import HDExplorerPanel from "./panels/HDExplorerPanel";
+import AIGovernancePanel from "./panels/AIGovernancePanel";
+import IntegratedTerminal from "./panels/IntegratedTerminal";
 import { trpc } from "@/lib/trpc";
 import {
   Container, Brain, Terminal, Server, Target, Search,
@@ -41,6 +44,9 @@ const NAV_ITEMS = [
   { id: "kanban",      label: "Gestão de Metas",  icon: <Target className="w-4 h-4" />,           color: "emerald", desc: "Kanban, Burnup, Engines" },
   { id: "search",      label: "Busca Técnica",    icon: <Search className="w-4 h-4" />,           color: "sky",     desc: "Web Search + Resumo IA" },
   { id: "governance",  label: "Governança",       icon: <Shield className="w-4 h-4" />,           color: "zinc",    desc: "Logs de auditoria" },
+  { id: "hd-explorer", label: "HD 1TB",           icon: <HardDrive className="w-4 h-4" />,        color: "orange",  desc: "Explorador BACKUP_CO2" },
+  { id: "ai-gov",      label: "Gov. de IA",       icon: <Shield className="w-4 h-4" />,           color: "blue",    desc: "Ligar/desligar agentes" },
+  { id: "terminal",    label: "Terminal",         icon: <Terminal className="w-4 h-4" />,         color: "green",   desc: "Console de automação" },
 ];
 
 // ─── Status Pill ──────────────────────────────────────────────────────────────
@@ -256,6 +262,9 @@ function CommandCenter() {
       case "kanban":      return <KanbanPanel />;
       case "search":      return <WebSearchPanel />;
       case "governance":  return <GovernancePanel token={token ?? ""} />;
+      case "hd-explorer": return <HDExplorerPanel />;
+      case "ai-gov":      return <AIGovernancePanel />;
+      case "terminal":    return <IntegratedTerminal />;
       default:            return <OverviewPanel onNavigate={setActivePanel} />;
     }
   };
